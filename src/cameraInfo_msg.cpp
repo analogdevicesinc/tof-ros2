@@ -29,7 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "cameraInfo_msg.h"
+#include "cameraInfo_message.h"
 
 using namespace aditof;
 
@@ -50,20 +50,20 @@ void CameraInfoMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 
 void CameraInfoMsg::setMembers(const std::shared_ptr<Camera> &camera, int width,
                                int height, rclcpp::Time tStamp) {
-    msg.header.stamp = tStamp;
-    msg.header.frame_id = "aditof_camera_info";
+    message.header.stamp = tStamp;
+    message.header.frame_id = "aditof_camera_info";
 
-    msg.width = width;
-    msg.height = height;
-    msg.distortion_model = "plumb_bob";
+    message.width = width;
+    message.height = height;
+    message.distortion_model = "plumb_bob";
 
     IntrinsicParameters intr = getIntrinsics(camera);
 
-    msg.D = {intr.k1, intr.k2, intr.p1, intr.p2, intr.k3};
-    msg.K = {intr.fx, 0.0, intr.cx, 0.0, intr.fy, intr.cy, 0.0, 0.0, 1.0};
-    msg.R = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-    msg.P = {msg.K[0], msg.K[1], msg.K[2], 0.0f,     msg.K[3], msg.K[4],
-             msg.K[5], 0.0f,     msg.K[6], msg.K[7], msg.K[8], 0.0f};
+    message.d = {intr.k1, intr.k2, intr.p1, intr.p2, intr.k3};
+    message.k = {intr.fx, 0.0, intr.cx, 0.0, intr.fy, intr.cy, 0.0, 0.0, 1.0};
+    message.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
+    message.p = {message.k[0], message.k[1], message.k[2], 0.0f,     message.k[3], message.k[4],
+             message.k[5], 0.0f,     message.k[6], message.k[7], message.k[8], 0.0f};
 }
 
-void CameraInfoMsg::publishMsg(const rclcpp::Publisher &pub) { pub.publish(msg); }
+void CameraInfoMsg::publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub) { pub->publish(message); }

@@ -56,14 +56,15 @@ int main(int argc, char **argv) {
     // ROS_ASSERT_MSG(camera, "initCamera call failed");
     rclcpp::init(argc, argv);
     //Create camera node
-    auto camera_node = rclcpp::Node::make_shared("tof_camera_node");
+    std::shared_ptr<rclcpp::Node> camera_node = rclcpp::Node::make_shared("tof_camera_node");
+    camera_node->create_publisher<std_msgs::msg::String>("topic", 10);
     // ROS_ASSERT_MSG(camera, "ros init failed");
     
     //Creating generic publisher for the camera 
-    // PublisherFactory publishers();
+    PublisherFactory publishers();
         
     //Creating frame
-    // aditof::Frame **frame = &tmp;
+    aditof::Frame **frame = &tmp;
 
     // publishers.m_enableDepthCompute =
     //     (strcmp(arguments[2].c_str(), "true") ? false : true);

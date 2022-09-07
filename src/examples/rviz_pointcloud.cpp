@@ -36,7 +36,7 @@
 using namespace aditof;
 
 int main(int argc, char **argv) {
-    std::string *arguments = parseArgs(argc, argv);
+    std_msgs::msg::String *arguments = parseArgs(argc, argv);
 
     std::shared_ptr<Camera> camera = initCamera(arguments);
 
@@ -56,11 +56,11 @@ int main(int argc, char **argv) {
     aditof::Frame **frame = &tmp;
 
     getNewFrame(camera, frame);
-    PointCloud2Msg *msg = new PointCloud2Msg(camera, frame, rclcpp::Time::now());
+    PointCloud2Msg *msg = new PointCloud2Msg(camera, frame, rclcpp::Time::seconds());
 
     while (ros::ok()) {
         getNewFrame(camera, frame);
-        msg->FrameDataToMsg(camera, frame, rclcpp::Time::now());
+        msg->FrameDataToMsg(camera, frame, rclcpp::Time::seconds());
         msg->publishMsg(frame_pubisher);
         //ros::spinOnce();
     }

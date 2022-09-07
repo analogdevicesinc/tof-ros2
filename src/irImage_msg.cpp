@@ -29,13 +29,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "irImage_msg.h"
+#include "irImage_message.h"
 using namespace aditof;
 
 IRImageMsg::IRImageMsg() {}
 
 IRImageMsg::IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                       aditof::Frame **frame, std::string encoding,
+                       aditof::Frame **frame, std_msgs::msg::String encoding,
                        rclcpp::Time tStamp) {
     imgEncoding = encoding;
     //FrameDataToMsg(camera, frame, tStamp);
@@ -58,30 +58,30 @@ void IRImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 }
 
 void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
-    msg.header.stamp = tStamp;
-    msg.header.frame_id = "aditof_ir_img";
+    message.header.stamp = tStamp;
+    message.header.frame_id = "aditof_ir_img";
 
-    msg.width = width;
-    msg.height = height;
+    message.width = width;
+    message.height = height;
 
-    msg.encoding = imgEncoding;
-    msg.is_bigendian = false;
+    message.encoding = imgEncoding;
+    message.is_bigendian = false;
 
-    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
-                       sensor_msgs::image_encodings::numChannels(imgEncoding);
-    msg.step = width * pixelByteCnt;
+    int pixelByteCnt = sensor_msgs::msg::image_encodings::bitDepth(imgEncoding) / 8 *
+                       sensor_msgs::msg::image_encodings::numChannels(imgEncoding);
+    message.step = width * pixelByteCnt;
 
-    msg.data.resize(msg.step * height);
+    message.data.resize(message.step * height);
 }
 
 void IRImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
                                 uint16_t *frameData) {
-    if (msg.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
-        irTo16bitGrayscale(frameData, msg.width, msg.height);
-        uint8_t *msgDataPtr = msg.data.data();
-        std::memcpy(msgDataPtr, frameData, msg.step * msg.height);
-    } else
-        RCLCPP_ERROR("Image encoding invalid or not available");
+    if (message.encoding.compare(sensor_msgs::msg::image_encodings::MONO16) == 0) {
+        irTo16bitGrayscale(frameData, message.width, message.height);
+        uint8_t *msgDataPtr = message.data.data();
+        memcpy(msgDataPtr, frameData, message.step * message.height);
+    } 
+        // RCLCPP_ERROR(this->get_logger(),"Image encoding invalid or not available");
 }
 
-void IRImageMsg::publishMsg(const rclcpp::Node &pub) { pub.publish(msg); }
+void IRImageMsg::publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub) { pub->publish(message); }

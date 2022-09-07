@@ -39,11 +39,12 @@
 #include <memory>
 #include <typeinfo>
 #include <vector>
+#include <sensor_msgs/msg/image.hpp>
 
 class PublisherFactory {
   public:
     PublisherFactory();
-    void createNew(ModeTypes mode,const rclcpp::Node &camera_node,
+    void createNew(ModeTypes mode, rclcpp::Node *camera_node,
                    const std::shared_ptr<aditof::Camera> &camera,
                    aditof::Frame **frame);
     void updatePublishers(const rclcpp::Node &camera_node, const std::shared_ptr<aditof::Camera> &camera,
@@ -52,7 +53,7 @@ class PublisherFactory {
     void setDepthFormat(const int val);
 
   private:
-    std::vector<rclcpp::Publisher<std_msgs::msg::String>::SharedPtr> img_publishers;
+    std::vector<std::shared_ptr<rclcpp::Publisher<sensor_msgs::msg::Image>>> img_publishers;
     std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
 
   public:

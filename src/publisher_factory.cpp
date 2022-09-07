@@ -35,13 +35,13 @@
 PublisherFactory::PublisherFactory()
 {
     m_currentMode = ModeTypes::NONE;
-};
+}
 
-void PublisherFactory::createNew(const ModeTypes mode, const rclcpp::Node &camera_node,
+void PublisherFactory::createNew(const ModeTypes mode, rclcpp::Node *camera_node,
                                  const std::shared_ptr<aditof::Camera> &camera,
                                  aditof::Frame **frame)
 {
-    rclcpp::Time timeStamp = camera_node.now();
+    rclcpp::Time timeStamp = camera_node->now();
 
     if (*frame != nullptr)
         (*frame)->~Frame();
@@ -78,28 +78,21 @@ void PublisherFactory::createNew(const ModeTypes mode, const rclcpp::Node &camer
         if (!strcmp(iter.type.c_str(), "ir") &&
             (m_enableDepthCompute || mode == ModeTypes::mode3))
         {
-            img_publishers.emplace_back(
-                camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_ir", 5));
-            imgMsgs.emplace_back(new IRImageMsg(
-                camera, frame, sensor_msgs::image_encodings::MONO16,
-                timeStamp));
+            img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_ir", 5));
+            imgMsgs.emplace_back(new IRImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16, timeStamp));
             LOG(INFO) << "Added ir publisher";
         }
         else if (!strcmp(iter.type.c_str(), "depth") &&
                  m_enableDepthCompute)
         {
-            img_publishers.emplace_back(
-                camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_depth", 5));
-            imgMsgs.emplace_back(new DepthImageMsg(
-                camera, frame, sensor_msgs::mage_encodings::RGBA8, timeStamp));
+            img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_depth", 5));
+            imgMsgs.emplace_back(new DepthImageMsg(camera, frame, sensor_msgs::image_encodings::RGBA8, timeStamp));
             LOG(INFO) << "Added depth publisher";
         }
         else if (!strcmp(iter.type.c_str(), "xyz") &&
                  m_enableDepthCompute)
         {
-            img_publishers.emplace_back(
-                camera_node->create_publisher<sensor_msgs::msg::PointCloud2>("aditof_pcloud",
-                                                                        5));
+            img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::PointCloud2>("aditof_pcloud", 5));
             imgMsgs.emplace_back(new PointCloud2Msg(camera, frame, timeStamp));
             LOG(INFO) << "Added point_cloud publisher";
         }
@@ -111,11 +104,8 @@ void PublisherFactory::createNew(const ModeTypes mode, const rclcpp::Node &camer
         else if (!strcmp(iter.type.c_str(), "raw") &&
                  !m_enableDepthCompute && mode != ModeTypes::mode3)
         {
-            img_publishers.emplace_back(
-                camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_raw", 5));
-            imgMsgs.emplace_back(new RAWImageMsg(
-                camera, frame, sensor_msgs::msg::image_encodings::MONO16,
-                timeStamp));
+            img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_raw", 5));
+            imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::msg::image_encodings::MONO16, timeStamp));
             LOG(INFO) << "Added raw data publisher";
         }
     }
