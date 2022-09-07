@@ -79,21 +79,21 @@ void PublisherFactory::createNew(const ModeTypes mode, rclcpp::Node *camera_node
             (m_enableDepthCompute || mode == ModeTypes::mode3))
         {
             img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_ir", 5));
-            imgMsgs.emplace_back(new IRImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16, timeStamp));
+            imgMsgs.emplace_back(new IRImageMsg(*camera, frame, sensor_msgs::image_encodings::MONO16, timeStamp));
             LOG(INFO) << "Added ir publisher";
         }
         else if (!strcmp(iter.type.c_str(), "depth") &&
                  m_enableDepthCompute)
         {
             img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_depth", 5));
-            imgMsgs.emplace_back(new DepthImageMsg(camera, frame, sensor_msgs::image_encodings::RGBA8, timeStamp));
+            imgMsgs.emplace_back(new DepthImageMsg(*camera, frame, sensor_msgs::image_encodings::RGBA8, timeStamp));
             LOG(INFO) << "Added depth publisher";
         }
         else if (!strcmp(iter.type.c_str(), "xyz") &&
                  m_enableDepthCompute)
         {
             img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::PointCloud2>("aditof_pcloud", 5));
-            imgMsgs.emplace_back(new PointCloud2Msg(camera, frame, timeStamp));
+            imgMsgs.emplace_back(new PointCloud2Msg(*camera, frame, timeStamp));
             LOG(INFO) << "Added point_cloud publisher";
         }
         else if (!strcmp(iter.type.c_str(), "embedded_header") &&
@@ -105,7 +105,7 @@ void PublisherFactory::createNew(const ModeTypes mode, rclcpp::Node *camera_node
                  !m_enableDepthCompute && mode != ModeTypes::mode3)
         {
             img_publishers.emplace_back(camera_node->create_publisher<sensor_msgs::msg::Image>("aditof_raw", 5));
-            imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::msg::image_encodings::MONO16, timeStamp));
+            imgMsgs.emplace_back(new RAWImageMsg(*camera, frame, sensor_msgs::image_encodings::MONO16, timeStamp));
             LOG(INFO) << "Added raw data publisher";
         }
     }

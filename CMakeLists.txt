@@ -20,6 +20,7 @@ endif()
 # set(Protobuf_PROTOC_EXECUTABLE "/usr/bin/protoc")
 list(APPEND CMAKE_PREFIX_PATH "/usr/local;/opt/glog;/opt/protobuf;/opt/websockets" ${ADITOF_CMAKE_PREFIX_PATH})
 
+
 find_package(aditof REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -32,11 +33,10 @@ file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 list(REMOVE_ITEM SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/camera_node.cpp)
 
 add_executable(aditof_camera_node ${CMAKE_CURRENT_SOURCE_DIR}/src/camera_node.cpp ${SOURCES})
-target_sources(aditof_camera_node INTERFACE ${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME})
 
 target_link_libraries(aditof_camera_node aditof::aditof)
-# target_link_libraries(aditof_camera_node colcon_LIBRARIES)
 ament_target_dependencies(aditof_camera_node rclcpp std_msgs)
+target_sources(aditof_camera_node INTERFACE ${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME})
 
 install(TARGETS
 aditof_camera_node

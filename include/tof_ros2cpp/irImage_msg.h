@@ -43,7 +43,7 @@
 class IRImageMsg : public AditofSensorMsg {
   public:
     IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-               aditof::Frame **frame, std_msgs::msg::String encoding, rclcpp::Time tStamp);
+               aditof::Frame **frame, std::string encoding, rclcpp::Time tStamp);
     /**
      * @brief Each message corresponds to one frame
      */
@@ -52,7 +52,7 @@ class IRImageMsg : public AditofSensorMsg {
     /**
      * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
      */
-    std_msgs::msg::String imgEncoding;
+    std::string imgEncoding;
 
     /**
      * @brief Converts the frame data to a message

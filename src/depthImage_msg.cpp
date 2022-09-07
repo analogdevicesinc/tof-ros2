@@ -30,12 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "depthImage_msg.h"
+
 using namespace aditof;
 
 DepthImageMsg::DepthImageMsg() {}
 
 DepthImageMsg::DepthImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                             aditof::Frame **frame, std_msgs::msg::String encoding,
+                             aditof::Frame **frame, std::string encoding,
                              rclcpp::Time tStamp)
 {
     imgEncoding = encoding;
@@ -63,34 +64,34 @@ void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 void DepthImageMsg::setMetadataMembers(int width, int height,
                                        rclcpp::Time tStamp)
 {
-    msg.header.stamp = tStamp;
-    msg.header.frame_id = "aditof_depth_img";
+    message.header.stamp = tStamp;
+    message.header.frame_id = "aditof_depth_img";
 
-    msg.width = width;
-    msg.height = height;
-    msg.encoding = imgEncoding;
-    msg.is_bigendian = false;
+    message.width = width;
+    message.height = height;
+    message.encoding = imgEncoding;
+    message.is_bigendian = false;
 
-    int pixelByteCnt = sensor_msgs::msg::image_encodings::bitDepth(imgEncoding) / 8 *
-                       sensor_msgs::msg::image_encodings::numChannels(imgEncoding);
-    msg.step = width * pixelByteCnt;
+    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
+                       sensor_msgs::image_encodings::numChannels(imgEncoding);
+    message.step = width * pixelByteCnt;
 
-    msg.data.resize(msg.step * height);
+    message.data.resize(message.step * height);
 }
 
 void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
                                    uint16_t *frameData)
 {
 
-    if (msg.encoding.compare(sensor_msgs::msg::image_encodings::RGBA8) == 0)
+    if (message.encoding.compare(sensor_msgs::image_encodings::RGBA8) == 0)
     {
         std::vector<uint16_t> depthData(frameData,
-                                        frameData + msg.width * msg.height);
+                                        frameData + message.width * message.height);
         dataToRGBA8(0, 0x0fff, frameData);
     }
-    else if (msg.encoding.compare(sensor_msgs::msg::image_encodings::MONO16) == 0)
+    else if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
     {
-        memcpy(msg.data.data(), frameData, 2 * msg.width * msg.height);
+        memcpy(message.data.data(), frameData, 2 * message.width * message.height);
     }
     // RCLCPP_ERROR(this->get_logger(),"Image encoding invalid or not available");
 }
@@ -98,10 +99,10 @@ void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
 void DepthImageMsg::dataToRGBA8(uint16_t min_range, uint16_t max_range,
                                 uint16_t *data)
 {
-    uint8_t *msgDataPtr = msg.data.data();
+    uint8_t *msgDataPtr = message.data.data();
     int32_t delta = static_cast<uint32_t>(max_range - min_range);
 
-    for (unsigned int i = 0; i < msg.width * msg.height; i++)
+    for (unsigned int i = 0; i < message.width * message.height; i++)
     {
         // normalized value
         double norm_val = static_cast<double>(
@@ -174,8 +175,8 @@ void DepthImageMsg::publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::S
 
 void DepthImageMsg::setDepthDataFormat(int value)
 {
-    message.encoding = (value == 0) ? sensor_msgs::msg::image_encodings::RGBA8
-                                : sensor_msgs::msg::image_encodings::MONO16;
-    imgEncoding = (value == 0) ? sensor_msgs::msg::image_encodings::RGBA8
-                               : sensor_msgs::msg::image_encodings::MONO16;
+    message.encoding = (value == 0) ? sensor_msgs::image_encodings::RGBA8
+                                : sensor_msgs::image_encodings::MONO16;
+    imgEncoding = (value == 0) ? sensor_msgs::image_encodings::RGBA8
+                               : sensor_msgs::image_encodings::MONO16;
 }

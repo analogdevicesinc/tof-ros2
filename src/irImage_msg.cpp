@@ -29,13 +29,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "irImage_message.h"
+#include "irImage_msg.h"
 using namespace aditof;
 
 IRImageMsg::IRImageMsg() {}
 
 IRImageMsg::IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                       aditof::Frame **frame, std_msgs::msg::String encoding,
+                       aditof::Frame **frame, std::string encoding,
                        rclcpp::Time tStamp) {
     imgEncoding = encoding;
     //FrameDataToMsg(camera, frame, tStamp);
@@ -67,8 +67,8 @@ void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) 
     message.encoding = imgEncoding;
     message.is_bigendian = false;
 
-    int pixelByteCnt = sensor_msgs::msg::image_encodings::bitDepth(imgEncoding) / 8 *
-                       sensor_msgs::msg::image_encodings::numChannels(imgEncoding);
+    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
+                       sensor_msgs::image_encodings::numChannels(imgEncoding);
     message.step = width * pixelByteCnt;
 
     message.data.resize(message.step * height);
@@ -76,7 +76,7 @@ void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) 
 
 void IRImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
                                 uint16_t *frameData) {
-    if (message.encoding.compare(sensor_msgs::msg::image_encodings::MONO16) == 0) {
+    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
         irTo16bitGrayscale(frameData, message.width, message.height);
         uint8_t *msgDataPtr = message.data.data();
         memcpy(msgDataPtr, frameData, message.step * message.height);

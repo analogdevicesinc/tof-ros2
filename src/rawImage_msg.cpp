@@ -29,13 +29,13 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "rawImage_message.h"
+#include "rawImage_msg.h"
 using namespace aditof;
 
 RAWImageMsg::RAWImageMsg() {}
 
 RAWImageMsg::RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                         aditof::Frame **frame, std_msgs::msg::String encoding,
+                         aditof::Frame **frame, std::string encoding,
                          rclcpp::Time tStamp)
 {
 
@@ -77,9 +77,9 @@ void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
     message.encoding = message.encoding;
     message.is_bigendian = false;
 
-    int pixelByteCnt = sensor_msgs::msg::image_encodings::bitDepth(message.encoding) /
+    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(message.encoding) /
                        8 *
-                       sensor_msgs::msg::image_encodings::numChannels(message.encoding);
+                       sensor_msgs::image_encodings::numChannels(message.encoding);
     message.step = width * pixelByteCnt;
 
     message.data.resize(message.step * height);
@@ -88,7 +88,7 @@ void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
 void RAWImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
                                  uint16_t *frameData)
 {
-    if (message.encoding.compare(sensor_msgs::msg::image_encodings::MONO16) == 0)
+    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
     {
 
         uint8_t *msgDataPtr = message.data.data();

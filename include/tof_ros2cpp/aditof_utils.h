@@ -38,6 +38,7 @@
 #include <rclcpp/logger.hpp>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include <string.h>
 
 enum class ModeTypes { NONE, mode3, mode7, mode10 };
 
@@ -64,7 +65,7 @@ void applyNoiseReduction(const std::shared_ptr<aditof::Camera> &camera,
 void disableNoiseReduction(const std::shared_ptr<aditof::Camera> &camera);
 void getNewFrame(const std::shared_ptr<aditof::Camera> &camera,
                  aditof::Frame **frame);
-uint16_t *getFrameData(aditof::Frame **frame, const std_msgs::msg::String &dataType);
+uint16_t *getFrameData(aditof::Frame **frame, const std::string &dataType);
 aditof::IntrinsicParameters
 getIntrinsics(const std::shared_ptr<aditof::Camera> &camera);
 int getRangeMax(const std::shared_ptr<aditof::Camera> &camera);
