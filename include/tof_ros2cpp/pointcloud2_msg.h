@@ -46,7 +46,7 @@ class PointCloud2Msg : public AditofSensorMsg {
     /**
      * @brief Each message corresponds to one frame
      */
-    sensor_msgs::PointCloud2 msg;
+    sensor_msgs::msg::PointCloud2 msg;
 
     /**
      * @brief Converts the frame data to a message
@@ -67,7 +67,7 @@ class PointCloud2Msg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-    void publishMsg(const rclcpp::Node &pub);
+    void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub);
 
   private:
     PointCloud2Msg();

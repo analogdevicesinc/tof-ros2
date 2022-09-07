@@ -50,7 +50,7 @@ class CameraInfoMsg : public AditofSensorMsg {
     /**
      * @brief Each message corresponds to one frame
      */
-    sensor_msgs::msg::CameraInfo msg;
+    sensor_msgs::msg::CameraInfo message;
 
     /**
      * @brief Converts the frame data to a message
@@ -66,7 +66,7 @@ class CameraInfoMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-    void publishMsg(const rclcpp::Publisher &pub);
+    void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub);
 
   private:
     CameraInfoMsg();

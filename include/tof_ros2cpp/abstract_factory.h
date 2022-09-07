@@ -34,7 +34,7 @@
 
 #include <aditof/camera.h>
 #include <glog/logging.h>
-#include <publisher.hpp>
+
 
 class AbstractPublisherFactory {
   public:

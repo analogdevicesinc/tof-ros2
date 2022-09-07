@@ -34,6 +34,7 @@
 
 #include "aditof/camera.h"
 #include "message_factory.h"
+#include <sensor_msgs/image_encodings.hpp>
 #include <aditof_utils.h>
 #include <memory>
 #include <typeinfo>
@@ -42,16 +43,16 @@
 class PublisherFactory {
   public:
     PublisherFactory();
-    void createNew(ModeTypes mode, ros::NodeHandle nHandle,
+    void createNew(ModeTypes mode,const rclcpp::Node &camera_node,
                    const std::shared_ptr<aditof::Camera> &camera,
                    aditof::Frame **frame);
-    void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,
+    void updatePublishers(const rclcpp::Node &camera_node, const std::shared_ptr<aditof::Camera> &camera,
                           aditof::Frame **frame);
     void deletePublishers(const std::shared_ptr<aditof::Camera> &camera);
     void setDepthFormat(const int val);
 
   private:
-    std::vector<rclcpp::Publisher> img_publishers;
+    std::vector<rclcpp::Publisher<std_msgs::msg::String>::SharedPtr> img_publishers;
     std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
 
   public:

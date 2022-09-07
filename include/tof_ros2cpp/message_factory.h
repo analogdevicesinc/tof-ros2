@@ -37,6 +37,7 @@
 #include "irImage_msg.h"
 #include "pointcloud2_msg.h"
 #include "rawImage_msg.h"
+#include "rclcpp/rclcpp.hpp"
 
 enum class MessageType {
     sensor_msgs_PointCloud2,

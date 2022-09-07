@@ -37,6 +37,8 @@
 // #include <ros/package.h>
 #include <string.h>
 #include <unistd.h>
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
 
 std::mutex mtx_dynamic_rec;
 using namespace aditof;
@@ -45,11 +47,11 @@ std::string *parseArgs(int argc, char **argv) {
     google::InitGoogleLogging(argv[0]);
     FLAGS_alsologtostderr = 1;
 
-    std::string ip = "";
-    std::string config_path = "";
-    std::string use_depthCompute = "";
-    std::string mode = "";
-    std::string rqt = "";
+    std::string ip;// = "";
+    std::string config_path;// = "";
+    std::string use_depthCompute;// = "";
+    std::string mode;// = "";
+    std::string rqt;// = "";
 
     for (int i = 1; i < argc; i++) {
         std::string left;
@@ -59,15 +61,15 @@ std::string *parseArgs(int argc, char **argv) {
         left = argnew.substr(0, argnew.find("=", 0));
         right = argnew.substr(argnew.find("=", 0) + 1, argnew.size());
 
-        if (std::strcmp(left.c_str(), "ip") == 0)
+        if (strcmp(left.c_str(), "ip") == 0)
             ip = right;
-        else if (std::strcmp(left.c_str(), "config_file") == 0)
+        else if (strcmp(left.c_str(), "config_file") == 0)
             config_path = right;
-        else if (std::strcmp(left.c_str(), "use_depthCompute") == 0)
+        else if (strcmp(left.c_str(), "use_depthCompute") == 0)
             use_depthCompute = right;
-        else if (std::strcmp(left.c_str(), "mode") == 0)
+        else if (strcmp(left.c_str(), "mode") == 0)
             mode = right;
-        else if (std::strcmp(left.c_str(), "rqt") == 0)
+        else if (strcmp(left.c_str(), "rqt") == 0)
             rqt = right;
     }
 

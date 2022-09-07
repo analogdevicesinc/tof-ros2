@@ -33,17 +33,16 @@
 #define ADITOF_SENSOR_MSG_H
 
 #include <aditof/camera.h>
-// #include <ros/publisher.h>
+#include <rclcpp/publisher.hpp>
+#include <std_msgs/msg/string.hpp>
 
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
-
-class AditofSensorMsg {
-  public:
-    virtual ~AditofSensorMsg() = default;
-    virtual void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                                aditof::Frame **frame, rclcpp::Time tStamp) = 0;
-    virtual void publishMsg(const rclcpp::Node &pub) = 0;
+class AditofSensorMsg
+{
+public:
+  virtual ~AditofSensorMsg() = default;
+  virtual void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                              aditof::Frame **frame, rclcpp::Time tStamp) = 0;
+  virtual void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub) = 0;
 };
 
 #endif // ADITOF_SENSOR_MSG_H

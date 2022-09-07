@@ -64,18 +64,18 @@ typedef struct Rgb32Color {
 class DepthImageMsg : public AditofSensorMsg {
   public:
     DepthImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                  aditof::Frame **frame, std::string encoding,
+                  aditof::Frame **frame, std_msgs::msg::String encoding,
                   rclcpp::Time tStamp);
 
     /**
      * @brief Each message corresponds to one frame
      */
-    sensor_msgs::msg::Image msg;
+    sensor_msgs::msg::Image message;
 
     /**
      * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
      */
-    std::string imgEncoding;
+    std_msgs::msg::String imgEncoding;
 
     /**
      * @brief Converts the frame data to a message
@@ -106,7 +106,7 @@ class DepthImageMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-    void publishMsg(const rclcpp::Node &pub);
+    void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub);
 
     void setDepthDataFormat(int value);
     int getDepthDataFormat();

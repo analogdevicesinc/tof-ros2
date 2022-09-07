@@ -35,7 +35,7 @@ add_executable(aditof_camera_node ${CMAKE_CURRENT_SOURCE_DIR}/src/camera_node.cp
 target_sources(aditof_camera_node INTERFACE ${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME})
 
 target_link_libraries(aditof_camera_node aditof::aditof)
-target_link_libraries(aditof_camera_node colcon_LIBRARIES)
+# target_link_libraries(aditof_camera_node colcon_LIBRARIES)
 ament_target_dependencies(aditof_camera_node rclcpp std_msgs)
 
 install(TARGETS

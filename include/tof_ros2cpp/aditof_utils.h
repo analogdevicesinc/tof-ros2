@@ -35,6 +35,9 @@
 #include <aditof/camera.h>
 #include <glog/logging.h>
 #include <mutex>
+#include <rclcpp/logger.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/string.hpp"
 
 enum class ModeTypes { NONE, mode3, mode7, mode10 };
 
@@ -45,15 +48,15 @@ void stopCamera(const std::shared_ptr<aditof::Camera> &camera);
 void setFrameType(const std::shared_ptr<aditof::Camera> &camera,
                   const std::string &type);
 void getAvailableFrameType(const std::shared_ptr<aditof::Camera> &camera,
-                           std::vector<std::string> &availableFrameTypes);
+                           std::vector<std_msgs::msg::String> &availableFrameTypes);
 void getCameraDataDetails(const std::shared_ptr<aditof::Camera> &camera,
                           aditof::CameraDetails &details);
 void enableCameraDepthCompute(const std::shared_ptr<aditof::Camera> &camera,
                               const bool value);
 void setMode(const std::shared_ptr<aditof::Camera> &camera,
-             const std::string &mode);
+             const std_msgs::msg::String &mode);
 void setCameraRevision(const std::shared_ptr<aditof::Camera> &camera,
-                       const std::string rev);
+                       const std_msgs::msg::String rev);
 void setIrGammaCorrection(const std::shared_ptr<aditof::Camera> &camera,
                           float gamma);
 void applyNoiseReduction(const std::shared_ptr<aditof::Camera> &camera,
@@ -61,7 +64,7 @@ void applyNoiseReduction(const std::shared_ptr<aditof::Camera> &camera,
 void disableNoiseReduction(const std::shared_ptr<aditof::Camera> &camera);
 void getNewFrame(const std::shared_ptr<aditof::Camera> &camera,
                  aditof::Frame **frame);
-uint16_t *getFrameData(aditof::Frame **frame, const std::string &dataType);
+uint16_t *getFrameData(aditof::Frame **frame, const std_msgs::msg::String &dataType);
 aditof::IntrinsicParameters
 getIntrinsics(const std::shared_ptr<aditof::Camera> &camera);
 int getRangeMax(const std::shared_ptr<aditof::Camera> &camera);

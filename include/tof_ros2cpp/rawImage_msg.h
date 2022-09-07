@@ -43,11 +43,11 @@
 class RAWImageMsg : public AditofSensorMsg {
   public:
     RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                aditof::Frame **frame, std::string encoding, rclcpp::Time tStamp);
+                aditof::Frame **frame, std_msgs::msg::String encoding, rclcpp::Time tStamp);
     /**
      * @brief Each message corresponds to one frame
      */
-    sensor_msgs::msg::Image msg;
+    sensor_msgs::msg::Image message;
 
     /**
      * @brief Converts the frame data to a message
@@ -68,7 +68,7 @@ class RAWImageMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-    void publishMsg(const rclcpp::Node &pub);
+    void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub);
 
   private:
     RAWImageMsg();
