@@ -35,21 +35,23 @@ using namespace aditof;
 IRImageMsg::IRImageMsg() {}
 
 IRImageMsg::IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                       aditof::Frame **frame, std::string encoding,
-                       rclcpp::Time tStamp) {
+                       aditof::Frame **frame, std::string encoding)
+{
     imgEncoding = encoding;
-    //FrameDataToMsg(camera, frame, tStamp);
+    FrameDataToMsg(camera, frame);
 }
 
 void IRImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                aditof::Frame **frame, rclcpp::Time tStamp) {
+                                aditof::Frame **frame)
+{
     FrameDetails fDetails;
     (*frame)->getDetails(fDetails);
 
-    setMetadataMembers(fDetails.width, fDetails.height, tStamp);
+    setMetadataMembers(fDetails.width, fDetails.height);
 
     uint16_t *frameData = getFrameData(frame, "ir");
-    if (!frameData) {
+    if (!frameData)
+    {
         LOG(ERROR) << "getFrameData call failed";
         return;
     }
@@ -57,8 +59,9 @@ void IRImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
-    message.header.stamp = tStamp;
+void IRImageMsg::setMetadataMembers(int width, int height)
+{
+    // message.header.stamp = tStamp;
     message.header.frame_id = "aditof_ir_img";
 
     message.width = width;
@@ -75,13 +78,21 @@ void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) 
 }
 
 void IRImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                uint16_t *frameData) {
-    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
+                                uint16_t *frameData)
+{
+    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
+    {
         irTo16bitGrayscale(frameData, message.width, message.height);
         uint8_t *msgDataPtr = message.data.data();
         memcpy(msgDataPtr, frameData, message.step * message.height);
-    } 
-        // RCLCPP_ERROR(this->get_logger(),"Image encoding invalid or not available");
+    }
+    else
+        LOG(ERROR) << "Image encoding invalid or not available";
 }
 
-void IRImageMsg::publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub) { pub->publish(message); }
+sensor_msgs::msg::Image IRImageMsg::getMessage()
+{
+    return message;
+}
+
+// void IRImageMsg::publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub) { pub.publish(message); }

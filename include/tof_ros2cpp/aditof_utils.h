@@ -35,10 +35,8 @@
 #include <aditof/camera.h>
 #include <glog/logging.h>
 #include <mutex>
-#include <rclcpp/logger.hpp>
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
-#include <string.h>
+#include <rclcpp/time.hpp>
+#include <aditof/frame.h>
 
 enum class ModeTypes { NONE, mode3, mode7, mode10 };
 
@@ -49,15 +47,15 @@ void stopCamera(const std::shared_ptr<aditof::Camera> &camera);
 void setFrameType(const std::shared_ptr<aditof::Camera> &camera,
                   const std::string &type);
 void getAvailableFrameType(const std::shared_ptr<aditof::Camera> &camera,
-                           std::vector<std_msgs::msg::String> &availableFrameTypes);
+                           std::vector<std::string> &availableFrameTypes);
 void getCameraDataDetails(const std::shared_ptr<aditof::Camera> &camera,
                           aditof::CameraDetails &details);
 void enableCameraDepthCompute(const std::shared_ptr<aditof::Camera> &camera,
                               const bool value);
 void setMode(const std::shared_ptr<aditof::Camera> &camera,
-             const std_msgs::msg::String &mode);
+             const std::string &mode);
 void setCameraRevision(const std::shared_ptr<aditof::Camera> &camera,
-                       const std_msgs::msg::String rev);
+                       const std::string rev);
 void setIrGammaCorrection(const std::shared_ptr<aditof::Camera> &camera,
                           float gamma);
 void applyNoiseReduction(const std::shared_ptr<aditof::Camera> &camera,

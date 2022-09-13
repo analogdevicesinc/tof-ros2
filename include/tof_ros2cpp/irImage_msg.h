@@ -33,50 +33,49 @@
 #define IRIMAGE_MSG_H
 
 #include <aditof/frame.h>
-
-#include "aditof_sensor_msg.h"
+#include <aditof_sensor_msg.h>
 #include "aditof_utils.h"
 
-#include <sensor_msgs/msg/image.hpp>
-#include <sensor_msgs/image_encodings.hpp>
+class IRImageMsg : public AditofSensorMsg
+{
+public:
+  IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+             aditof::Frame **frame, std::string encoding);
+  /**
+   * @brief Each message corresponds to one frame
+   */
+  sensor_msgs::msg::Image message;
 
-class IRImageMsg : public AditofSensorMsg {
-  public:
-    IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-               aditof::Frame **frame, std::string encoding, rclcpp::Time tStamp);
-    /**
-     * @brief Each message corresponds to one frame
-     */
-    sensor_msgs::msg::Image message;
+  /**
+   * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
+   */
+  std::string imgEncoding;
 
-    /**
-     * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
-     */
-    std::string imgEncoding;
+  /**
+   * @brief Converts the frame data to a message
+   */
+  void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                      aditof::Frame **frame);
+  /**
+   * @brief Assigns values to the message fields concerning metadata
+   */
+  void setMetadataMembers(int width, int height);
 
-    /**
-     * @brief Converts the frame data to a message
-     */
-    void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                        aditof::Frame **frame, rclcpp::Time tStamp);
-    /**
-     * @brief Assigns values to the message fields concerning metadata
-     */
-    void setMetadataMembers(int width, int height, rclcpp::Time tStamp);
+  /**
+   * @brief Assigns values to the message fields concerning the point data
+   */
+  void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
+                      uint16_t *frameData);
 
-    /**
-     * @brief Assigns values to the message fields concerning the point data
-     */
-    void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
-                        uint16_t *frameData);
+  /**
+   * @brief Publishes a message
+   */
+  // void publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
 
-    /**
-     * @brief Publishes a message
-     */
-    void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub);
+  sensor_msgs::msg::Image getMessage();
 
-  private:
-    IRImageMsg();
+private:
+  IRImageMsg();
 };
 
 #endif // IRIMAGE_MSG_H

@@ -33,12 +33,8 @@
 #define DEPTHIMAGE_MSG_H
 
 #include <aditof/frame.h>
-
-#include "aditof_sensor_msg.h"
 #include "aditof_utils.h"
-
-#include <sensor_msgs/msg/image.hpp>
-#include <sensor_msgs/image_encodings.hpp>
+#include <aditof_sensor_msg.h>
 
 //rainbow color map
 #define RED 0
@@ -64,8 +60,7 @@ typedef struct Rgb32Color {
 class DepthImageMsg : public AditofSensorMsg {
   public:
     DepthImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                  aditof::Frame **frame, std::string encoding,
-                  rclcpp::Time tStamp);
+                  aditof::Frame **frame, std::string encoding);
 
     /**
      * @brief Each message corresponds to one frame
@@ -81,12 +76,12 @@ class DepthImageMsg : public AditofSensorMsg {
      * @brief Converts the frame data to a message
      */
     void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                        aditof::Frame **frame, rclcpp::Time tStamp);
+                        aditof::Frame **frame);
 
     /**
      * @brief Assigns values to the message fields concerning metadata
      */
-    void setMetadataMembers(int width, int height, rclcpp::Time tStamp);
+    void setMetadataMembers(int width, int height);
 
     /**
      * @brief Assigns values to the message fields concerning the point data
@@ -106,10 +101,13 @@ class DepthImageMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-    void publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub);
+    // void publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
 
     void setDepthDataFormat(int value);
+
     int getDepthDataFormat();
+
+    sensor_msgs::msg::Image getMessage();
 
   private:
     DepthImageMsg();

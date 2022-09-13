@@ -35,7 +35,6 @@
 #include <aditof/camera.h>
 #include <glog/logging.h>
 
-
 class AbstractPublisherFactory {
   public:
     rclcpp::Publisher publisher;
@@ -45,7 +44,7 @@ class AbstractPublisherFactory {
 
 class pclPublisherFactory : public AbstractPublisherFactory {
   public:
-    publisher = nHandle.advertise<sensor_msgs::PointCloud2>("aditof_pcloud", 5);
+    publisher = nHandle.advertise<sensor_msgs::msg::PointCloud2>("aditof_pcloud", 5);
 }
 
 #endif

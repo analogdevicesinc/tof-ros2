@@ -30,26 +30,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "depthImage_msg.h"
-
 using namespace aditof;
 
 DepthImageMsg::DepthImageMsg() {}
 
 DepthImageMsg::DepthImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                             aditof::Frame **frame, std::string encoding,
-                             rclcpp::Time tStamp)
+                             aditof::Frame **frame, std::string encoding)
 {
     imgEncoding = encoding;
-    // FrameDataToMsg(camera, frame, tStamp);
+    FrameDataToMsg(camera, frame);
 }
 
 void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                   aditof::Frame **frame, rclcpp::Time tStamp)
+                                   aditof::Frame **frame)
 {
     FrameDetails fDetails;
     (*frame)->getDetails(fDetails);
 
-    setMetadataMembers(fDetails.width, fDetails.height, tStamp);
+    setMetadataMembers(fDetails.width, fDetails.height);
 
     uint16_t *frameData = getFrameData(frame, "depth");
     if (!frameData)
@@ -61,10 +59,9 @@ void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void DepthImageMsg::setMetadataMembers(int width, int height,
-                                       rclcpp::Time tStamp)
+void DepthImageMsg::setMetadataMembers(int width, int height)
 {
-    message.header.stamp = tStamp;
+    // message.header.stamp = tStamp;
     message.header.frame_id = "aditof_depth_img";
 
     message.width = width;
@@ -89,11 +86,13 @@ void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
                                         frameData + message.width * message.height);
         dataToRGBA8(0, 0x0fff, frameData);
     }
-    else if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
+    else if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) ==
+             0)
     {
         memcpy(message.data.data(), frameData, 2 * message.width * message.height);
     }
-    // RCLCPP_ERROR(this->get_logger(),"Image encoding invalid or not available");
+    else
+        LOG(ERROR) << "Image encoding invalid or not available";
 }
 
 void DepthImageMsg::dataToRGBA8(uint16_t min_range, uint16_t max_range,
@@ -171,12 +170,17 @@ Rgba8Color DepthImageMsg::HSVtoRGBA8(double hue, double sat, double val)
     return rgba8;
 }
 
-void DepthImageMsg::publishMsg(const rclcpp::Publisher<std_msgs::msg::String>::SharedPtr &pub) { pub->publish(message); }
+// void DepthImageMsg::publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub) { pub.publish(message); }
 
 void DepthImageMsg::setDepthDataFormat(int value)
 {
     message.encoding = (value == 0) ? sensor_msgs::image_encodings::RGBA8
-                                : sensor_msgs::image_encodings::MONO16;
+                                    : sensor_msgs::image_encodings::MONO16;
     imgEncoding = (value == 0) ? sensor_msgs::image_encodings::RGBA8
                                : sensor_msgs::image_encodings::MONO16;
+}
+
+sensor_msgs::msg::Image DepthImageMsg::getMessage()
+{
+    return message;
 }
