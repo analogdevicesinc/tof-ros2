@@ -1,4 +1,4 @@
-# ROS2 Wrapper for Time of Flight SDK of Analog Devices&copy; (for Ubuntu 20.04)
+# ROS2 Wrapper for Time of Flight SDK of Analog Devices (for Ubuntu 20.04)
 
 ## ROS2 Installation
 
