@@ -34,7 +34,9 @@ and in the main ros2_ws directory run the: ```colcon build``` commad.
 * Crosby: "```config/config_crosby_nxp.json```"
 * Walden: "```config/config_walden_nxp.json```"
 
- [use_depthCompute] = "true" [Must be on ```true``` for the initial release] 
+ [use_depthCompute] 
+ - "true" for enabling Depth Compute libraries
+ - "false" for disabling Depth Compute libraries 
 
  [mode]:
 * 1 -> QMP mode of the camera
