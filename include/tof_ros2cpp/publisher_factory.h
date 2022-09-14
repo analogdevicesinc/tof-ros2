@@ -29,62 +29,39 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <aditof_utils.h>
-#include <rclcpp/rclcpp.hpp>
-#include <chrono>
+#ifndef PUBLISHER_FACTORY_H
+#define PUBLISHER_FACTORY_H
+
 #include "aditof/camera.h"
+#include <aditof_utils.h>
+#include <memory>
+
+#include <rclcpp/rclcpp.hpp>
+#include "image_transport/image_transport.hpp"
+
+#include <depthImage_msg.h>
+#include <irImage_msg.h>
+#include <rawImage_msg.h>
 #include <aditof_sensor_msg.h>
-#include <publisher_factory.h>
 
-// #include "image_transport/image_transport.hpp"
-// #include "rclcpp/rclcpp.hpp"
+#include <typeinfo>
+#include <vector>
 
-using namespace aditof;
-
-std::mutex m_mtxDynamicRec;
-std::mutex m_mtxDynamicRec2;
-
-using namespace std::chrono_literals;
-
-int main(int argc, char **argv)
+class PublisherFactory
 {
-    /*
-    pos 0 - ip
-    pos 1 - config_path
-    pos 2 - use_depthCompute
-    pos 3 - mode
-    */
-    std::string *arguments = parseArgs(argc, argv);
+public:
+  PublisherFactory();
+  void createNew(const rclcpp::Node::SharedPtr &node, image_transport::ImageTransport &it,
+                 const std::shared_ptr<aditof::Camera> &camera,
+                 aditof::Frame **frame, bool enableDepthCompute);
+  void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,
+                        aditof::Frame **frame);
+  void deletePublishers(const std::shared_ptr<aditof::Camera> &camera);
+  void setDepthFormat(const int val);
 
-    // Initializing camera and establishing connection
-    std::shared_ptr<Camera> camera = initCamera(arguments);
-    // Setting camera parameters
-    (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-    (arguments[3] == "1") ? setFrameType(camera, "qmp") : setFrameType(camera, "mp");
+private:
+  std::vector<image_transport::Publisher> img_publishers;
+  std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
+};
 
-    // Creating camera frame for the API
-    auto tmp = new Frame;
-    aditof::Frame **frame = &tmp;
-    startCamera(camera);
-
-    // Creating camera node
-    rclcpp::init(argc, argv);
-    rclcpp::NodeOptions options;
-    rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("tof_camera_publisher", options);
-
-    // Creating Image transporter
-    image_transport::ImageTransport it(node);
-
-    // Creating publisher
-    PublisherFactory publishers;
-    publishers.createNew(node, it, camera, frame, (arguments[2] == "true") ? true : false);
-
-
-    while (rclcpp::ok())
-    {
-        getNewFrame(camera, frame);
-        publishers.updatePublishers(camera, frame);
-        rclcpp::spin_some(node);
-    }
-    return 0;
-}
+#endif // PUBLISHER_FACTORY_H

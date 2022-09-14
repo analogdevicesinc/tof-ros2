@@ -22,31 +22,54 @@
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * FOR ANY DRAWECT, INDRAWECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef ADITOF_SENSOR_MSG_H
-#define ADITOF_SENSOR_MSG_H
+#ifndef RAWIMAGE_MSG_H
+#define RAWIMAGE_MSG_H
 
-#include <aditof/camera.h>
-#include <rcl/publisher.h>
-#include <rcl/time.h>
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/image.hpp>
-#include <sensor_msgs/image_encodings.hpp>
+#include <aditof/frame.h>
 
+#include "aditof_sensor_msg.h"
+#include "aditof_utils.h"
 
-class AditofSensorMsg {
+class RAWImageMsg : public AditofSensorMsg {
   public:
-    virtual ~AditofSensorMsg() = default;
-    virtual void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                                aditof::Frame **frame) = 0;
-    virtual sensor_msgs::msg::Image getMessage() = 0;
-    // virtual void publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub) = 0;
+    RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+                aditof::Frame **frame, std::string encoding);
+    /**
+     * @brief Each message corresponds to one frame
+     */
+    sensor_msgs::msg::Image message;
+
+    /**
+     * @brief Converts the frame data to a message
+     */
+    void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                        aditof::Frame **frame);
+    /**
+     * @brief Assigns values to the message fields concerning metadata
+     */
+    void setMetadataMembers(int width, int height);
+
+    /**
+     * @brief Assigns values to the message fields concerning the point data
+     */
+    void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
+                        uint16_t *frameData);
+
+    /**
+     * @brief Publishes a message
+     */
+    // void publishMsg(const ros::Publisher &pub);
+
+    sensor_msgs::msg::Image getMessage();
+  private:
+    RAWImageMsg();
 };
 
-#endif // ADITOF_SENSOR_MSG_H
+#endif // RAWIMAGE_MSG_H
