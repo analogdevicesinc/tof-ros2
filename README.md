@@ -1,29 +1,38 @@
-# ROS2 Wrapper for Time of Flight SDK of Analog Devices&copy; (for Ubuntu 20.04)
+# ROS2 Wrapper for [Time of Flight SDK](https://https://github.com/analogdevicesinc/ToF) of Analog Devices (for Ubuntu)
 
-## ROS2 Installation
+
+# 1. Install ROS2
 
 - Install the recommended [ROS2 distribution](https://docs.ros.org/en/rolling/Releases.html) for your operating system**
   - [ROS Install page](https://docs.ros.org/en/foxy/Installation.html)
 
 - In order to prepare the system to run the ROS wrapper in the general catkin workspace make sure to install correctly the following libraries:
 
-## Library prerequisits
+# 2. ToF dependency
 
-* ToF libraries:
-```console
-wget https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/tof_roscpp.deb
-sudo dpkg -i tof_roscpp.deb
-```
+In order to prepare the system to run the ROS wrapper in the general catkin workspace make sure to install correctly the following library:
 
-- After preparing the neccessary libraries open the general ```ros_ws``` workspace and in the ```src```  and run 
+
+- [Build ToF from sourcecode](https://github.com/analogdevicesinc/ToF/blob/master/doc/itof/linux_build_instructions.md) (Until the step: "Download and build the SDK only")
+
+Also make sure to run ```sudo make install``` at the end of the build
+
+# 3. Usage
+
+In directory ```ros2_ws/src/``` clone the repository:
+
 ```console
 git clone https://github.com/rbudai98/tof_ros2cpp.git
 ```
-and in the main ros2_ws directory run the: ```colcon build``` commad.
-- <b>NOTE: </b>The config files from the cloned repository must be copied by the Cmake of the project into the root of the ros2_ws directory.
 
+After cloning the repository in the ``ros2_ws/ run the following command:
+ 
+```console
+colcon build
+source devel/setup.bash
+```
 
-## Starting camera node
+### Starting camera node
 - In the general ROS2 workspace run the following code:
 ```console
     ros2 run tof_ros2cpp tof_camera_node ip="10.42.0.1" config_file="config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
