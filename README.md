@@ -48,6 +48,6 @@ source devel/setup.bash
  - "false" for disabling Depth Compute libraries 
 
  [mode]:
-* 1 -> QMP mode of the camera
-* 2 -> MP mode of the camera
+* 1 -> LR - QMP mode of the camera
+* 2 -> LR - MP mode of the camera
 

@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     std::shared_ptr<Camera> camera = initCamera(arguments);
     // Setting camera parameters
     (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-    (arguments[3] == "1") ? setFrameType(camera, "qmp") : setFrameType(camera, "mp");
+    (arguments[3] == "1") ? setFrameType(camera, "lrqmp") : setFrameType(camera, "lrmp");
 
     // Creating camera frame for the API
     auto tmp = new Frame;
