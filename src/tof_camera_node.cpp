@@ -58,9 +58,29 @@ int main(int argc, char **argv)
 
     // Initializing camera and establishing connection
     std::shared_ptr<Camera> camera = initCamera(arguments);
+        
     // Setting camera parameters
-    (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-    (arguments[3] == "1") ? setFrameType(camera, "lrqmp") : setFrameType(camera, "lrmp");
+    int m_mode = atoi(arguments[3]);
+    switch(m_mode)
+    {
+        case 1:
+            //LR - QMP mode of the camera
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, "lrqmp");
+            break;
+        case 2:
+            //LR - MP mode of the camera
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, "lrmp");
+            break;
+        case 3:
+            //VGA mode of the camera
+            setFrameType(camera, "vga")
+            break;
+        default:
+        //wrong statement
+        return 0;
+    }
 
     // Creating camera frame for the API
     auto tmp = new Frame;

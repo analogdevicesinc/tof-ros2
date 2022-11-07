@@ -47,7 +47,10 @@ source devel/setup.bash
  - "true" for enabling Depth Compute libraries
  - "false" for disabling Depth Compute libraries 
 
+
  [mode]:
-* 1 -> LR - QMP mode of the camera
-* 2 -> LR - MP mode of the camera
+* 1 -> LR - QMP mode of the camera (Long Range Quarter Megapixel)
+* 2 -> LR - MP mode of the camera (ong Range Megapixel)
+* 3 -> VGA mode of the camera (ONLY for Tembin)
+
 
