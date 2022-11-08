@@ -293,8 +293,6 @@ void getNewFrame(const std::shared_ptr<Camera> &camera, aditof::Frame **frame) {
 uint16_t *getFrameData(aditof::Frame **frame, const std::string &dataType) {
     uint16_t *frameData;
     Status status = Status::OK;
-    aditof::Frame *test;
-    test = new Frame;
 
     status = (*frame)->getData(dataType, &frameData);
 
