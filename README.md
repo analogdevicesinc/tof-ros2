@@ -22,7 +22,7 @@ Also make sure to run ```sudo make install``` at the end of the build
 In directory ```ros2_ws/src/``` clone the repository:
 
 ```console
-git clone https://github.com/rbudai98/tof_ros2cpp.git
+git clone https://github.com/analogdevicesinc/tof-ros2
 ```
 
 After cloning the repository in the ``ros2_ws/ run the following command:
