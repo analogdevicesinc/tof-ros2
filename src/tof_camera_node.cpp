@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     std::shared_ptr<Camera> camera = initCamera(arguments);
         
     // Setting camera parameters
-    int m_mode = atoi(arguments[3]);
+    int m_mode = atoi(arguments[3].c_str());
     switch(m_mode)
     {
         case 1:
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
             break;
         case 3:
             //VGA mode of the camera
-            setFrameType(camera, "vga")
+            setFrameType(camera, "vga");
             break;
         default:
         //wrong statement
