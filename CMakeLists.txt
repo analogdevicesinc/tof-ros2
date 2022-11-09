@@ -3,7 +3,7 @@ project(tof_ros2cpp)
 
 list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib;/opt/glog;/opt/protobuf;/opt/websockets")
 list(APPEND AMENT_PREFIX_PATH "/usr/local;/opt/glog;/opt/protobuf;/opt/websockets")
-set(CMAKE_INSTALL_RPATH "/usr/local/lib")
+set(CMAKE_INSTALL_RPATH "/usr/local/lib;/opt/websockets/lib")
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -19,7 +19,7 @@ find_package(std_msgs REQUIRED)
 find_package(example_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(image_transport REQUIRED)
-find_package(glog REQUIRED)
+
 find_package(aditof REQUIRED)
 find_package(Libwebsockets REQUIRED)
 find_package(glog REQUIRED)
