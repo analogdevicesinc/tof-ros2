@@ -35,7 +35,7 @@ source devel/setup.bash
 ### Starting camera node
 - In the general ROS2 workspace run the following code:
 ```console
-    ros2 run tof_ros2cpp tof_camera_node ip="10.42.0.1" config_file="config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
+    ros2 run tof_ros2cpp tof_ros2cpp ip="10.42.0.1" config_file="config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
 ```
 ### Parameters
  [config_file:"<<b>path></b>"]
