@@ -1,0 +1,3 @@
+tof_camera_node:
+  ros__parameters:
+    bool_val: True

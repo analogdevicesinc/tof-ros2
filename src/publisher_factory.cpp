@@ -34,7 +34,7 @@
 
 PublisherFactory::PublisherFactory(){};
 
-void PublisherFactory::createNew(const rclcpp::Node::SharedPtr &node, image_transport::ImageTransport &it,
+void PublisherFactory::createNew(image_transport::ImageTransport &it,
                                  const std::shared_ptr<aditof::Camera> &camera,
                                  aditof::Frame **frame, bool enableDepthCompute)
 {

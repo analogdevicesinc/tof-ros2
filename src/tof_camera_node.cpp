@@ -41,70 +41,205 @@
 
 using namespace aditof;
 
-std::mutex m_mtxDynamicRec;
-std::mutex m_mtxDynamicRec2;
 
+// Include important C++ header files that provide class
+// templates for useful operations.
+#include <chrono> // Date and time
+#include <functional> // Arithmetic, comparisons, and logical operations
+#include <memory> // Dynamic memory management
+#include <string> // String functions
+ 
+// ROS Client Library for C++
+// Allows use of the most common elements of ROS 2
+#include "rclcpp/rclcpp.hpp"
+ 
+// Built-in message type that will be used to publish data
+#include "std_msgs/msg/string.hpp"
+ 
+// chrono_literals handles user-defined time durations (e.g. 500ms) 
 using namespace std::chrono_literals;
+ 
 
-int main(int argc, char **argv)
-{
-    /*
-    pos 0 - ip
-    pos 1 - config_path
-    pos 2 - use_depthCompute
-    pos 3 - mode
-    */
-    std::string *arguments = parseArgs(argc, argv);
+// int main(int argc, char **argv)
+// {
+//     /*
+//     pos 0 - ip
+//     pos 1 - config_path
+//     pos 2 - use_depthCompute
+//     pos 3 - mode
+//     */
+//     // std::string *arguments = parseArgs(argc, argv);
 
-    // Initializing camera and establishing connection
-    std::shared_ptr<Camera> camera = initCamera(arguments);
+//     // // Initializing camera and establishing connection
+//     // std::shared_ptr<Camera> camera = initCamera(arguments);
         
-    // Setting camera parameters
-    int m_mode = atoi(arguments[3].c_str());
-    switch(m_mode)
+//     // // Setting camera parameters
+//     // int m_mode = atoi(arguments[3].c_str());
+//     // switch(m_mode)
+//     // {
+//     //     case 1:
+//     //         //LR - QMP mode of the camera
+//     //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+//     //         setFrameType(camera, "lrqmp");
+//     //         break;
+//     //     case 2:
+//     //         //LR - MP mode of the camera
+//     //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+//     //         setFrameType(camera, "lrmp");
+//     //         break;
+//     //     case 3:
+//     //         //VGA mode of the camera
+//     //         setFrameType(camera, "vga");
+//     //         break;
+//     //     default:
+//     //     //wrong statement
+//     //     return 0;
+//     // }
+
+//     // Creating camera frame for the API
+//     // auto tmp = new Frame;
+//     // aditof::Frame **frame = &tmp;
+//     // // startCamera(camera);
+
+//     // // Creating camera node
+//     rclcpp::init(argc, argv);
+//     // rclcpp::NodeOptions options;
+
+//     // rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("tof_camera_publisher", options);
+
+//     // Creating Image transporter
+//     // image_transport::ImageTransport it(node);
+
+
+
+//         // getNewFrame(camera, frame);
+//         // publishers.updatePublishers(camera, frame);
+//     rclcpp::spin(std::make_shared<TofNode>());
+//     rclcpp::shutdown();
+//     return 0;
+// }
+
+
+
+
+
+// Create the node class named MinimalPublisher which inherits the attributes
+// and methods of the rclcpp::Node class.
+class TofNode : public rclcpp::Node
+{
+    private:
+
+        // Initializing camera and establishing connection
+        std::shared_ptr<Camera> camera;
+        aditof::Frame **frame;
+
+
+        PublisherFactory publishers;
+        Frame *tmp;
+        image_transport::ImageTransport* it;
+
+
+  public:
+    // Constructor creates a node named minimal_publisher. 
+    // The published message count is initialized to 0.
+    TofNode()
+    : Node("tof_camera_node"), count_(0)
     {
-        case 1:
-            //LR - QMP mode of the camera
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, "lrqmp");
-            break;
-        case 2:
-            //LR - MP mode of the camera
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, "lrmp");
-            break;
-        case 3:
-            //VGA mode of the camera
-            setFrameType(camera, "vga");
-            break;
-        default:
-        //wrong statement
-        return 0;
+        // camera = initCamera(arguments);
+        // tmp = new Frame;
+        // frame = &tmp;
+        // it = new image_transport::Image_transport(selfe);
+        // startCamera(camera);
+        // publishers.createNew(it, camera, frame, (arguments[2] == "true") ? true : false);
+
+
+
+        // Publisher publishes String messages to a topic named "addison". 
+        // The size of the queue is 10 messages.
+        publisher_ = this->create_publisher<std_msgs::msg::String>("addison",10);
+        // Initialize the timer. The timer_callback function will execute every
+        // 500 milliseconds.
+        timer_ = this->create_wall_timer(
+        500ms, std::bind(&TofNode::timer_callback, this));
+
+
     }
+ 
+  private:
+    // This method executes every 500 milliseconds
+    void timer_callback()
+    {
+        // getNewFrame(camera, frame);
+        // publishers.updatePublishers(camera, frame);
 
-    // Creating camera frame for the API
-    auto tmp = new Frame;
-    aditof::Frame **frame = &tmp;
-    startCamera(camera);
 
-    // Creating camera node
+        // Create a new message of type String
+        auto message = std_msgs::msg::String();
+        // Set our message's data attribute and increment the message count by 1
+        message.data = "Hi Automatic Addison! " + std::to_string(count_++);
+        // Print every message to the terminal window      
+        RCLCPP_INFO(this->get_logger(),"Publishing: '%s'", message.data.c_str());
+        // Publish the message to the topic named "addison"
+        publisher_->publish(message);
+
+
+
+    }
+     
+    // Declaration of the timer_ attribute
+    rclcpp::TimerBase::SharedPtr timer_;
+  
+    // Declaration of the publisher_ attribute
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+   
+    // Declaration of the count_ attribute
+    size_t count_;
+};
+ 
+// Node execution starts here
+int main(int argc, char * argv[])
+{
+
+    // Initialize ROS 2
     rclcpp::init(argc, argv);
-    rclcpp::NodeOptions options;
-    rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("tof_camera_publisher", options);
-
-    // Creating Image transporter
-    image_transport::ImageTransport it(node);
-
-    // Creating publisher
-    PublisherFactory publishers;
-    publishers.createNew(node, it, camera, frame, (arguments[2] == "true") ? true : false);
+    
+    // pos 0 - ip
+    // pos 1 - config_path
+    // pos 2 - use_depthCompute
+    // pos 3 - mode
+    
+    // std::string *arguments = parseArgs(argc, argv);
 
 
-    while (rclcpp::ok())
-    {
-        getNewFrame(camera, frame);
-        publishers.updatePublishers(camera, frame);
-        rclcpp::spin_some(node);
-    }
-    return 0;
-}
+    // Setting camera parameters
+    // int m_mode = atoi(arguments[3].c_str());
+    // switch(m_mode)
+    // {
+    //     case 1:
+    //         //LR - QMP mode of the camera
+    //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+    //         setFrameType(camera, "lrqmp");
+    //         break;
+    //     case 2:
+    //         //LR - MP mode of the camera
+    //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+    //         setFrameType(camera, "lrmp");
+    //         break;
+    //     case 3:
+    //         //VGA mode of the camera
+    //         setFrameType(camera, "vga");
+    //         break;
+    //     default:
+    //     //wrong statement
+    //     return 0;
+    // }
+
+
+
+  // Start processing data from the node as well as the callbacks and the timer
+  rclcpp::spin(std::make_shared<TofNode>());
+  // Shutdown the node when finished
+  rclcpp::shutdown();
+  return 0;
+
+}   
