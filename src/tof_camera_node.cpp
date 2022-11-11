@@ -35,6 +35,7 @@
 #include "aditof/camera.h"
 #include <aditof_sensor_msg.h>
 #include <publisher_factory.h>
+#include <string>
 
 #include "image_transport/image_transport.hpp"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
@@ -48,7 +49,7 @@ using namespace aditof;
 #include <functional> // Arithmetic, comparisons, and logical operations
 #include <memory>     // Dynamic memory management
 #include <string>     // String functions
-
+#include <map>
 // ROS Client Library for C++
 // Allows use of the most common elements of ROS 2
 #include "rclcpp/rclcpp.hpp"
@@ -136,13 +137,25 @@ private:
   int m_adsd3500RadialThresholdMin_;
   int m_adsd3500RadialThresholdMax_;
   OnSetParametersCallbackHandle::SharedPtr callback_handle_;
+  std::map<std::string, FnPtr> controlFncMap;
 
 public:
+  // void initialize_control_map_function()
+  // {
+  //   controlFncMap["adsd3500ABinvalidationThreshold"] = control_adsd3500SetABinvalidationThreshold;
+  //   controlFncMap["adsd3500ConfidenceThreshold"] = control_adsd3500SetConfidenceThreshold;
+  //   controlFncMap["adsd3500JBLFfilterEnableState"] = control_adsd3500SetJBLFfilterEnableState;
+  //   controlFncMap["adsd3500JBLFfilterSize"] = control_adsd3500SetJBLFfilterSize;
+  //   controlFncMap["adsd3500RadialThresholdMin"] = control_adsd3500SetRadialThresholdMin;
+  //   controlFncMap["adsd3500RadialThresholdMax"] = control_adsd3500SetRadialThresholdMax;
+  // }
+
   // Constructor creates a node named minimal_publisher.
   // The published message count is initialized to 0.
-  TofNode()
+  TofNode(std::string *arguments)
       : Node("tof_camera_node"), count_(0)
   {
+
     this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
     this->declare_parameter("adsd3500ConfidenceThreshold", 0);
     this->declare_parameter("adsd3500JBLFfilterEnableState", false);
@@ -156,12 +169,33 @@ public:
     m_adsd3500JBLFfilterSize_ = this->get_parameter("adsd3500JBLFfilterSize").as_int();
     m_adsd3500RadialThresholdMin_ = this->get_parameter("adsd3500RadialThresholdMin").as_int();
     m_adsd3500RadialThresholdMax_ = this->get_parameter("adsd3500RadialThresholdMax").as_int();
-    // camera = initCamera(arguments);
-    // tmp = new Frame;
-    // frame = &tmp;
-    // it = new image_transport::Image_transport(selfe);
-    // startCamera(camera);
-    // publishers.createNew(it, camera, frame, (arguments[2] == "true") ? true : false);
+
+    camera = initCamera(arguments);
+    tmp = new Frame;
+    frame = &tmp;
+
+    // Setting camera parameters
+    int m_mode = atoi(arguments[3].c_str());
+    switch (m_mode)
+    {
+    case 1:
+      // LR - QMP mode of the camera
+      (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+      setFrameType(camera, "lrqmp");
+      break;
+    case 2:
+      // LR - MP mode of the camera
+      (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+      setFrameType(camera, "lrmp");
+      break;
+    case 3:
+      // VGA mode of the camera (Tenbin)
+      setFrameType(camera, "vga");
+      break;
+    }
+    it = new image_transport::ImageTransport(this->shared_from_this());
+    startCamera(camera);
+    publishers.createNew(*it, camera, frame, (arguments[2] == "true") ? true : false);
 
     callback_handle_ = this->add_on_set_parameters_callback(
         std::bind(&TofNode::parametersCallback, this, std::placeholders::_1));
@@ -182,6 +216,13 @@ public:
     result.successful = true;
     result.reason = "success";
     // Here update class attributes, do some actions, etc.
+    for (const auto &param : parameters)
+    {
+      RCLCPP_INFO(this->get_logger(), "%s", param.get_name().c_str());
+      RCLCPP_INFO(this->get_logger(), "%s", param.get_type_name().c_str());
+      RCLCPP_INFO(this->get_logger(), "%s", param.value_to_string().c_str());
+      // std::str
+    }
     return result;
   }
 
@@ -189,8 +230,8 @@ private:
   // This method executes every 500 milliseconds
   void timer_callback()
   {
-    // getNewFrame(camera, frame);
-    // publishers.updatePublishers(camera, frame);
+    getNewFrame(camera, frame);
+    publishers.updatePublishers(camera, frame);
 
     // Create a new message of type String
     auto message = std_msgs::msg::String();
@@ -224,33 +265,10 @@ int main(int argc, char *argv[])
   // pos 2 - use_depthCompute
   // pos 3 - mode
 
-  // std::string *arguments = parseArgs(argc, argv);
-
-  // Setting camera parameters
-  // int m_mode = atoi(arguments[3].c_str());
-  // switch(m_mode)
-  // {
-  //     case 1:
-  //         //LR - QMP mode of the camera
-  //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-  //         setFrameType(camera, "lrqmp");
-  //         break;
-  //     case 2:
-  //         //LR - MP mode of the camera
-  //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-  //         setFrameType(camera, "lrmp");
-  //         break;
-  //     case 3:
-  //         //VGA mode of the camera
-  //         setFrameType(camera, "vga");
-  //         break;
-  //     default:
-  //     //wrong statement
-  //     return 0;
-  // }
+  std::string *arguments = parseArgs(argc, argv);
 
   // Start processing data from the node as well as the callbacks and the timer
-  rclcpp::spin(std::make_shared<TofNode>());
+  rclcpp::spin(std::make_shared<TofNode>(arguments));
   // Shutdown the node when finished
   rclcpp::shutdown();
   return 0;

@@ -39,6 +39,7 @@
 #include <aditof/frame.h>
 
 enum class ModeTypes { NONE, mode3, mode7, mode10 };
+typedef void(*FnPtr)(std::shared_ptr<aditof::Camera>&, int);
 
 std::string *parseArgs(int argc, char **argv);
 std::shared_ptr<aditof::Camera> initCamera(std::string *arguments);
