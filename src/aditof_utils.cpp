@@ -362,3 +362,112 @@ enum ModeTypes intToMode(int var) {
     }
     return (newMode);
 }
+
+void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500SetABinvalidationThreshold(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500GetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500GetABinvalidationThreshold(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500SetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500SetConfidenceThreshold(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500GetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500GetConfidenceThreshold(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500SetJBLFfilterEnableState(const std::shared_ptr<aditof::Camera> &camera, bool enable)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500SetJBLFfilterEnableState(enable);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500GetJBLFfilterEnableState(const std::shared_ptr<aditof::Camera> &camera, bool &enable)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500GetJBLFfilterEnableState(enable);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500SetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &camera, int threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500SetJBLFfilterSize(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500GetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500GetJBLFfilterSize(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500SetRadialThresholdMin(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500GetRadialThresholdMin(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500SetRadialThresholdMax(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
+void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
+{    
+    Status status = Status::OK;
+    status = camera->adsd3500GetRadialThresholdMax(threshold);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
+        return;
+    }
+}
