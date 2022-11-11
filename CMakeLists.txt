@@ -34,8 +34,7 @@ set(SOURCE ${CMAKE_SOURCE_DIR}/include/tof-ros2)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../../tof_ros2_binary/install/)
 
 set(SOURCES ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
-FILE(GLOB_RECURSE LibFiles ${CMAKE_SOURCE_DIR}/include/tof-ros2cpp/*.h)
-add_custom_target(headers SOURCES ${LibFiles})
+FILE(GLOB_RECURSE LibFiles ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp/*.h)
 
 file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
