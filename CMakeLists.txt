@@ -29,9 +29,18 @@ find_library(TOFI_COMPUTE
   NAMES tofi_compute
   PATHS /usr/lib)
 
+set(SOURCE ${CMAKE_SOURCE_DIR}/include/tof-ros2)
+
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../../tof_ros2_binary/install/)
+
 set(SOURCES ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
+FILE(GLOB_RECURSE LibFiles ${CMAKE_SOURCE_DIR}/include/tof-ros2cpp/*.h)
+add_custom_target(headers SOURCES ${LibFiles})
+
 file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
-add_executable(tof_ros2cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/tof_camera_node.cpp ${SOURCES})
+
+
+add_executable(tof_ros2cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/tof_camera_node.cpp ${SOURCES} ${LibFiles})
 
 
 target_include_directories(tof_ros2cpp PUBLIC ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
@@ -51,10 +60,10 @@ tof_ros2cpp
   DESTINATION lib/${PROJECT_NAME}
 )
 
+
+## Copying config files and depth compute libraries from sdk/config, sdk/lib folders to build/examples/first-frame and build/first-frame/Debug or Release folders
+FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/*)
+install(FILES ${CONFIG_FILES} DESTINATION lib/config/)
+
 ament_package()
 
-# Copying config files and depth compute libraries from sdk/config, sdk/lib folders to build/examples/first-frame and build/first-frame/Debug or Release folders    
-add_custom_command( TARGET tof_ros2cpp POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/config ${CMAKE_CURRENT_SOURCE_DIR}/../../config
-    COMMENT "Copying cfgs and libs to build config "
-)
