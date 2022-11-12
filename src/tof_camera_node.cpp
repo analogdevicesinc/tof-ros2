@@ -152,7 +152,7 @@ public:
 
   // Constructor creates a node named minimal_publisher.
   // The published message count is initialized to 0.
-  TofNode(std::string *arguments)
+  TofNode(std::string *arguments, std::shared_ptr<Camera> camera)
       : Node("tof_camera_node"), count_(0)
   {
 
@@ -170,29 +170,10 @@ public:
     m_adsd3500RadialThresholdMin_ = this->get_parameter("adsd3500RadialThresholdMin").as_int();
     m_adsd3500RadialThresholdMax_ = this->get_parameter("adsd3500RadialThresholdMax").as_int();
 
-    camera = initCamera(arguments);
+    this->camera = camera;
     tmp = new Frame;
     frame = &tmp;
 
-    // Setting camera parameters
-    int m_mode = atoi(arguments[3].c_str());
-    switch (m_mode)
-    {
-    case 1:
-      // LR - QMP mode of the camera
-      (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-      setFrameType(camera, "lrqmp");
-      break;
-    case 2:
-      // LR - MP mode of the camera
-      (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-      setFrameType(camera, "lrmp");
-      break;
-    case 3:
-      // VGA mode of the camera (Tenbin)
-      setFrameType(camera, "vga");
-      break;
-    }
     it = new image_transport::ImageTransport(this->shared_from_this());
     startCamera(camera);
     publishers.createNew(*it, camera, frame, (arguments[2] == "true") ? true : false);
@@ -264,11 +245,33 @@ int main(int argc, char *argv[])
   // pos 1 - config_path
   // pos 2 - use_depthCompute
   // pos 3 - mode
-
   std::string *arguments = parseArgs(argc, argv);
 
+  std::shared_ptr<Camera> camera = initCamera(arguments);
+
+  // Setting camera parameters
+  int m_mode = atoi(arguments[3].c_str());
+  switch (m_mode)
+  {
+  case 1:
+    // LR - QMP mode of the camera
+    (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+    setFrameType(camera, "lrqmp");
+    break;
+  case 2:
+    // LR - MP mode of the camera
+    (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+    setFrameType(camera, "lrmp");
+    break;
+  case 3:
+    // VGA mode of the camera (Tenbin)
+    setFrameType(camera, "vga");
+    break;
+  }
+
+
   // Start processing data from the node as well as the callbacks and the timer
-  rclcpp::spin(std::make_shared<TofNode>(arguments));
+  rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
   // Shutdown the node when finished
   rclcpp::shutdown();
   return 0;
