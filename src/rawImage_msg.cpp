@@ -101,4 +101,4 @@ sensor_msgs::msg::Image RAWImageMsg::getMessage()
 {
     return message;
 }
-// void RAWImageMsg::publishMsg(const ros::Publisher &pub) { pub.publish(msg); }
+ void RAWImageMsg::publishMsg(const rclcpp::Publisher pub) { pub.publish(msg); }

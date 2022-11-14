@@ -95,4 +95,6 @@ sensor_msgs::msg::Image IRImageMsg::getMessage()
     return message;
 }
 
-// void IRImageMsg::publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub) { pub.publish(message); }
+ void IRImageMsg::publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
+     pub.publish(message);
+ }

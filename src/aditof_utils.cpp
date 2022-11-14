@@ -188,7 +188,7 @@ void setFrameType(const std::shared_ptr<aditof::Camera> &camera,
     }
 
     Status status = Status::OK;
-    status = camera->setFrameType(type);
+        status = camera->setFrameType(type);
     if (status != Status::OK) {
         LOG(ERROR) << "Could not set camera frame type!";
         return;

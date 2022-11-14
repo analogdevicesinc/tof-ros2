@@ -34,6 +34,7 @@
 #include <chrono>
 #include "aditof/camera.h"
 #include <aditof_sensor_msg.h>
+#include "aditof/system.h"
 #include <publisher_factory.h>
 #include <string>
 
@@ -129,8 +130,9 @@ private:
 
   PublisherFactory publishers;
   Frame *tmp;
-  image_transport::ImageTransport *it;
+  //image_transport::ImageTransport *it;
 
+  bool m_flagStreamOn = false;
   int m_adsd3500ABinvalidationThreshold_;
   int m_adsd3500ConfidenceThreshold_;
   bool m_adsd3500JBLFfilterEnableState_;
@@ -139,6 +141,8 @@ private:
   int m_adsd3500RadialThresholdMax_;
   OnSetParametersCallbackHandle::SharedPtr callback_handle_;
   std::map<std::string, FnPtr> controlFncMap;
+
+
 
 public:
   // void initialize_control_map_function()
@@ -154,30 +158,32 @@ public:
   // Constructor creates a node named minimal_publisher.
   // The published message count is initialized to 0.
   TofNode(std::string *arguments, std::shared_ptr<Camera> camera)
-      : Node("tof_camera_node"), count_(0)
+      : Node("tof_camera_node")
   {
 
-    this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
-    this->declare_parameter("adsd3500ConfidenceThreshold", 0);
-    this->declare_parameter("adsd3500JBLFfilterEnableState", false);
-    this->declare_parameter("adsd3500JBLFfilterSize", 0);
-    this->declare_parameter("adsd3500RadialThresholdMin", 0);
-    this->declare_parameter("adsd3500RadialThresholdMax", 0);
+//    this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
+//    this->declare_parameter("adsd3500ConfidenceThreshold", 0);
+//    this->declare_parameter("adsd3500JBLFfilterEnableState", false);
+//    this->declare_parameter("adsd3500JBLFfilterSize", 0);
+//    this->declare_parameter("adsd3500RadialThresholdMin", 0);
+//    this->declare_parameter("adsd3500RadialThresholdMax", 0);
 
-    m_adsd3500ABinvalidationThreshold_ = this->get_parameter("adsd3500ABinvalidationThreshold").as_int();
-    m_adsd3500ConfidenceThreshold_ = this->get_parameter("adsd3500ConfidenceThreshold").as_int();
-    m_adsd3500JBLFfilterEnableState_ = this->get_parameter("adsd3500JBLFfilterEnableState").as_bool();
-    m_adsd3500JBLFfilterSize_ = this->get_parameter("adsd3500JBLFfilterSize").as_int();
-    m_adsd3500RadialThresholdMin_ = this->get_parameter("adsd3500RadialThresholdMin").as_int();
-    m_adsd3500RadialThresholdMax_ = this->get_parameter("adsd3500RadialThresholdMax").as_int();
+//    m_adsd3500ABinvalidationThreshold_ = this->get_parameter("adsd3500ABinvalidationThreshold").as_int();
+//    m_adsd3500ConfidenceThreshold_ = this->get_parameter("adsd3500ConfidenceThreshold").as_int();
+//    m_adsd3500JBLFfilterEnableState_ = this->get_parameter("adsd3500JBLFfilterEnableState").as_bool();
+//    m_adsd3500JBLFfilterSize_ = this->get_parameter("adsd3500JBLFfilterSize").as_int();
+//    m_adsd3500RadialThresholdMin_ = this->get_parameter("adsd3500RadialThresholdMin").as_int();
+//    m_adsd3500RadialThresholdMax_ = this->get_parameter("adsd3500RadialThresholdMax").as_int();
 
     this->camera = camera;
     tmp = new Frame;
     frame = &tmp;
 
-    it = new image_transport::ImageTransport(this->shared_from_this());
+//    image_transport::ImageTransport it = image_transport::ImageTransport();
+
+
     startCamera(camera);
-    publishers.createNew(*it, camera, frame, (arguments[2] == "true") ? true : false);
+//    publishers.createNew(it, camera, frame, (arguments[2] == "true") ? true : false);
 
     callback_handle_ = this->add_on_set_parameters_callback(
         std::bind(&TofNode::parametersCallback, this, std::placeholders::_1));
@@ -212,8 +218,8 @@ private:
   // This method executes every 500 milliseconds
   void timer_callback()
   {
-    getNewFrame(camera, frame);
-    publishers.updatePublishers(camera, frame);
+//    getNewFrame(camera, frame);
+//    publishers.updatePublishers(camera, frame);
 
     // Create a new message of type String
     auto message = std_msgs::msg::String();
@@ -250,6 +256,12 @@ int main(int argc, char *argv[])
 
   std::shared_ptr<Camera> camera = initCamera(arguments);
 
+  if(!camera)
+  {
+      LOG(WARNING) << "No cameras found";
+      return 0;
+  }
+
   // Setting camera parameters
   int m_mode = atoi(arguments[3].c_str());
   switch (m_mode)
@@ -270,9 +282,11 @@ int main(int argc, char *argv[])
     break;
   }
 
+  LOG(INFO) << "Camera Initialized sucesfully";
 
   // Start processing data from the node as well as the callbacks and the timer
   rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
+
   // Shutdown the node when finished
   rclcpp::shutdown();
   return 0;

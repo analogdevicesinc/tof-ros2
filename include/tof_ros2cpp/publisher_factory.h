@@ -51,7 +51,7 @@ class PublisherFactory
 {
 public:
   PublisherFactory();
-  void createNew(image_transport::ImageTransport &it,
+  void createNew(std::shared_ptr<rclcpp::Node> node,
                  const std::shared_ptr<aditof::Camera> &camera,
                  aditof::Frame **frame, bool enableDepthCompute);
   void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,
@@ -60,7 +60,7 @@ public:
   void setDepthFormat(const int val);
 
 private:
-  std::vector<image_transport::Publisher> img_publishers;
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> img_publishers;
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
 };
 

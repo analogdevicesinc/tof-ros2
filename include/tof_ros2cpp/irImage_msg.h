@@ -70,7 +70,7 @@ public:
   /**
    * @brief Publishes a message
    */
-  // void publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
+   void publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
 
   sensor_msgs::msg::Image getMessage();
 
