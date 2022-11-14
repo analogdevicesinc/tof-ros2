@@ -62,8 +62,7 @@ void PublisherFactory::createNew(std::shared_ptr<rclcpp::Node> node,
         {
 //            img_publishers.emplace_back(it.advertise("tof_camera/raw", 2));
             img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/rgb", 2));
-            imgMsgs.emplace_back(new (
-                camera, frame, sensor_msgs::image_encodings::MONO16));
+            imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added raw data publisher";
         }
     }
@@ -75,7 +74,7 @@ void PublisherFactory::updatePublishers(
     for (unsigned int i = 0; i < imgMsgs.size(); ++i)
     {
         imgMsgs.at(i)->FrameDataToMsg(camera, frame);
-        img_publishers.at(i).publishMsg(imgMsgs.at(i)->getMessage());
+        imgMsgs.at(i)->publishMsg(img_publishers.at(i));
     }
 }
 void PublisherFactory::deletePublishers(

@@ -77,8 +77,8 @@ void RAWImageMsg::setMetadataMembers(int width, int height)
     message.is_bigendian = false;
 
     int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(message.encoding) /
-                       8 *
-                       sensor_msgs::image_encodings::numChannels(message.encoding);
+            8 *
+            sensor_msgs::image_encodings::numChannels(message.encoding);
     message.step = width * pixelByteCnt;
 
     message.data.resize(message.step * height);
@@ -101,4 +101,7 @@ sensor_msgs::msg::Image RAWImageMsg::getMessage()
 {
     return message;
 }
- void RAWImageMsg::publishMsg(const rclcpp::Publisher pub) { pub.publish(msg); }
+void RAWImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub)
+{
+    pub.publish(message);
+}

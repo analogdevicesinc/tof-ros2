@@ -170,7 +170,7 @@ Rgba8Color DepthImageMsg::HSVtoRGBA8(double hue, double sat, double val)
     return rgba8;
 }
 
-void DepthImageMsg::publishMsg(const rclcpp::Publisher<sensor_msgs::msg::Image> &pub)
+void DepthImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> *pub)
 {
     pub.publish(message);
 }
