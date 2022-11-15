@@ -51,7 +51,7 @@ class PublisherFactory
 {
 public:
   PublisherFactory();
-  void createNew(std::shared_ptr<rclcpp::Node> node,
+  void createNew(rclcpp::Node *node,
                  const std::shared_ptr<aditof::Camera> &camera,
                  aditof::Frame **frame, bool enableDepthCompute);
   void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,

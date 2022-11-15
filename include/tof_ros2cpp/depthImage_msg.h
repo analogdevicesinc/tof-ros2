@@ -101,7 +101,7 @@ class DepthImageMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-     void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
+    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
 
     void setDepthDataFormat(int value);
 

@@ -61,64 +61,6 @@ using namespace aditof;
 // chrono_literals handles user-defined time durations (e.g. 500ms)
 using namespace std::chrono_literals;
  
-
-// int main(int argc, char **argv)
-// {
-//     /*
-//     pos 0 - ip
-//     pos 1 - config_path
-//     pos 2 - use_depthCompute
-//     pos 3 - mode
-//     */
-//     // std::string *arguments = parseArgs(argc, argv);
-
-//     // // Initializing camera and establishing connection
-//     // std::shared_ptr<Camera> camera = initCamera(arguments);
-
-//     // // Setting camera parameters
-//     // int m_mode = atoi(arguments[3].c_str());
-//     // switch(m_mode)
-//     // {
-//     //     case 1:
-//     //         //LR - QMP mode of the camera
-//     //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-//     //         setFrameType(camera, "lrqmp");
-//     //         break;
-//     //     case 2:
-//     //         //LR - MP mode of the camera
-//     //         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-//     //         setFrameType(camera, "lrmp");
-//     //         break;
-//     //     case 3:
-//     //         //VGA mode of the camera
-//     //         setFrameType(camera, "vga");
-//     //         break;
-//     //     default:
-//     //     //wrong statement
-//     //     return 0;
-//     // }
-
-//     // Creating camera frame for the API
-//     // auto tmp = new Frame;
-//     // aditof::Frame **frame = &tmp;
-//     // // startCamera(camera);
-
-//     // // Creating camera node
-//     rclcpp::init(argc, argv);
-//     // rclcpp::NodeOptions options;
-
-//     // rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("tof_camera_publisher", options);
-
-//     // Creating Image transporter
-//     // image_transport::ImageTransport it(node);
-
-//         // getNewFrame(camera, frame);
-//         // publishers.updatePublishers(camera, frame);
-//     rclcpp::spin(std::make_shared<TofNode>());
-//     rclcpp::shutdown();
-//     return 0;
-// }
-
 // Create the node class named MinimalPublisher which inherits the attributes
 // and methods of the rclcpp::Node class.
 class TofNode : public rclcpp::Node
@@ -130,118 +72,32 @@ private:
 
   PublisherFactory publishers;
   Frame *tmp;
-  //image_transport::ImageTransport *it;
-
-  bool m_flagStreamOn = false;
-  int m_adsd3500ABinvalidationThreshold_;
-  int m_adsd3500ConfidenceThreshold_;
-  bool m_adsd3500JBLFfilterEnableState_;
-  int m_adsd3500JBLFfilterSize_;
-  int m_adsd3500RadialThresholdMin_;
-  int m_adsd3500RadialThresholdMax_;
-  OnSetParametersCallbackHandle::SharedPtr callback_handle_;
-  std::map<std::string, FnPtr> controlFncMap;
-
-
 
 public:
-  // void initialize_control_map_function()
-  // {
-  //   controlFncMap["adsd3500ABinvalidationThreshold"] = control_adsd3500SetABinvalidationThreshold;
-  //   controlFncMap["adsd3500ConfidenceThreshold"] = control_adsd3500SetConfidenceThreshold;
-  //   controlFncMap["adsd3500JBLFfilterEnableState"] = control_adsd3500SetJBLFfilterEnableState;
-  //   controlFncMap["adsd3500JBLFfilterSize"] = control_adsd3500SetJBLFfilterSize;
-  //   controlFncMap["adsd3500RadialThresholdMin"] = control_adsd3500SetRadialThresholdMin;
-  //   controlFncMap["adsd3500RadialThresholdMax"] = control_adsd3500SetRadialThresholdMax;
-  // }
-
-  // Constructor creates a node named minimal_publisher.
-  // The published message count is initialized to 0.
   TofNode(std::string *arguments, std::shared_ptr<Camera> camera)
       : Node("tof_camera_node")
   {
 
-//    this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
-//    this->declare_parameter("adsd3500ConfidenceThreshold", 0);
-//    this->declare_parameter("adsd3500JBLFfilterEnableState", false);
-//    this->declare_parameter("adsd3500JBLFfilterSize", 0);
-//    this->declare_parameter("adsd3500RadialThresholdMin", 0);
-//    this->declare_parameter("adsd3500RadialThresholdMax", 0);
-
-//    m_adsd3500ABinvalidationThreshold_ = this->get_parameter("adsd3500ABinvalidationThreshold").as_int();
-//    m_adsd3500ConfidenceThreshold_ = this->get_parameter("adsd3500ConfidenceThreshold").as_int();
-//    m_adsd3500JBLFfilterEnableState_ = this->get_parameter("adsd3500JBLFfilterEnableState").as_bool();
-//    m_adsd3500JBLFfilterSize_ = this->get_parameter("adsd3500JBLFfilterSize").as_int();
-//    m_adsd3500RadialThresholdMin_ = this->get_parameter("adsd3500RadialThresholdMin").as_int();
-//    m_adsd3500RadialThresholdMax_ = this->get_parameter("adsd3500RadialThresholdMax").as_int();
-
     this->camera = camera;
     tmp = new Frame;
     frame = &tmp;
-
-//    image_transport::ImageTransport it = image_transport::ImageTransport();
-
-
     startCamera(camera);
-//    publishers.createNew(it, camera, frame, (arguments[2] == "true") ? true : false);
+    publishers.createNew(this, camera, frame, (arguments[2] == "true") ? true : false);
 
-    callback_handle_ = this->add_on_set_parameters_callback(
-        std::bind(&TofNode::parametersCallback, this, std::placeholders::_1));
 
-    // Publisher publishes String messages to a topic named "addison".
-    // The size of the queue is 10 messages.
-    publisher_ = this->create_publisher<std_msgs::msg::String>("addison", 10);
-    // Initialize the timer. The timer_callback function will execute every
-    // 500 milliseconds.
     timer_ = this->create_wall_timer(
-        500ms, std::bind(&TofNode::timer_callback, this));
-  }
-
-  rcl_interfaces::msg::SetParametersResult parametersCallback(
-      const std::vector<rclcpp::Parameter> &parameters)
-  {
-    rcl_interfaces::msg::SetParametersResult result;
-    result.successful = true;
-    result.reason = "success";
-    // Here update class attributes, do some actions, etc.
-    for (const auto &param : parameters)
-    {
-      RCLCPP_INFO(this->get_logger(), "%s", param.get_name().c_str());
-      RCLCPP_INFO(this->get_logger(), "%s", param.get_type_name().c_str());
-      RCLCPP_INFO(this->get_logger(), "%s", param.value_to_string().c_str());
-      // std::str
-    }
-    return result;
+        100ms, std::bind(&TofNode::timer_callback, this));
   }
 
 private:
-  // This method executes every 500 milliseconds
   void timer_callback()
   {
-//    getNewFrame(camera, frame);
-//    publishers.updatePublishers(camera, frame);
-
-    // Create a new message of type String
-    auto message = std_msgs::msg::String();
-    // Set our message's data attribute and increment the message count by 1
-    message.data = "Hi Automatic Addison! " + std::to_string(count_++);
-    // Print every message to the terminal window
-    RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-    // Publish the message to the topic named "addison"
-    publisher_->publish(message);
+    getNewFrame(camera, frame);
+    publishers.updatePublishers(camera, frame);
   }
-
-  // Declaration of the timer_ attribute
   rclcpp::TimerBase::SharedPtr timer_;
-
-  // Declaration of the publisher_ attribute
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-
-  // Declaration of the count_ attribute
-  size_t count_;
 };
 
-// Node execution starts here
 int main(int argc, char *argv[])
 {
 
@@ -281,9 +137,6 @@ int main(int argc, char *argv[])
     setFrameType(camera, "vga");
     break;
   }
-
-  LOG(INFO) << "Camera Initialized sucesfully";
-
   // Start processing data from the node as well as the callbacks and the timer
   rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
 
