@@ -34,77 +34,113 @@
 #include <chrono>
 #include "aditof/camera.h"
 #include <aditof_sensor_msg.h>
+#include "aditof/system.h"
 #include <publisher_factory.h>
+#include <string>
 
-// #include "image_transport/image_transport.hpp"
+#include "image_transport/image_transport.hpp"
+#include "rcl_interfaces/msg/set_parameters_result.hpp"
 // #include "rclcpp/rclcpp.hpp"
 
 using namespace aditof;
 
-std::mutex m_mtxDynamicRec;
-std::mutex m_mtxDynamicRec2;
+// Include important C++ header files that provide class
+// templates for useful operations.
+#include <chrono>     // Date and time
+#include <functional> // Arithmetic, comparisons, and logical operations
+#include <memory>     // Dynamic memory management
+#include <string>     // String functions
+#include <map>
+// ROS Client Library for C++
+// Allows use of the most common elements of ROS 2
+#include "rclcpp/rclcpp.hpp"
 
+// Built-in message type that will be used to publish data
+#include "std_msgs/msg/string.hpp"
+
+// chrono_literals handles user-defined time durations (e.g. 500ms)
 using namespace std::chrono_literals;
-
-int main(int argc, char **argv)
+ 
+// Create the node class named MinimalPublisher which inherits the attributes
+// and methods of the rclcpp::Node class.
+class TofNode : public rclcpp::Node
 {
-    /*
-    pos 0 - ip
-    pos 1 - config_path
-    pos 2 - use_depthCompute
-    pos 3 - mode
-    */
-    std::string *arguments = parseArgs(argc, argv);
+private:
+  // Initializing camera and establishing connection
+  std::shared_ptr<Camera> camera;
+  aditof::Frame **frame;
 
-    // Initializing camera and establishing connection
-    std::shared_ptr<Camera> camera = initCamera(arguments);
-        
-    // Setting camera parameters
-    int m_mode = atoi(arguments[3].c_str());
-    switch(m_mode)
-    {
-        case 1:
-            //LR - QMP mode of the camera
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, "lrqmp");
-            break;
-        case 2:
-            //LR - MP mode of the camera
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, "lrmp");
-            break;
-        case 3:
-            //VGA mode of the camera
-            setFrameType(camera, "vga");
-            break;
-        default:
-        //wrong statement
-        return 0;
-    }
+  PublisherFactory publishers;
+  Frame *tmp;
 
-    // Creating camera frame for the API
-    auto tmp = new Frame;
-    aditof::Frame **frame = &tmp;
+public:
+  TofNode(std::string *arguments, std::shared_ptr<Camera> camera)
+      : Node("tof_camera_node")
+  {
+
+    this->camera = camera;
+    tmp = new Frame;
+    frame = &tmp;
     startCamera(camera);
-
-    // Creating camera node
-    rclcpp::init(argc, argv);
-    rclcpp::NodeOptions options;
-    rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("tof_camera_publisher", options);
-
-    // Creating Image transporter
-    image_transport::ImageTransport it(node);
-
-    // Creating publisher
-    PublisherFactory publishers;
-    publishers.createNew(node, it, camera, frame, (arguments[2] == "true") ? true : false);
+    publishers.createNew(this, camera, frame, (arguments[2] == "true") ? true : false);
 
 
-    while (rclcpp::ok())
-    {
-        getNewFrame(camera, frame);
-        publishers.updatePublishers(camera, frame);
-        rclcpp::spin_some(node);
-    }
-    return 0;
+    timer_ = this->create_wall_timer(
+        100ms, std::bind(&TofNode::timer_callback, this));
+  }
+
+private:
+  void timer_callback()
+  {
+    getNewFrame(camera, frame);
+    publishers.updatePublishers(camera, frame);
+  }
+  rclcpp::TimerBase::SharedPtr timer_;
+};
+
+int main(int argc, char *argv[])
+{
+
+  // Initialize ROS 2
+  rclcpp::init(argc, argv);
+
+  // pos 0 - ip
+  // pos 1 - config_path
+  // pos 2 - use_depthCompute
+  // pos 3 - mode
+  std::string *arguments = parseArgs(argc, argv);
+
+  std::shared_ptr<Camera> camera = initCamera(arguments);
+
+  if(!camera)
+  {
+      LOG(WARNING) << "No cameras found";
+      return 0;
+  }
+
+  // Setting camera parameters
+  int m_mode = atoi(arguments[3].c_str());
+  switch (m_mode)
+  {
+  case 1:
+    // LR - QMP mode of the camera
+    (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+    setFrameType(camera, "lrqmp");
+    break;
+  case 2:
+    // LR - MP mode of the camera
+    (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+    setFrameType(camera, "lrmp");
+    break;
+  case 3:
+    // VGA mode of the camera (Tenbin)
+    setFrameType(camera, "vga");
+    break;
+  }
+  // Start processing data from the node as well as the callbacks and the timer
+  rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
+
+  // Shutdown the node when finished
+  rclcpp::shutdown();
+  return 0;
 }

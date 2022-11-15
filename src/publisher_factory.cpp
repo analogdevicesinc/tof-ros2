@@ -34,7 +34,7 @@
 
 PublisherFactory::PublisherFactory(){};
 
-void PublisherFactory::createNew(const rclcpp::Node::SharedPtr &node, image_transport::ImageTransport &it,
+void PublisherFactory::createNew(rclcpp::Node *node,
                                  const std::shared_ptr<aditof::Camera> &camera,
                                  aditof::Frame **frame, bool enableDepthCompute)
 {
@@ -46,21 +46,20 @@ void PublisherFactory::createNew(const rclcpp::Node::SharedPtr &node, image_tran
     {
         if (!strcmp(iter.type.c_str(), "ir") && enableDepthCompute == true)
         {
-            img_publishers.emplace_back(it.advertise("tof_camera/ir", 2));
+            img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/ir", 2));
             imgMsgs.emplace_back(new IRImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added ir publisher";
         }
         else if (!strcmp(iter.type.c_str(), "depth") && enableDepthCompute == true)
         {
-            img_publishers.emplace_back(it.advertise("tof_camera/depth", 2));
+            img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/depth", 2));
             imgMsgs.emplace_back(new DepthImageMsg(camera, frame, sensor_msgs::image_encodings::RGBA8));
             LOG(INFO) << "Added depth publisher";
         }
         else if (!strcmp(iter.type.c_str(), "raw") && enableDepthCompute == false)
         {
-            img_publishers.emplace_back(it.advertise("tof_camera/raw", 2));
-            imgMsgs.emplace_back(new RAWImageMsg(
-                camera, frame, sensor_msgs::image_encodings::MONO16));
+            img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/rgb", 2));
+            imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added raw data publisher";
         }
     }
@@ -72,7 +71,7 @@ void PublisherFactory::updatePublishers(
     for (unsigned int i = 0; i < imgMsgs.size(); ++i)
     {
         imgMsgs.at(i)->FrameDataToMsg(camera, frame);
-        img_publishers.at(i).publish(imgMsgs.at(i)->getMessage());
+        imgMsgs.at(i)->publishMsg(*img_publishers.at(i));
     }
 }
 void PublisherFactory::deletePublishers(

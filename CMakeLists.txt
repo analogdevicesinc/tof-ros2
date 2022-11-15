@@ -58,11 +58,10 @@ install(TARGETS
 tof_ros2cpp
   DESTINATION lib/${PROJECT_NAME}
 )
-
-
 ## Copying config files and depth compute libraries from sdk/config, sdk/lib folders to build/examples/first-frame and build/first-frame/Debug or Release folders
-FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/*)
-install(FILES ${CONFIG_FILES} DESTINATION lib/config/)
+FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/tof_config/*)
+install(FILES ${CONFIG_FILES} DESTINATION lib/../../../config/)
+install(FILES ${CONFIG_FILES} DESTINATION lib/${PROJECT_NAME}/config/)
 
 ament_package()
 

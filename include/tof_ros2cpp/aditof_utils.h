@@ -39,6 +39,7 @@
 #include <aditof/frame.h>
 
 enum class ModeTypes { NONE, mode3, mode7, mode10 };
+typedef void(*FnPtr)(std::shared_ptr<aditof::Camera>&, int);
 
 std::string *parseArgs(int argc, char **argv);
 std::shared_ptr<aditof::Camera> initCamera(std::string *arguments);
@@ -70,5 +71,17 @@ int getRangeMax(const std::shared_ptr<aditof::Camera> &camera);
 int getRangeMin(const std::shared_ptr<aditof::Camera> &camera);
 void irTo16bitGrayscale(uint16_t *frameData, int width, int height);
 enum ModeTypes intToMode(int var);
+void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold);
+void control_adsd3500GetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
+void control_adsd3500SetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold);
+void control_adsd3500GetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
+void control_adsd3500SetJBLFfilterEnableState(const std::shared_ptr<aditof::Camera> &camera, bool enable);
+void control_adsd3500GetJBLFfilterEnableState(const std::shared_ptr<aditof::Camera> &camera, bool &enable);
+void control_adsd3500SetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &camera, int threshold);
+void control_adsd3500GetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
+void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int threshold);
+void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
+void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int threshold);
+void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
 
 #endif // ADITOF_UTILS_H
