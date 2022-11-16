@@ -1,0 +1,8 @@
+tof_camera_node:
+  ros__parameters:
+    m_adsd3500ABinvalidationThreshold: 0 
+    m_adsd3500ConfidenceThreshold: 0 
+    m_adsd3500JBLFfilterEnableState: 0 
+    m_adsd3500JBLFfilterSize: 0 
+    m_adsd3500RadialThresholdMin: 0 
+    m_adsd3500RadialThresholdMax: 0 

@@ -31,7 +31,7 @@ find_library(TOFI_COMPUTE
 
 set(SOURCE ${CMAKE_SOURCE_DIR}/include/tof-ros2)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../../tof_ros2_binary/install/)
+#set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../../tof_ros2_binary/install/)
 
 set(SOURCES ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
 FILE(GLOB_RECURSE LibFiles ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp/*.h)
@@ -58,6 +58,17 @@ install(TARGETS
 tof_ros2cpp
   DESTINATION lib/${PROJECT_NAME}
 )
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
+)
+install(DIRECTORY
+  config
+  DESTINATION share/${PROJECT_NAME}
+)
+
+
 ## Copying config files and depth compute libraries from sdk/config, sdk/lib folders to build/examples/first-frame and build/first-frame/Debug or Release folders
 FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/tof_config/*)
 install(FILES ${CONFIG_FILES} DESTINATION lib/../../../config/)
