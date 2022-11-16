@@ -1,8 +1,0 @@
-launch:
-
-- node:
-    pkg: "tof_ros2cpp"
-    exec: "tof_ros2cpp"
-    param: config
-    
-
