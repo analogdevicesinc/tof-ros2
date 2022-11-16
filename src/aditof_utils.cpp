@@ -50,7 +50,6 @@ std::string *parseArgs(int argc, char **argv) {
     std::string config_path = "";
     std::string use_depthCompute = "";
     std::string mode = "";
-    std::string rqt = "";
 
     for (int i = 1; i < argc; i++) {
         std::string left;
@@ -68,8 +67,6 @@ std::string *parseArgs(int argc, char **argv) {
             use_depthCompute = right;
         else if (std::strcmp(left.c_str(), "mode") == 0)
             mode = right;
-        else if (std::strcmp(left.c_str(), "rqt") == 0)
-            rqt = right;
     }
 
     if (ip.empty()) {
@@ -87,16 +84,12 @@ std::string *parseArgs(int argc, char **argv) {
         LOG(INFO) << "Camera mode not provided!";
     }
 
-    if (rqt.empty()) {
-        LOG(INFO) << "Dynamic RQT option not provided!";
-    }
 
     std::string *result = new std::string[5];
     result[0] = ip;
     result[1] = config_path;
     result[2] = use_depthCompute;
     result[3] = mode;
-    result[4] = rqt;
     return result;
 }
 
