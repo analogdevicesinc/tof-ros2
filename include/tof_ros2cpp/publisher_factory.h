@@ -38,10 +38,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include "image_transport/image_transport.hpp"
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include <depthImage_msg.h>
 #include <irImage_msg.h>
 #include <rawImage_msg.h>
+#include <xyzImage_msg.h>
 #include <aditof_sensor_msg.h>
 
 #include <typeinfo>
@@ -62,6 +64,9 @@ public:
 private:
   std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> img_publishers;
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
+
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloud_publisher;
+  std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
 };
 
 #endif // PUBLISHER_FACTORY_H

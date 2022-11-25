@@ -29,19 +29,19 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "irImage_msg.h"
+#include "xyzImage_msg.h"
 using namespace aditof;
 
-IRImageMsg::IRImageMsg() {}
+XYZImageMsg::XYZImageMsg() {}
 
-IRImageMsg::IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+XYZImageMsg::XYZImageMsg(const std::shared_ptr<aditof::Camera> &camera,
                        aditof::Frame **frame, std::string encoding)
 {
     imgEncoding = encoding;
     FrameDataToMsg(camera, frame);
 }
 
-void IRImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
+void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
                                 aditof::Frame **frame)
 {
     FrameDetails fDetails;
@@ -49,7 +49,7 @@ void IRImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 
     setMetadataMembers(fDetails.width, fDetails.height);
 
-    uint16_t *frameData = getFrameData(frame, "ir");
+    uint16_t *frameData = getFrameData(frame, "xyz");
 
     if (!frameData)
     {
@@ -60,42 +60,56 @@ void IRImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void IRImageMsg::setMetadataMembers(int width, int height)
+void XYZImageMsg::setMetadataMembers(int width, int height)
 {
-    // message.header.stamp = tStamp;
-    message.header.frame_id = "aditof_ir_img";
-
+    message.header.frame_id = "aditof_xyz_img";
     message.width = width;
     message.height = height;
-
-    message.encoding = imgEncoding;
     message.is_bigendian = false;
-
-    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
-                       sensor_msgs::image_encodings::numChannels(imgEncoding);
-    message.step = width * pixelByteCnt;
-
-    message.data.resize(message.step * height);
 }
 
-void IRImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
+void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
                                 uint16_t *frameData)
 {
-    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
+    m_points.clear();
+    m_intensity.values.clear();
+    m_range.values.clear();
+
+    //uint8_t *msgDataPtr = (uint8_t*)frameData;
+    char * msgDataCharPtr = (char*)(frameData);
+    for(int i=0 ; i < message.width * message.height ; i+=3)
     {
-        irTo16bitGrayscale(frameData, message.width, message.height);
-        uint8_t *msgDataPtr = message.data.data();
-        memcpy(msgDataPtr, frameData, message.step * message.height);
+        auto pt = geometry_msgs::msg::Point32();
+        pt.x = static_cast<float>(msgDataCharPtr[i]);
+        pt.y = static_cast<float>(msgDataCharPtr[i+1]);
+        pt.z = static_cast<float>(msgDataCharPtr[i+2]);
+        m_points.push_back(pt);
+
+        m_intensity.values.push_back(static_cast<float>(4 * pt.z));
+        m_range.values.push_back(static_cast<float>(5 * pt.z));
     }
-    else
-        LOG(ERROR) << "Image encoding invalid or not available";
+
+    sensor_msgs::msg::PointCloud cloud;
+
+    cloud.header.stamp.sec = 100;
+    cloud.header.stamp.nanosec = 500;
+    cloud.header.frame_id = "map";
+
+    cloud.points = m_points;
+    cloud.channels.push_back(m_intensity);
+    cloud.channels.push_back(m_range);
+
+    sensor_msgs::convertPointCloudToPointCloud2(cloud, message);
 }
 
-sensor_msgs::msg::Image IRImageMsg::getMessage()
+sensor_msgs::msg::PointCloud2 XYZImageMsg::getMessagePointCloud()
 {
     return message;
 }
 
- void IRImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
+void XYZImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub)
+{
      pub.publish(message);
- }
+}
+
+

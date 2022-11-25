@@ -76,7 +76,7 @@ class DepthImageMsg : public AditofSensorMsg {
      * @brief Converts the frame data to a message
      */
     void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                        aditof::Frame **frame);
+                        aditof::Frame **frame) override;
 
     /**
      * @brief Assigns values to the message fields concerning metadata
@@ -101,13 +101,13 @@ class DepthImageMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub);
+    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
 
     void setDepthDataFormat(int value);
 
     int getDepthDataFormat();
 
-    sensor_msgs::msg::Image getMessage();
+    sensor_msgs::msg::Image getMessage() override;
 
   private:
     DepthImageMsg();

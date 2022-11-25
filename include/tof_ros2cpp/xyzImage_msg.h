@@ -29,22 +29,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IRIMAGE_MSG_H
-#define IRIMAGE_MSG_H
+#ifndef XYZIMAGE_MSG_H
+#define XYZIMAGE_MSG_H
 
 #include <aditof/frame.h>
 #include <aditof_sensor_msg.h>
 #include "aditof_utils.h"
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include "geometry_msgs/msg/point32.hpp"
+#include "sensor_msgs/msg/point_cloud.hpp"
+#include "sensor_msgs/point_cloud_conversion.hpp"
 
-class IRImageMsg : public AditofSensorMsg
+class XYZImageMsg : public AditofSensorPointCloudMsg
 {
 public:
-  IRImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+  XYZImageMsg(const std::shared_ptr<aditof::Camera> &camera,
              aditof::Frame **frame, std::string encoding);
   /**
    * @brief Each message corresponds to one frame
    */
-  sensor_msgs::msg::Image message;
+  sensor_msgs::msg::PointCloud2 message;
+
+  /**
+   * @brief Variale to color the points in rviz2
+   */
+  sensor_msgs::msg::ChannelFloat32 m_intensity, m_range;
+
+  /**
+   * @brief Points that will be publish on message
+   */
+  std::vector<geometry_msgs::msg::Point32> m_points;
 
   /**
    * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
@@ -70,12 +84,15 @@ public:
   /**
    * @brief Publishes a message
    */
-   void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
+  void publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub) override;
 
-  sensor_msgs::msg::Image getMessage() override;
+  /**
+   * @brief Get the point cloud message
+   */
+  sensor_msgs::msg::PointCloud2 getMessagePointCloud() override;
 
 private:
-  IRImageMsg();
+  XYZImageMsg();
 };
 
-#endif // IRIMAGE_MSG_H
+#endif // XYZIMAGE_MSG_H
