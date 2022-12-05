@@ -75,18 +75,18 @@ void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
     m_intensity.values.clear();
     m_range.values.clear();
 
-    //uint8_t *msgDataPtr = (uint8_t*)frameData;
-    char * msgDataCharPtr = (char*)(frameData);
-    for(int i=0 ; i < message.width * message.height ; i+=3)
+    int16_t *msgDataPtr = (int16_t*)frameData;
+
+    for(int i=0 ; i < message.width * message.height * 3 ; i+=3)
     {
         auto pt = geometry_msgs::msg::Point32();
-        pt.x = static_cast<float>(msgDataCharPtr[i]);
-        pt.y = static_cast<float>(msgDataCharPtr[i+1]);
-        pt.z = static_cast<float>(msgDataCharPtr[i+2]);
+        pt.x = static_cast<float>(msgDataPtr[i]);
+        pt.y = static_cast<float>(msgDataPtr[i+1]);
+        pt.z = static_cast<float>(msgDataPtr[i+2]);
         m_points.push_back(pt);
 
-        m_intensity.values.push_back(static_cast<float>(4 * pt.z));
-        m_range.values.push_back(static_cast<float>(5 * pt.z));
+        m_intensity.values.push_back(static_cast<float>(pt.z));
+        m_range.values.push_back(static_cast<float>(pt.z));
     }
 
     sensor_msgs::msg::PointCloud cloud;
