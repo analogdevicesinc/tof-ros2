@@ -30,6 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "xyzImage_msg.h"
+#include <rclcpp/rclcpp.hpp>
+#include <chrono>
+#include <string>
+using namespace std::chrono_literals;
 using namespace aditof;
 
 XYZImageMsg::XYZImageMsg() {}
@@ -91,8 +95,8 @@ void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
 
     sensor_msgs::msg::PointCloud cloud;
 
-    cloud.header.stamp.sec = 100;
-    cloud.header.stamp.nanosec = 500;
+    cloud.header.stamp.nanosec = rclcpp::Clock{RCL_ROS_TIME}.now().nanoseconds();
+    cloud.header.stamp.sec = rclcpp::Clock{RCL_ROS_TIME}.now().seconds();
     cloud.header.frame_id = "map";
 
     cloud.points = m_points;
