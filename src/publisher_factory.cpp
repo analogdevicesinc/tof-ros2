@@ -62,8 +62,14 @@ void PublisherFactory::createNew(rclcpp::Node *node,
             imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added raw data publisher";
         }
+        else if (!strcmp(iter.type.c_str(), "xyz") && enableDepthCompute == true)
+        {
+            pointCloud_publisher.emplace_back(node->create_publisher<sensor_msgs::msg::PointCloud2>("tof_camera/xyz", 2));
+            pointCloudMsgs.emplace_back(new XYZImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+            LOG(INFO) << "Added xyz data publisher";
+        }
     }
-    startCamera(camera);
+    //startCamera(camera);
 }
 void PublisherFactory::updatePublishers(
     const std::shared_ptr<aditof::Camera> &camera, aditof::Frame **frame)
@@ -72,6 +78,11 @@ void PublisherFactory::updatePublishers(
     {
         imgMsgs.at(i)->FrameDataToMsg(camera, frame);
         imgMsgs.at(i)->publishMsg(*img_publishers.at(i));
+    }
+    for (unsigned int i = 0; i < pointCloudMsgs.size(); ++i)
+    {
+        pointCloudMsgs.at(i)->FrameDataToMsg(camera, frame);
+        pointCloudMsgs.at(i)->publishMsg(*pointCloud_publisher.at(i));
     }
 }
 void PublisherFactory::deletePublishers(

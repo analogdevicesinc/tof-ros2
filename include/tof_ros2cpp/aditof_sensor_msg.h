@@ -38,7 +38,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/image_encodings.hpp>
-
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
 class AditofSensorMsg {
   public:
@@ -47,6 +47,16 @@ class AditofSensorMsg {
                                 aditof::Frame **frame) = 0;
     virtual sensor_msgs::msg::Image getMessage() = 0;
     virtual void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) = 0;
+};
+
+class AditofSensorPointCloudMsg {
+  public:
+    virtual ~AditofSensorPointCloudMsg() = default;
+    virtual void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                                aditof::Frame **frame) = 0;
+
+    virtual sensor_msgs::msg::PointCloud2 getMessagePointCloud() = 0;
+    virtual void publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub) = 0;
 };
 
 #endif // ADITOF_SENSOR_MSG_H
