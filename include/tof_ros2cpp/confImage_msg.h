@@ -29,45 +29,58 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PUBLISHER_FACTORY_H
-#define PUBLISHER_FACTORY_H
+#ifndef CONFIMAGE_MSG_H
+#define CONFIMAGE_MSG_H
 
-#include "aditof/camera.h"
-#include <aditof_utils.h>
-#include <memory>
-
-#include <rclcpp/rclcpp.hpp>
-#include "image_transport/image_transport.hpp"
-#include <sensor_msgs/msg/point_cloud2.hpp>
-
-#include <depthImage_msg.h>
-#include <irImage_msg.h>
-#include <rawImage_msg.h>
-#include <xyzImage_msg.h>
-#include <confImage_msg.h>
+#include <aditof/frame.h>
 #include <aditof_sensor_msg.h>
+#include "aditof_utils.h"
 
-#include <typeinfo>
-#include <vector>
-
-class PublisherFactory
+class ConfImageMsg : public AditofSensorMsg
 {
 public:
-  PublisherFactory();
-  void createNew(rclcpp::Node *node,
-                 const std::shared_ptr<aditof::Camera> &camera,
-                 aditof::Frame **frame, bool enableDepthCompute);
-  void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,
-                        aditof::Frame **frame);
-  void deletePublishers(const std::shared_ptr<aditof::Camera> &camera);
-  void setDepthFormat(const int val);
+  ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+             aditof::Frame **frame, std::string encoding);
+  /**
+   * @brief Each message corresponds to one frame
+   */
+  sensor_msgs::msg::Image message;
+
+  /**
+   * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
+   */
+  std::string imgEncoding;
+
+  /**
+   * @brief Converts the frame data to a message
+   */
+  void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                      aditof::Frame **frame) override;
+  /**
+   * @brief Assigns values to the message fields concerning metadata
+   */
+  void setMetadataMembers(int width, int height);
+
+  /**
+   * @brief Assigns values to the message fields concerning the point data
+   */
+  void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
+                      uint16_t *frameData);
+
+  /**
+   * @brief Convert frameData to uint8_t* and take 5th bytes
+   */
+  void confTake5byte(uint16_t *frameData, int width, int height);
+
+  /**
+   * @brief Publishes a message
+   */
+   void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
+
+  sensor_msgs::msg::Image getMessage() override;
 
 private:
-  std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> img_publishers;
-  std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
-
-  std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloud_publisher;
-  std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
+  ConfImageMsg();
 };
 
-#endif // PUBLISHER_FACTORY_H
+#endif // CONFIMAGE_MSG_H

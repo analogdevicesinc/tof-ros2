@@ -25,6 +25,16 @@ find_package(Libwebsockets REQUIRED)
 find_package(glog REQUIRED)
 find_package(Protobuf REQUIRED)
 
+# for debug tof in qt creator
+#find_package(aditof PATHS "/home/vholonec/work/ToF/build/sdk" REQUIRED)
+#include_directories("/home/vholonec/work/build-ToF-Desktop-Debug/sdk")
+#link_directories("/home/vholonec/work/build-ToF-Desktop-Debug/sdk/")
+#add_library(aditof SHARED IMPORTED) # or STATIC instead of SHARED
+#set_target_properties(aditof PROPERTIES
+#  IMPORTED_LOCATION "/home/vholonec/work/build-ToF-Desktop-Debug/sdk/libaditof.so"
+#  INTERFACE_INCLUDE_DIRECTORIES "/home/vholonec/work/build-ToF-Desktop-Debug/sdk"
+#)
+
 find_library(TOFI_COMPUTE
   NAMES tofi_compute
   PATHS /usr/lib)
@@ -50,7 +60,7 @@ ament_target_dependencies(tof_ros2cpp image_transport rclcpp std_msgs aditof glo
 target_include_directories(tof_ros2cpp PUBLIC "${ADITOF_INCLUDE_DIRS}")
 target_include_directories(tof_ros2cpp PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS}")
 target_link_libraries(tof_ros2cpp "${ADITOF_LIBRARIES}")
-target_link_libraries(tof_ros2cpp aditof::aditof)
+target_link_libraries(tof_ros2cpp aditof)
 target_link_libraries(tof_ros2cpp websockets_shared)
 
 

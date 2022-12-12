@@ -68,6 +68,12 @@ void PublisherFactory::createNew(rclcpp::Node *node,
             pointCloudMsgs.emplace_back(new XYZImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added xyz data publisher";
         }
+        else if (!strcmp(iter.type.c_str(), "conf") && enableDepthCompute == true)
+        {
+            img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/conf", 2));
+            imgMsgs.emplace_back(new ConfImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+            LOG(INFO) << "Added conf data publisher";
+        }
     }
     //startCamera(camera);
 }
