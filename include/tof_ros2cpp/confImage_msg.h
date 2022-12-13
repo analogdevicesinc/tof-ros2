@@ -68,11 +68,6 @@ public:
                       uint16_t *frameData);
 
   /**
-   * @brief Convert frameData to uint8_t* and take 5th bytes
-   */
-  void confTake5byte(uint16_t *frameData, int width, int height);
-
-  /**
    * @brief Publishes a message
    */
    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;

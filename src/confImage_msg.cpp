@@ -49,7 +49,7 @@ void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 
     setMetadataMembers(fDetails.width, fDetails.height);
 
-    uint16_t *frameData = getFrameData(frame, "raw");
+    uint16_t *frameData = getFrameData(frame, "conf");
 
     if (!frameData)
     {
@@ -83,25 +83,12 @@ void ConfImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
 {
     if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
     {
-        confTake5byte(frameData, message.width, message.height);
-        irTo16bitGrayscale(frameData, message.width, message.height);
+        irTo16bitGrayscale(frameData, message.width, message.height, true);
         uint8_t *msgDataPtr = message.data.data();
         memcpy(msgDataPtr, frameData, message.step * message.height);
     }
     else
         LOG(ERROR) << "Image encoding invalid or not available";
-}
-
-void ConfImageMsg::confTake5byte(uint16_t *frameData, int width, int height)
-{
-    uint8_t *data = (uint8_t *)frameData;
-
-    int j=0;
-    for (int i = 4; i < width * height *5 ; i+=5)
-    {
-        frameData[j] = 255 * data[i] / 8;
-        j++;
-    }
 }
 
 sensor_msgs::msg::Image ConfImageMsg::getMessage()

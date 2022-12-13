@@ -26,13 +26,23 @@ find_package(glog REQUIRED)
 find_package(Protobuf REQUIRED)
 
 # for debug tof in qt creator
-#find_package(aditof PATHS "/home/vholonec/work/ToF/build/sdk" REQUIRED)
+###find_package(aditof PATHS "/home/vholonec/work/build-ToF-Desktop-Debug/sdk" REQUIRED)
 #include_directories("/home/vholonec/work/build-ToF-Desktop-Debug/sdk")
 #link_directories("/home/vholonec/work/build-ToF-Desktop-Debug/sdk/")
 #add_library(aditof SHARED IMPORTED) # or STATIC instead of SHARED
 #set_target_properties(aditof PROPERTIES
 #  IMPORTED_LOCATION "/home/vholonec/work/build-ToF-Desktop-Debug/sdk/libaditof.so"
 #  INTERFACE_INCLUDE_DIRECTORIES "/home/vholonec/work/build-ToF-Desktop-Debug/sdk"
+#)
+#add_library(tofi_compute SHARED IMPORTED) # or STATIC instead of SHARED
+#set_target_properties(tofi_compute PROPERTIES
+#  IMPORTED_LOCATION "/home/vholonec/work/build-ToF-Desktop-Debug/sdk/common/adi/depth-compute-opensource/libtofi_compute.so"
+#  INTERFACE_INCLUDE_DIRECTORIES "/home/vholonec/work/build-ToF-Desktop-Debug/sdk/common/adi/depth-compute-opensource"
+#)
+#add_library(tofi_config SHARED IMPORTED) # or STATIC instead of SHARED
+#set_target_properties(tofi_config PROPERTIES
+#  IMPORTED_LOCATION "/home/vholonec/work/build-ToF-Desktop-Debug/sdk/common/adi/depth-compute-opensource/libtofi_config.so"
+#  INTERFACE_INCLUDE_DIRECTORIES "/home/vholonec/work/build-ToF-Desktop-Debug/sdk/common/adi/depth-compute-opensource"
 #)
 
 find_library(TOFI_COMPUTE
@@ -55,14 +65,16 @@ add_executable(tof_ros2cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/tof_camera_node.cpp $
 target_include_directories(tof_ros2cpp PUBLIC ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
 target_sources(tof_ros2cpp INTERFACE ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
 
-ament_target_dependencies(tof_ros2cpp image_transport rclcpp std_msgs aditof glog)
+ament_target_dependencies(tof_ros2cpp image_transport rclcpp std_msgs glog)
 
 target_include_directories(tof_ros2cpp PUBLIC "${ADITOF_INCLUDE_DIRS}")
 target_include_directories(tof_ros2cpp PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS}")
 target_link_libraries(tof_ros2cpp "${ADITOF_LIBRARIES}")
 target_link_libraries(tof_ros2cpp aditof)
 target_link_libraries(tof_ros2cpp websockets_shared)
-
+target_link_libraries(tof_ros2cpp tofi_compute)
+target_link_libraries(tof_ros2cpp tofi_config)
+target_link_libraries(tof_ros2cpp glog::glog)
 
 install(TARGETS
 tof_ros2cpp
