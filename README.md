@@ -33,7 +33,11 @@ source devel/setup.bash
 ```
 
 ### Starting camera node
-- In the general ROS2 workspace run the following code:
+- In the general ROS2 workspace run the following code, setting up the path towards shaed library:
+```console
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
+```
+- Starting the node
 ```console
     ros2 run tof_ros2cpp tof_ros2cpp ip="10.42.0.1" config_file="config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
 ```
