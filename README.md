@@ -39,13 +39,14 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 ```
 - Starting the node
 ```console
-    ros2 run tof_ros2cpp tof_ros2cpp ip="10.42.0.1" config_file="config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
+    ros2 run tof_ros2cpp tof_ros2cpp ip="10.42.0.1" config_file="tof_config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
 ```
 ### Parameters
  [config_file:"<<b>path></b>"]
-* Crosby with Pulsatrix: "```config/config_walden_3500_nxp.json```"
-* Crosby: "```config/config_crosby_nxp.json```"
-* Walden: "```config/config_walden_nxp.json```"
+* Crosby with Pulsatrix: "```tof_config/config_crosby_adsd3500_new_modes.json```"
+* Tembin with Pulsatrix: "```tof_config/config_crosby_adsd3500_adsd3030_new_modes.json```"
+* Crosby: "```tof_config/config_crosby_nxp.json```"
+* Walden: "```tof_config/config_walden_nxp.json```"
 
  [use_depthCompute] 
  - "true" for enabling Depth Compute libraries
@@ -53,8 +54,9 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 
 
  [mode]:
-* 1 -> LR - QMP mode of the camera (Long Range Quarter Megapixel)
-* 2 -> LR - MP mode of the camera (ong Range Megapixel)
-* 3 -> VGA mode of the camera (ONLY for Tembin)
+* 1 -> SR - QMP mode of the camera (Short Range Quarter Megapixel)
+* 2 -> SR - MP mode of the camera (Short Range Megapixel)
+* 3 -> LR - QMP mode of the camera (Long Range Quarter Megapixel)
+* 4 -> LR - MP mode of the camera (Long Range Megapixel)
 
 

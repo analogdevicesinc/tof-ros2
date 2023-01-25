@@ -344,21 +344,6 @@ void irTo16bitGrayscale(uint16_t *frameData, int width, int height, bool shiftei
     }
 }
 
-enum ModeTypes intToMode(int var) {
-    ModeTypes newMode;
-    switch (var) {
-    case 0:
-        newMode = ModeTypes::mode3;
-        break;
-    case 1:
-        newMode = ModeTypes::mode7;
-        break;
-    case 2:
-        newMode = ModeTypes::mode10;
-        break;
-    }
-    return (newMode);
-}
 
 void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold)
 {    

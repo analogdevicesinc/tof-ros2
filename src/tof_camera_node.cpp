@@ -150,6 +150,7 @@ int main(int argc, char *argv[])
     // pos 1 - config_path
     // pos 2 - use_depthCompute
     // pos 3 - mode
+    
     std::string *arguments = parseArgs(argc, argv);
 
     std::shared_ptr<Camera> camera = initCamera(arguments);
@@ -167,17 +168,26 @@ int main(int argc, char *argv[])
     case 1:
         // LR - QMP mode of the camera
         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "lrqmp");
+        setFrameType(camera, "sr-qnative");
         break;
     case 2:
         // LR - MP mode of the camera
         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "lrmp");
+        setFrameType(camera, "sr-native");
         break;
     case 3:
-        // VGA mode of the camera (Tenbin)
-        setFrameType(camera, "vga");
+        // LR - MP mode of the camera
+        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+        setFrameType(camera, "lr-qnative");
         break;
+    case 4:
+        // LR - MP mode of the camera
+        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+        setFrameType(camera, "lr-native");
+        break;
+    default:
+        LOG(WARNING) << "Wrong frame format!";
+        return 0;
     }
     // Start processing data from the node as well as the callbacks and the timer
     rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
