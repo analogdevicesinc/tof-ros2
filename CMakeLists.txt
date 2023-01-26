@@ -3,7 +3,7 @@ project(tof_ros2cpp)
 
 list(APPEND CMAKE_PREFIX_PATH "/usr/local/lib;/opt/glog;/opt/protobuf;/opt/websockets")
 list(APPEND AMENT_PREFIX_PATH "/usr/local;/opt/glog;/opt/protobuf;/opt/websockets")
-set(CMAKE_INSTALL_RPATH "/usr/local/lib;/opt/websockets/lib")
+set(CMAKE_INSTALL_RPATH "/usr/local/lib;/opt/glog/lib;/opt/websockets/lib")
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -85,6 +85,7 @@ install(DIRECTORY
   config
   DESTINATION share/${PROJECT_NAME}
 )
+
 
 
 ## Copying config files and depth compute libraries from sdk/config, sdk/lib folders to build/examples/first-frame and build/first-frame/Debug or Release folders
