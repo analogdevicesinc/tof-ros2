@@ -82,5 +82,5 @@ void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera>
 void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
 void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int threshold);
 void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
-
+void versioningAuxiliaryFunction(const std::shared_ptr<aditof::Camera> &camera);
 #endif // ADITOF_UTILS_H

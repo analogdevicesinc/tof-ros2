@@ -150,6 +150,10 @@ void startCamera(const std::shared_ptr<aditof::Camera> &camera) {
         LOG(ERROR) << "Could not start camera!";
         return;
     }
+    else
+    {
+        LOG(INFO) << "Camera started";
+    }
     return;
 }
 
@@ -160,6 +164,11 @@ void stopCamera(const std::shared_ptr<aditof::Camera> &camera) {
     if (status != Status::OK) {
         LOG(ERROR) << "Could not stop camera!";
         return;
+    }
+    else
+    {
+        LOG(INFO) << "Camera stopped";
+
     }
     return;
 }
@@ -185,6 +194,10 @@ void setFrameType(const std::shared_ptr<aditof::Camera> &camera,
     if (status != Status::OK) {
         LOG(ERROR) << "Could not set camera frame type!";
         return;
+    }
+    else
+    {
+        LOG(INFO) << "Frame type set: " << type;
     }
 }
 
@@ -452,4 +465,14 @@ void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera>
         LOG(ERROR) << "Could not set adsd3500 set AB invalidation Threshold!";
         return;
     }
+}
+
+void versioningAuxiliaryFunction(const std::shared_ptr<aditof::Camera> &camera)
+{
+    aditof::CameraDetails cameraDetails;
+	camera->getDetails(cameraDetails);
+
+	LOG(INFO) << "SD card image version: " << cameraDetails.sdCardImageVersion;
+	LOG(INFO) << "Kernel version: " << cameraDetails.kernelVersion;
+	LOG(INFO) << "U-Boot version: " << cameraDetails.uBootVersion;
 }
