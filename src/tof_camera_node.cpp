@@ -175,23 +175,19 @@ int main(int argc, char *argv[])
             // LR - QMP mode of the camera
             (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
             setFrameType(camera, availableFrameTypes.at(0));
-            m_currentMode = ModeTypes::mode1; 
             break;
         case 1:
             // LR - MP mode of the camera
             (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
             setFrameType(camera, availableFrameTypes.at(1));
-            m_currentMode = ModeTypes::mode1; 
             break;
         case 2:
             (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
             setFrameType(camera, availableFrameTypes.at(2));
-            m_currentMode = ModeTypes::mode1; 
             break;
         case 3:
             (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
             setFrameType(camera, availableFrameTypes.at(3));
-            m_currentMode = ModeTypes::mode1; 
             break;
         }
     }
@@ -199,7 +195,6 @@ int main(int argc, char *argv[])
     {
         enableCameraDepthCompute(camera, m_enableDepthCompute);
         setFrameType(camera, availableFrameTypes.at(0));
-        m_currentMode = ModeTypes::mode1; 
     }
     // Start processing data from the node as well as the callbacks and the timer
     rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
