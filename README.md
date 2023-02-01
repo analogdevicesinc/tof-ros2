@@ -43,10 +43,11 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 ```
 ### Parameters
  [config_file:"<<b>path></b>"]
-* Crosby with Pulsatrix: "```tof_config/config_crosby_adsd3500_new_modes.json```"
-* Tembin with Pulsatrix: "```tof_config/config_adsd3500_adsd3030_new_modes.json```"
-* Crosby: "```tof_config/config_crosby_nxp.json```"
-* Walden: "```tof_config/config_walden_nxp.json```"
+
+* "```config/config_walden_3500_nxp.json```"
+* "```config/config_crosby_nxp.json```"
+* "```config/config_walden_nxp.json```"
+
 
  [use_depthCompute] 
  - "true" for enabling Depth Compute libraries
@@ -54,9 +55,11 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 
 
  [mode]:
-* 1 -> SR - QMP mode of the camera (Short Range Quarter Megapixel)
-* 2 -> SR - MP mode of the camera (Short Range Megapixel)
-* 3 -> LR - QMP mode of the camera (Long Range Quarter Megapixel)
-* 4 -> LR - MP mode of the camera (Long Range Megapixel)
+
+|          | New modes                                                                      | Old modes                                               |
+|----------|--------------------------------------------------------------------------------|---------------------------------------------------------|
+| adsd3500 | mode 0 - sr-native; mode 1 - lr-native; mode 2 - sr-qnative; mode 3 - lr-qnative  | mode 0 - lt_bin; mode 1 - pcmmp; mode 2 - qmp; mode 3 - mp |
+| adsd3030 | mode 0 - sr-native; mode 1 - lr-native; mode 2 - sr-qnative; mode 3 - lr-qnative  | mode 0 - vga                                            |
+
 
 

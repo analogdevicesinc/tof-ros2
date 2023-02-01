@@ -164,33 +164,42 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Setting camera parameters
-    int m_mode = atoi(arguments[3].c_str());
-    switch (m_mode)
+    //getting available frame types, backward compatibility
+    std::vector<std::string> availableFrameTypes;
+    getAvailableFrameTypes(camera, availableFrameTypes);
+
+    //In case old modes are available
+    if (availableFrameTypes.size() > 1)
     {
-    case 1:
-        // LR - QMP mode of the camera
-        // (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "sr-qnative");
-        break;
-    case 2:
-        // LR - MP mode of the camera
-        // (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "sr-native");
-        break;
-    case 3:
-        // LR - MP mode of the camera
-        // (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "lr-qnative");
-        break;
-    case 4:
-        // LR - MP mode of the camera
-        // (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "lr-native");
-        break;
-    default:
-        LOG(WARNING) << "Wrong frame format!";
-        return 0;
+        // Setting camera parameters
+        int m_mode = atoi(arguments[3].c_str());
+        switch (m_mode)
+        {
+        case 0:
+            // LR - QMP mode of the camera
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(0));
+            break;
+        case 1:
+            // LR - MP mode of the camera
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(1));
+            break;
+        case 2:
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(2));
+            break;
+        case 3:
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(3));
+            break;
+        }
+    }
+    else
+    {
+
+        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+        setFrameType(camera, availableFrameTypes.at(0));
     }
 
     startCamera(camera);

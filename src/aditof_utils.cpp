@@ -130,6 +130,19 @@ std::shared_ptr<Camera> initCamera(std::string *arguments) {
     return camera;
 }
 
+void getAvailableFrameTypes(const std::shared_ptr<aditof::Camera> &camera,
+std::vector<std::string> &availableFrameTypes)
+{
+    //get available frae types of camera
+    aditof::Status status = aditof::Status::OK;
+
+    status = camera->getAvailableFrameTypes(availableFrameTypes);
+    if (status != Status::OK) {
+        LOG(ERROR) << "Couldn't get available frame types";
+        return;
+    }
+}
+
 void enableCameraDepthCompute(const std::shared_ptr<aditof::Camera> &camera,
                               const bool value) {
     //set depthCompute to on or off
@@ -357,6 +370,24 @@ void irTo16bitGrayscale(uint16_t *frameData, int width, int height, bool shiftei
     }
 }
 
+enum ModeTypes intToMode(int var) {
+    ModeTypes newMode;
+    switch (var) {
+    case 1:
+        newMode = ModeTypes::mode0;
+        break;
+    case 2:
+        newMode = ModeTypes::mode1;
+        break;
+    case 3:
+        newMode = ModeTypes::mode2;
+        break;
+    case 4:
+        newMode = ModeTypes::mode3;
+        break;
+    }
+    return (newMode);
+}
 
 void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold)
 {    
