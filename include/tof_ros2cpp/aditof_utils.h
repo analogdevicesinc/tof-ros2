@@ -38,7 +38,7 @@
 #include <rclcpp/time.hpp>
 #include <aditof/frame.h>
 
-enum class ModeTypes { NONE, mode3, mode7, mode10 };
+enum class ModeTypes { NONE, mode0, mode1, mode2, mode3};
 typedef void(*FnPtr)(std::shared_ptr<aditof::Camera>&, int);
 
 std::string *parseArgs(int argc, char **argv);
@@ -83,5 +83,6 @@ void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera>
 void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
 void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int threshold);
 void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
+void getAvailableFrameTypes(const std::shared_ptr<aditof::Camera> &camera, std::vector<std::string> &availableFrameTypes);
 
 #endif // ADITOF_UTILS_H

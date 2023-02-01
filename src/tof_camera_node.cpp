@@ -160,24 +160,46 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Setting camera parameters
-    int m_mode = atoi(arguments[3].c_str());
-    switch (m_mode)
+    //getting available frame types, backward compatibility
+    std::vector<std::string> availableFrameTypes;
+    getAvailableFrameTypes(camera, availableFrameTypes);
+
+    //In case old modes are available
+    if (availableFrameTypes.size() > 1)
     {
-    case 1:
-        // LR - QMP mode of the camera
-        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "lrqmp");
-        break;
-    case 2:
-        // LR - MP mode of the camera
-        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, "lrmp");
-        break;
-    case 3:
-        // VGA mode of the camera (Tenbin)
-        setFrameType(camera, "vga");
-        break;
+        // Setting camera parameters
+        int m_mode = atoi(arguments[3].c_str());
+        switch (m_mode)
+        {
+        case 0:
+            // LR - QMP mode of the camera
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(0));
+            m_currentMode = ModeTypes::mode1; 
+            break;
+        case 1:
+            // LR - MP mode of the camera
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(1));
+            m_currentMode = ModeTypes::mode1; 
+            break;
+        case 2:
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(2));
+            m_currentMode = ModeTypes::mode1; 
+            break;
+        case 3:
+            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+            setFrameType(camera, availableFrameTypes.at(3));
+            m_currentMode = ModeTypes::mode1; 
+            break;
+        }
+    }
+    else
+    {
+        enableCameraDepthCompute(camera, m_enableDepthCompute);
+        setFrameType(camera, availableFrameTypes.at(0));
+        m_currentMode = ModeTypes::mode1; 
     }
     // Start processing data from the node as well as the callbacks and the timer
     rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
