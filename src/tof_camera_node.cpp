@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        enableCameraDepthCompute(camera, m_enableDepthCompute);
+        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
         setFrameType(camera, availableFrameTypes.at(0));
     }
     // Start processing data from the node as well as the callbacks and the timer
