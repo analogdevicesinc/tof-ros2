@@ -49,6 +49,7 @@
 
 using namespace std::chrono_literals;
 using namespace aditof;
+bool m_streamOnFlag = false;
 
 // Create the node class named MinimalPublisher which inherits the attributes
 // and methods of the rclcpp::Node class.
@@ -59,8 +60,7 @@ private:
     std::shared_ptr<Camera> camera;
     aditof::Frame **frame;
     PublisherFactory publishers;
-    Frame *tmp;
-    bool m_streamOnFlag = 0;
+
 
     // camera parameters
     int m_adsd3500ABinvalidationThreshold_;
@@ -97,15 +97,18 @@ private:
 
     void timer_callback()
     {
-        getNewFrame(camera, frame);
-        publishers.updatePublishers(camera, frame);
+        if (m_streamOnFlag)
+        {
+            getNewFrame(camera, frame);
+            publishers.updatePublishers(camera, frame);
+        }
     }
     rclcpp::TimerBase::SharedPtr timer_;
     OnSetParametersCallbackHandle::SharedPtr callback_handle_;
 
 
 public:
-    TofNode(std::string *arguments, std::shared_ptr<Camera> camera)
+    TofNode(std::string *arguments, std::shared_ptr<Camera> camera, aditof::Frame **frame)
         : Node("tof_camera_node")
     {
         this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
@@ -123,8 +126,7 @@ public:
         this->get_parameter("adsd3500RadialThresholdMax", m_adsd3500RadialThresholdMax_);
 
         this->camera = camera;
-        tmp = new Frame;
-        frame = &tmp;
+        this->frame = frame;
 
         if (!m_streamOnFlag)
         {
@@ -151,8 +153,10 @@ int main(int argc, char *argv[])
     // pos 2 - use_depthCompute
     // pos 3 - mode
     std::string *arguments = parseArgs(argc, argv);
-
+    //find camera (local/usb/network), set config file and initialize the camera 
     std::shared_ptr<Camera> camera = initCamera(arguments);
+    //versioning print
+    versioningAuxiliaryFunction(camera);
 
     if (!camera)
     {
@@ -193,11 +197,18 @@ int main(int argc, char *argv[])
     }
     else
     {
+
         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
         setFrameType(camera, availableFrameTypes.at(0));
     }
+
+    startCamera(camera);
+    m_streamOnFlag = true;
+    auto tmp = new Frame;
+    aditof::Frame **frame = &tmp;
+
     // Start processing data from the node as well as the callbacks and the timer
-    rclcpp::spin(std::make_shared<TofNode>(arguments, camera));
+    rclcpp::spin(std::make_shared<TofNode>(arguments, camera,frame));
 
     // Shutdown the node when finished
     rclcpp::shutdown();

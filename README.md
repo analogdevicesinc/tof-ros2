@@ -39,13 +39,15 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 ```
 - Starting the node
 ```console
-    ros2 run tof_ros2cpp tof_ros2cpp ip="10.42.0.1" config_file="config/config_walden_3500_nxp.json" use_depthCompute="true" mode=1
+    ros2 run tof_ros2cpp tof_ros2cpp ip="10.42.0.1" config_file="tof_config/config_walden_3500_nxp.json" mode=1
 ```
 ### Parameters
  [config_file:"<<b>path></b>"]
+
 * "```config/config_walden_3500_nxp.json```"
 * "```config/config_crosby_nxp.json```"
 * "```config/config_walden_nxp.json```"
+
 
  [use_depthCompute] 
  - "true" for enabling Depth Compute libraries
@@ -53,9 +55,11 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 
 
  [mode]:
+
 |          | New modes                                                                      | Old modes                                               |
 |----------|--------------------------------------------------------------------------------|---------------------------------------------------------|
 | adsd3500 | mode 0 - sr-native; mode 1 - lr-native; mode 2 - sr-qnative; mode 3 - lr-qnative  | mode 0 - lt_bin; mode 1 - pcmmp; mode 2 - qmp; mode 3 - mp |
 | adsd3030 | mode 0 - sr-native; mode 1 - lr-native; mode 2 - sr-qnative; mode 3 - lr-qnative  | mode 0 - vga                                            |
+
 
 

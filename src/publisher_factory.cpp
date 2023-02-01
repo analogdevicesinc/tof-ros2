@@ -58,7 +58,7 @@ void PublisherFactory::createNew(rclcpp::Node *node,
         }
         else if (!strcmp(iter.type.c_str(), "raw") && enableDepthCompute == false)
         {
-            img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/rgb", 2));
+            img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/raw", 2));
             imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added raw data publisher";
         }

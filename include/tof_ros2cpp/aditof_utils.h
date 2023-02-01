@@ -70,7 +70,6 @@ getIntrinsics(const std::shared_ptr<aditof::Camera> &camera);
 int getRangeMax(const std::shared_ptr<aditof::Camera> &camera);
 int getRangeMin(const std::shared_ptr<aditof::Camera> &camera);
 void irTo16bitGrayscale(uint16_t *frameData, int width, int height, bool shifteight = false);
-enum ModeTypes intToMode(int var);
 void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold);
 void control_adsd3500GetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
 void control_adsd3500SetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold);
@@ -83,6 +82,8 @@ void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera>
 void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
 void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int threshold);
 void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int &threshold);
+void versioningAuxiliaryFunction(const std::shared_ptr<aditof::Camera> &camera);
 void getAvailableFrameTypes(const std::shared_ptr<aditof::Camera> &camera, std::vector<std::string> &availableFrameTypes);
+
 
 #endif // ADITOF_UTILS_H
