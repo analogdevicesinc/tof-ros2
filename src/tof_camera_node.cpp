@@ -134,7 +134,7 @@ public:
             m_streamOnFlag = true;
         }
 
-        publishers.createNew(this, camera, frame, (arguments[2] == "true") ? true : false);
+        publishers.createNew(this, camera, frame, (arguments[2] == "true" || arguments[2]=="1") ? true : false);
 
         timer_ = this->create_wall_timer(100ms, std::bind(&TofNode::timer_callback, this));
         callback_handle_ = this->add_on_set_parameters_callback(std::bind(&TofNode::parameterCallback, this,std::placeholders::_1));
@@ -173,31 +173,19 @@ int main(int argc, char *argv[])
     {
         // Setting camera parameters
         int m_mode = atoi(arguments[3].c_str());
-        switch (m_mode)
-        {
-        case 0:
-            // LR - QMP mode of the camera
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, availableFrameTypes.at(0));
-            break;
-        case 1:
-            // LR - MP mode of the camera
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, availableFrameTypes.at(1));
-            break;
-        case 2:
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, availableFrameTypes.at(2));
-            break;
-        case 3:
-            (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-            setFrameType(camera, availableFrameTypes.at(3));
-            break;
-        }
+
+        int sizeTmp = availableFrameTypes.size();
+        int tmp1 = (availableFrameTypes.size() <= 1) ? availableFrameTypes.size() : 0;
+        int tmp2 = (availableFrameTypes.size() <= 2) ? availableFrameTypes.size() : 1;
+        int tmp3 = (availableFrameTypes.size() <= 3) ? availableFrameTypes.size() : 2;
+        int tmp4 = (availableFrameTypes.size() <= 4) ? availableFrameTypes.size() : 3;
+
+        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
+        setFrameType(camera, availableFrameTypes.at((availableFrameTypes.size() < m_mode) ? availableFrameTypes.size() : m_mode-1));
+
     }
     else
     {
-
         (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
         setFrameType(camera, availableFrameTypes.at(0));
     }

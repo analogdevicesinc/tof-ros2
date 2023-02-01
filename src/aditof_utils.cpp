@@ -90,6 +90,8 @@ std::string *parseArgs(int argc, char **argv) {
     result[1] = config_path;
     result[2] = use_depthCompute;
     result[3] = mode;
+
+
     return result;
 }
 
