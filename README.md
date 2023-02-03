@@ -44,9 +44,12 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
 ### Parameters
  [config_file:"<<b>path></b>"]
 
-* "```config/config_walden_3500_nxp.json```"
-* "```config/config_crosby_nxp.json```"
-* "```config/config_walden_nxp.json```"
+* ```config/config_adsd3500_adsd3030_new_modes.json```
+* ```config/config_adsd3500_adsd3030_old_modes.json```
+* ```config/config_crosby_adsd3500_new_modes.json```
+* ```config/config_crosby_nxp.json```
+* ```config/config_crosby_old_modes.json```
+
 
 
  [use_depthCompute] 
