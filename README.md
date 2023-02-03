@@ -35,7 +35,7 @@ source devel/setup.bash
 ### Starting camera node
 - In the general ROS2 workspace run the following code, setting up the path towards shaed library:
 ```console
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib;/usr/local/lib"
 ```
 - Starting the node
 ```console
