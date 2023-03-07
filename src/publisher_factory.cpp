@@ -44,38 +44,38 @@ void PublisherFactory::createNew(rclcpp::Node *node,
 
     for (auto iter : (*details_tmp).frameType.dataDetails)
     {
-        if (!strcmp(iter.type.c_str(), "ir") && enableDepthCompute == true)
+        if (!strcmp(iter.type.c_str(), "ir"))
         {
             img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/ir", 2));
             imgMsgs.emplace_back(new IRImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added ir publisher";
         }
-        else if (!strcmp(iter.type.c_str(), "depth") && enableDepthCompute == true)
+        else if (!strcmp(iter.type.c_str(), "depth"))
         {
             img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/depth", 2));
             imgMsgs.emplace_back(new DepthImageMsg(camera, frame, sensor_msgs::image_encodings::RGBA8));
             LOG(INFO) << "Added depth publisher";
         }
-        else if (!strcmp(iter.type.c_str(), "raw") && enableDepthCompute == false)
+        else if (!strcmp(iter.type.c_str(), "raw"))
         {
             img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/raw", 2));
             imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added raw data publisher";
         }
-        else if (!strcmp(iter.type.c_str(), "xyz") && enableDepthCompute == true)
+        else if (!strcmp(iter.type.c_str(), "xyz"))
         {
             pointCloud_publisher.emplace_back(node->create_publisher<sensor_msgs::msg::PointCloud2>("tof_camera/xyz", 2));
             pointCloudMsgs.emplace_back(new XYZImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added xyz data publisher";
         }
-        else if (!strcmp(iter.type.c_str(), "conf") && enableDepthCompute == true)
+        else if (!strcmp(iter.type.c_str(), "conf"))
         {
             img_publishers.emplace_back(node->create_publisher<sensor_msgs::msg::Image>("tof_camera/conf", 2));
             imgMsgs.emplace_back(new ConfImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
             LOG(INFO) << "Added conf data publisher";
         }
     }
-    //startCamera(camera);
+    // startCamera(camera);
 }
 void PublisherFactory::updatePublishers(
     const std::shared_ptr<aditof::Camera> &camera, aditof::Frame **frame)
