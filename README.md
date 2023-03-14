@@ -9,9 +9,14 @@
 - In order to prepare the system to run the ROS wrapper in the general catkin workspace make sure to install correctly the following libraries:
 
 # 2. ToF dependency
+## Download debian package:
+* ([Tof lib for Ubuntu 18.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/out_ubuntu18/tof_lib.deb))
+* ([Tof lib for Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/out_ubuntu20/tof_lib.deb))
+* ([Tof lib for Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/out_ubuntu22/tof_lib.deb))
 
+Install command: ```sudo dpkg -i tof_lib.deb```
+## Building from sources
 In order to prepare the system to run the ROS wrapper in the general catkin workspace make sure to install correctly the following library:
-
 
 - [Build ToF from sourcecode](https://github.com/analogdevicesinc/ToF/blob/master/doc/itof/linux_build_instructions.md) (Until the step: "Download and build the SDK only")
 
