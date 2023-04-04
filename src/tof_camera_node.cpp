@@ -61,7 +61,6 @@ private:
     aditof::Frame **frame;
     PublisherFactory publishers;
 
-
     // camera parameters
     int m_adsd3500ABinvalidationThreshold_;
     int m_adsd3500ConfidenceThreshold_;
@@ -73,7 +72,7 @@ private:
 private:
     rcl_interfaces::msg::SetParametersResult parameterCallback(const std::vector<rclcpp::Parameter> &parameters)
     {
-        //Stream off //temporary solution, replace if we can modify during runtime of the camera
+        // Stream off //temporary solution, replace if we can modify during runtime of the camera
 
         stopCamera(camera);
         m_streamOnFlag = 0;
@@ -106,17 +105,16 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
     OnSetParametersCallbackHandle::SharedPtr callback_handle_;
 
-
 public:
     TofNode(std::string *arguments, std::shared_ptr<Camera> camera, aditof::Frame **frame)
         : Node("tof_camera_node")
     {
         this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
-        this->declare_parameter("adsd3500ConfidenceThreshold",0);
-        this->declare_parameter("adsd3500JBLFfilterEnableStat",false);
-        this->declare_parameter("adsd3500JBLFfilterSize",0);
-        this->declare_parameter("adsd3500RadialThresholdMin",0);
-        this->declare_parameter("adsd3500RadialThresholdMax",0);
+        this->declare_parameter("adsd3500ConfidenceThreshold", 0);
+        this->declare_parameter("adsd3500JBLFfilterEnableStat", false);
+        this->declare_parameter("adsd3500JBLFfilterSize", 0);
+        this->declare_parameter("adsd3500RadialThresholdMin", 0);
+        this->declare_parameter("adsd3500RadialThresholdMax", 0);
 
         this->get_parameter("adsd3500ABinvalidationThreshold", m_adsd3500ABinvalidationThreshold_);
         this->get_parameter("adsd3500ConfidenceThreshold", m_adsd3500ConfidenceThreshold_);
@@ -134,12 +132,11 @@ public:
             m_streamOnFlag = true;
         }
 
-        publishers.createNew(this, camera, frame, (arguments[2] == "true" || arguments[2]=="1") ? true : false);
+        publishers.createNew(this, camera, frame, (arguments[2] == "true" || arguments[2] == "1") ? true : false);
 
         timer_ = this->create_wall_timer(100ms, std::bind(&TofNode::timer_callback, this));
-        callback_handle_ = this->add_on_set_parameters_callback(std::bind(&TofNode::parameterCallback, this,std::placeholders::_1));
+        callback_handle_ = this->add_on_set_parameters_callback(std::bind(&TofNode::parameterCallback, this, std::placeholders::_1));
     }
-
 };
 
 int main(int argc, char *argv[])
@@ -150,12 +147,12 @@ int main(int argc, char *argv[])
 
     // pos 0 - ip
     // pos 1 - config_path
-    // pos 2 - use_depthCompute
-    // pos 3 - mode
+    // pos 2 - mode
+
     std::string *arguments = parseArgs(argc, argv);
-    //find camera (local/usb/network), set config file and initialize the camera 
+    // find camera (local/usb/network), set config file and initialize the camera
     std::shared_ptr<Camera> camera = initCamera(arguments);
-    //versioning print
+    // versioning print
     versioningAuxiliaryFunction(camera);
 
     if (!camera)
@@ -164,30 +161,22 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    //getting available frame types, backward compatibility
+    // getting available frame types, backward compatibility
     std::vector<std::string> availableFrameTypes;
     getAvailableFrameTypes(camera, availableFrameTypes);
 
-    //In case old modes are available
-    if (availableFrameTypes.size() > 1)
+    // Setting camera parameters
+    int currentMode = atoi(arguments[2].c_str());
+    int availableFrameTypeSize = availableFrameTypes.size();
+
+    if (0 <= currentMode && currentMode < availableFrameTypeSize)
     {
-        // Setting camera parameters
-        int m_mode = atoi(arguments[3].c_str());
-
-        int sizeTmp = availableFrameTypes.size();
-        int tmp1 = (availableFrameTypes.size() <= 1) ? availableFrameTypes.size() : 0;
-        int tmp2 = (availableFrameTypes.size() <= 2) ? availableFrameTypes.size() : 1;
-        int tmp3 = (availableFrameTypes.size() <= 3) ? availableFrameTypes.size() : 2;
-        int tmp4 = (availableFrameTypes.size() <= 4) ? availableFrameTypes.size() : 3;
-
-        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, availableFrameTypes.at((availableFrameTypes.size() < m_mode) ? availableFrameTypes.size() : m_mode-1));
-
+        setFrameType(camera, availableFrameTypes.at(currentMode));
     }
     else
     {
-        (arguments[2] == "true") ? enableCameraDepthCompute(camera, true) : enableCameraDepthCompute(camera, false);
-        setFrameType(camera, availableFrameTypes.at(0));
+        LOG(ERROR) << "Incompatible or unavalable mode type chosen";
+        return 0;
     }
 
     startCamera(camera);
@@ -196,7 +185,7 @@ int main(int argc, char *argv[])
     aditof::Frame **frame = &tmp;
 
     // Start processing data from the node as well as the callbacks and the timer
-    rclcpp::spin(std::make_shared<TofNode>(arguments, camera,frame));
+    rclcpp::spin(std::make_shared<TofNode>(arguments, camera, frame));
 
     // Shutdown the node when finished
     rclcpp::shutdown();

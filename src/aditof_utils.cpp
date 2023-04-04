@@ -63,8 +63,6 @@ std::string *parseArgs(int argc, char **argv) {
             ip = right;
         else if (std::strcmp(left.c_str(), "config_file") == 0)
             config_path = right;
-        else if (std::strcmp(left.c_str(), "use_depthCompute") == 0)
-            use_depthCompute = right;
         else if (std::strcmp(left.c_str(), "mode") == 0)
             mode = right;
     }
@@ -76,10 +74,6 @@ std::string *parseArgs(int argc, char **argv) {
     if (config_path.empty()) {
         LOG(INFO) << "Config file not provided!";
     }
-    if (use_depthCompute.empty()) {
-        LOG(INFO) << "'use_depthCompute' option not provided!";
-    }
-
     if (mode.empty()) {
         LOG(INFO) << "Camera mode not provided!";
     }
@@ -88,8 +82,7 @@ std::string *parseArgs(int argc, char **argv) {
     std::string *result = new std::string[5];
     result[0] = ip;
     result[1] = config_path;
-    result[2] = use_depthCompute;
-    result[3] = mode;
+    result[2] = mode;
 
 
     return result;

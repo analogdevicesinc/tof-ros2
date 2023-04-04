@@ -92,6 +92,6 @@ install(DIRECTORY
 FILE(GLOB CONFIG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/tof_config/*)
 install(FILES ${CONFIG_FILES} DESTINATION lib/../../../config/)
 install(FILES ${CONFIG_FILES} DESTINATION lib/${PROJECT_NAME}/config/)
-
+install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 ament_package()
 
