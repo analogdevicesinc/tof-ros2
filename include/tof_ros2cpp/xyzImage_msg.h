@@ -32,67 +32,67 @@
 #ifndef XYZIMAGE_MSG_H
 #define XYZIMAGE_MSG_H
 
-#include <aditof/frame.h>
-#include <aditof_sensor_msg.h>
 #include "aditof_utils.h"
-#include <sensor_msgs/msg/point_cloud2.hpp>
 #include "geometry_msgs/msg/point32.hpp"
 #include "sensor_msgs/msg/point_cloud.hpp"
 #include "sensor_msgs/point_cloud_conversion.hpp"
+#include <aditof/frame.h>
+#include <aditof_sensor_msg.h>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 
-class XYZImageMsg : public AditofSensorPointCloudMsg
-{
-public:
-  XYZImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-             aditof::Frame **frame, std::string encoding);
-  /**
+class XYZImageMsg : public AditofSensorPointCloudMsg {
+  public:
+    XYZImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+                aditof::Frame **frame, std::string encoding);
+    /**
    * @brief Each message corresponds to one frame
    */
-  sensor_msgs::msg::PointCloud2 message;
+    sensor_msgs::msg::PointCloud2 message;
 
-  /**
+    /**
    * @brief Variale to color the points in rviz2
    */
-  sensor_msgs::msg::ChannelFloat32 m_intensity, m_range;
+    sensor_msgs::msg::ChannelFloat32 m_intensity, m_range;
 
-  /**
+    /**
    * @brief Points that will be publish on message
    */
-  std::vector<geometry_msgs::msg::Point32> m_points;
+    std::vector<geometry_msgs::msg::Point32> m_points;
 
-  /**
+    /**
    * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
    */
-  std::string imgEncoding;
+    std::string imgEncoding;
 
-  /**
+    /**
    * @brief Converts the frame data to a message
    */
-  void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                      aditof::Frame **frame) override;
-  /**
+    void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                        aditof::Frame **frame) override;
+    /**
    * @brief Assigns values to the message fields concerning metadata
    */
-  void setMetadataMembers(int width, int height);
+    void setMetadataMembers(int width, int height);
 
-  /**
+    /**
    * @brief Assigns values to the message fields concerning the point data
    */
-  void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
-                      uint16_t *frameData);
+    void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
+                        uint16_t *frameData);
 
-  /**
+    /**
    * @brief Publishes a message
    */
-  void publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub) override;
+    void
+    publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub) override;
 
-  /**
+    /**
    * @brief Get the point cloud message
    */
-  sensor_msgs::msg::PointCloud2 getMessagePointCloud() override;
+    sensor_msgs::msg::PointCloud2 getMessagePointCloud() override;
 
-private:
-  XYZImageMsg();
+  private:
+    XYZImageMsg();
 };
 
 #endif // XYZIMAGE_MSG_H
