@@ -32,50 +32,49 @@
 #ifndef CONFIMAGE_MSG_H
 #define CONFIMAGE_MSG_H
 
+#include "aditof_utils.h"
 #include <aditof/frame.h>
 #include <aditof_sensor_msg.h>
-#include "aditof_utils.h"
 
-class ConfImageMsg : public AditofSensorMsg
-{
-public:
-  ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-             aditof::Frame **frame, std::string encoding);
-  /**
+class ConfImageMsg : public AditofSensorMsg {
+  public:
+    ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
+                 aditof::Frame **frame, std::string encoding);
+    /**
    * @brief Each message corresponds to one frame
    */
-  sensor_msgs::msg::Image message;
+    sensor_msgs::msg::Image message;
 
-  /**
+    /**
    * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
    */
-  std::string imgEncoding;
+    std::string imgEncoding;
 
-  /**
+    /**
    * @brief Converts the frame data to a message
    */
-  void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                      aditof::Frame **frame) override;
-  /**
+    void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
+                        aditof::Frame **frame) override;
+    /**
    * @brief Assigns values to the message fields concerning metadata
    */
-  void setMetadataMembers(int width, int height);
+    void setMetadataMembers(int width, int height);
 
-  /**
+    /**
    * @brief Assigns values to the message fields concerning the point data
    */
-  void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
-                      uint16_t *frameData);
+    void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
+                        uint16_t *frameData);
 
-  /**
+    /**
    * @brief Publishes a message
    */
-   void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
+    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
 
-  sensor_msgs::msg::Image getMessage() override;
+    sensor_msgs::msg::Image getMessage() override;
 
-private:
-  ConfImageMsg();
+  private:
+    ConfImageMsg();
 };
 
 #endif // CONFIMAGE_MSG_H

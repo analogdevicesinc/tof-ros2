@@ -65,9 +65,10 @@ class RAWImageMsg : public AditofSensorMsg {
     /**
      * @brief Publishes a message
      */
-     void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
+    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
 
     sensor_msgs::msg::Image getMessage() override;
+
   private:
     RAWImageMsg();
 };

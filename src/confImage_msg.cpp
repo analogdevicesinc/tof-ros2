@@ -35,15 +35,13 @@ using namespace aditof;
 ConfImageMsg::ConfImageMsg() {}
 
 ConfImageMsg::ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                       aditof::Frame **frame, std::string encoding)
-{
+                           aditof::Frame **frame, std::string encoding) {
     imgEncoding = encoding;
     FrameDataToMsg(camera, frame);
 }
 
 void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                aditof::Frame **frame)
-{
+                                  aditof::Frame **frame) {
     FrameDetails fDetails;
     (*frame)->getDetails(fDetails);
 
@@ -51,8 +49,7 @@ void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 
     uint16_t *frameData = getFrameData(frame, "conf");
 
-    if (!frameData)
-    {
+    if (!frameData) {
         LOG(ERROR) << "getFrameData call failed";
         return;
     }
@@ -60,8 +57,7 @@ void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void ConfImageMsg::setMetadataMembers(int width, int height)
-{
+void ConfImageMsg::setMetadataMembers(int width, int height) {
     // message.header.stamp = tStamp;
     message.header.frame_id = "aditof_conf_img";
 
@@ -79,23 +75,17 @@ void ConfImageMsg::setMetadataMembers(int width, int height)
 }
 
 void ConfImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                uint16_t *frameData)
-{
-    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0)
-    {
+                                  uint16_t *frameData) {
+    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
         irTo16bitGrayscale(frameData, message.width, message.height, true);
         uint8_t *msgDataPtr = message.data.data();
         memcpy(msgDataPtr, frameData, message.step * message.height);
-    }
-    else
+    } else
         LOG(ERROR) << "Image encoding invalid or not available";
 }
 
-sensor_msgs::msg::Image ConfImageMsg::getMessage()
-{
-    return message;
-}
+sensor_msgs::msg::Image ConfImageMsg::getMessage() { return message; }
 
- void ConfImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
-     pub.publish(message);
- }
+void ConfImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
+    pub.publish(message);
+}

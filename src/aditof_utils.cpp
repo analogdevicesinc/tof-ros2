@@ -31,7 +31,6 @@
  */
 #include "aditof_utils.h"
 
-
 #include <aditof/system.h>
 #include <regex>
 // #include <ros/package.h>
@@ -78,12 +77,10 @@ std::string *parseArgs(int argc, char **argv) {
         LOG(INFO) << "Camera mode not provided!";
     }
 
-
     std::string *result = new std::string[5];
     result[0] = ip;
     result[1] = config_path;
     result[2] = mode;
-
 
     return result;
 }
@@ -126,8 +123,7 @@ std::shared_ptr<Camera> initCamera(std::string *arguments) {
 }
 
 void getAvailableFrameTypes(const std::shared_ptr<aditof::Camera> &camera,
-std::vector<std::string> &availableFrameTypes)
-{
+                            std::vector<std::string> &availableFrameTypes) {
     //get available frae types of camera
     aditof::Status status = aditof::Status::OK;
 
@@ -157,9 +153,7 @@ void startCamera(const std::shared_ptr<aditof::Camera> &camera) {
     if (status != Status::OK) {
         LOG(ERROR) << "Could not start camera!";
         return;
-    }
-    else
-    {
+    } else {
         LOG(INFO) << "Camera started";
     }
     return;
@@ -172,11 +166,8 @@ void stopCamera(const std::shared_ptr<aditof::Camera> &camera) {
     if (status != Status::OK) {
         LOG(ERROR) << "Could not stop camera!";
         return;
-    }
-    else
-    {
+    } else {
         LOG(INFO) << "Camera stopped";
-
     }
     return;
 }
@@ -198,13 +189,11 @@ void setFrameType(const std::shared_ptr<aditof::Camera> &camera,
     }
 
     Status status = Status::OK;
-        status = camera->setFrameType(type);
+    status = camera->setFrameType(type);
     if (status != Status::OK) {
         LOG(ERROR) << "Could not set camera frame type!";
         return;
-    }
-    else
-    {
+    } else {
         LOG(INFO) << "Frame type set: " << type;
     }
 }
@@ -340,7 +329,8 @@ int getRangeMin(const std::shared_ptr<Camera> &camera) {
     return cameraDetails.minDepth;
 }
 
-void irTo16bitGrayscale(uint16_t *frameData, int width, int height, bool shifteight) {
+void irTo16bitGrayscale(uint16_t *frameData, int width, int height,
+                        bool shifteight) {
     std::vector<uint16_t> data(frameData, frameData + width * height);
 
     auto min_val = 0;      //std::min_element(data.begin(), data.end());
@@ -358,8 +348,7 @@ void irTo16bitGrayscale(uint16_t *frameData, int width, int height, bool shiftei
             norm_val * std::numeric_limits<unsigned short int>::max() +
             (1.0f - norm_val) * minColorValue;
         frameData[i] = static_cast<uint16_t>(grayscale_val);
-        if(shifteight == true)
-        {
+        if (shifteight == true) {
             frameData[i] = frameData[i] << 8;
         }
     }
@@ -384,8 +373,8 @@ enum ModeTypes intToMode(int var) {
     return (newMode);
 }
 
-void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold)
-{    
+void control_adsd3500SetABinvalidationThreshold(
+    const std::shared_ptr<aditof::Camera> &camera, int threshold) {
     Status status = Status::OK;
     status = camera->adsd3500SetABinvalidationThreshold(threshold);
     if (status != Status::OK) {
@@ -393,8 +382,8 @@ void control_adsd3500SetABinvalidationThreshold(const std::shared_ptr<aditof::Ca
         return;
     }
 }
-void control_adsd3500GetABinvalidationThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
-{    
+void control_adsd3500GetABinvalidationThreshold(
+    const std::shared_ptr<aditof::Camera> &camera, int &threshold) {
     Status status = Status::OK;
     status = camera->adsd3500GetABinvalidationThreshold(threshold);
     if (status != Status::OK) {
@@ -402,8 +391,8 @@ void control_adsd3500GetABinvalidationThreshold(const std::shared_ptr<aditof::Ca
         return;
     }
 }
-void control_adsd3500SetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int threshold)
-{    
+void control_adsd3500SetConfidenceThreshold(
+    const std::shared_ptr<aditof::Camera> &camera, int threshold) {
     Status status = Status::OK;
     status = camera->adsd3500SetConfidenceThreshold(threshold);
     if (status != Status::OK) {
@@ -411,8 +400,8 @@ void control_adsd3500SetConfidenceThreshold(const std::shared_ptr<aditof::Camera
         return;
     }
 }
-void control_adsd3500GetConfidenceThreshold(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
-{    
+void control_adsd3500GetConfidenceThreshold(
+    const std::shared_ptr<aditof::Camera> &camera, int &threshold) {
     Status status = Status::OK;
     status = camera->adsd3500GetConfidenceThreshold(threshold);
     if (status != Status::OK) {
@@ -420,8 +409,8 @@ void control_adsd3500GetConfidenceThreshold(const std::shared_ptr<aditof::Camera
         return;
     }
 }
-void control_adsd3500SetJBLFfilterEnableState(const std::shared_ptr<aditof::Camera> &camera, bool enable)
-{    
+void control_adsd3500SetJBLFfilterEnableState(
+    const std::shared_ptr<aditof::Camera> &camera, bool enable) {
     Status status = Status::OK;
     status = camera->adsd3500SetJBLFfilterEnableState(enable);
     if (status != Status::OK) {
@@ -429,8 +418,8 @@ void control_adsd3500SetJBLFfilterEnableState(const std::shared_ptr<aditof::Came
         return;
     }
 }
-void control_adsd3500GetJBLFfilterEnableState(const std::shared_ptr<aditof::Camera> &camera, bool &enable)
-{    
+void control_adsd3500GetJBLFfilterEnableState(
+    const std::shared_ptr<aditof::Camera> &camera, bool &enable) {
     Status status = Status::OK;
     status = camera->adsd3500GetJBLFfilterEnableState(enable);
     if (status != Status::OK) {
@@ -438,8 +427,8 @@ void control_adsd3500GetJBLFfilterEnableState(const std::shared_ptr<aditof::Came
         return;
     }
 }
-void control_adsd3500SetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &camera, int threshold)
-{    
+void control_adsd3500SetJBLFfilterSize(
+    const std::shared_ptr<aditof::Camera> &camera, int threshold) {
     Status status = Status::OK;
     status = camera->adsd3500SetJBLFfilterSize(threshold);
     if (status != Status::OK) {
@@ -447,8 +436,8 @@ void control_adsd3500SetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &ca
         return;
     }
 }
-void control_adsd3500GetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
-{    
+void control_adsd3500GetJBLFfilterSize(
+    const std::shared_ptr<aditof::Camera> &camera, int &threshold) {
     Status status = Status::OK;
     status = camera->adsd3500GetJBLFfilterSize(threshold);
     if (status != Status::OK) {
@@ -456,8 +445,8 @@ void control_adsd3500GetJBLFfilterSize(const std::shared_ptr<aditof::Camera> &ca
         return;
     }
 }
-void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int threshold)
-{    
+void control_adsd3500SetRadialThresholdMin(
+    const std::shared_ptr<aditof::Camera> &camera, int threshold) {
     Status status = Status::OK;
     status = camera->adsd3500SetRadialThresholdMin(threshold);
     if (status != Status::OK) {
@@ -465,8 +454,8 @@ void control_adsd3500SetRadialThresholdMin(const std::shared_ptr<aditof::Camera>
         return;
     }
 }
-void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
-{    
+void control_adsd3500GetRadialThresholdMin(
+    const std::shared_ptr<aditof::Camera> &camera, int &threshold) {
     Status status = Status::OK;
     status = camera->adsd3500GetRadialThresholdMin(threshold);
     if (status != Status::OK) {
@@ -474,8 +463,8 @@ void control_adsd3500GetRadialThresholdMin(const std::shared_ptr<aditof::Camera>
         return;
     }
 }
-void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int threshold)
-{    
+void control_adsd3500SetRadialThresholdMax(
+    const std::shared_ptr<aditof::Camera> &camera, int threshold) {
     Status status = Status::OK;
     status = camera->adsd3500SetRadialThresholdMax(threshold);
     if (status != Status::OK) {
@@ -483,8 +472,8 @@ void control_adsd3500SetRadialThresholdMax(const std::shared_ptr<aditof::Camera>
         return;
     }
 }
-void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera> &camera, int &threshold)
-{    
+void control_adsd3500GetRadialThresholdMax(
+    const std::shared_ptr<aditof::Camera> &camera, int &threshold) {
     Status status = Status::OK;
     status = camera->adsd3500GetRadialThresholdMax(threshold);
     if (status != Status::OK) {
@@ -493,12 +482,12 @@ void control_adsd3500GetRadialThresholdMax(const std::shared_ptr<aditof::Camera>
     }
 }
 
-void versioningAuxiliaryFunction(const std::shared_ptr<aditof::Camera> &camera)
-{
+void versioningAuxiliaryFunction(
+    const std::shared_ptr<aditof::Camera> &camera) {
     aditof::CameraDetails cameraDetails;
-	camera->getDetails(cameraDetails);
+    camera->getDetails(cameraDetails);
 
-	LOG(INFO) << "SD card image version: " << cameraDetails.sdCardImageVersion;
-	LOG(INFO) << "Kernel version: " << cameraDetails.kernelVersion;
-	LOG(INFO) << "U-Boot version: " << cameraDetails.uBootVersion;
+    LOG(INFO) << "SD card image version: " << cameraDetails.sdCardImageVersion;
+    LOG(INFO) << "Kernel version: " << cameraDetails.kernelVersion;
+    LOG(INFO) << "U-Boot version: " << cameraDetails.uBootVersion;
 }

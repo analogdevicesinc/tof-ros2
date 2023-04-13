@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "xyzImage_msg.h"
-#include <rclcpp/rclcpp.hpp>
 #include <chrono>
+#include <rclcpp/rclcpp.hpp>
 #include <string>
 using namespace std::chrono_literals;
 using namespace aditof;
@@ -39,15 +39,13 @@ using namespace aditof;
 XYZImageMsg::XYZImageMsg() {}
 
 XYZImageMsg::XYZImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                       aditof::Frame **frame, std::string encoding)
-{
+                         aditof::Frame **frame, std::string encoding) {
     imgEncoding = encoding;
     FrameDataToMsg(camera, frame);
 }
 
 void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                aditof::Frame **frame)
-{
+                                 aditof::Frame **frame) {
     FrameDetails fDetails;
     (*frame)->getDetails(fDetails);
 
@@ -55,8 +53,7 @@ void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
 
     uint16_t *frameData = getFrameData(frame, "xyz");
 
-    if (!frameData)
-    {
+    if (!frameData) {
         LOG(ERROR) << "getFrameData call failed";
         return;
     }
@@ -64,8 +61,7 @@ void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void XYZImageMsg::setMetadataMembers(int width, int height)
-{
+void XYZImageMsg::setMetadataMembers(int width, int height) {
     message.header.frame_id = "aditof_xyz_img";
     message.width = width;
     message.height = height;
@@ -73,20 +69,18 @@ void XYZImageMsg::setMetadataMembers(int width, int height)
 }
 
 void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                uint16_t *frameData)
-{
+                                 uint16_t *frameData) {
     m_points.clear();
     m_intensity.values.clear();
     m_range.values.clear();
 
-    int16_t *msgDataPtr = (int16_t*)frameData;
+    int16_t *msgDataPtr = (int16_t *)frameData;
 
-    for(int i=0 ; i < message.width * message.height * 3 ; i+=3)
-    {
+    for (int i = 0; i < message.width * message.height * 3; i += 3) {
         auto pt = geometry_msgs::msg::Point32();
         pt.x = static_cast<float>(msgDataPtr[i]);
-        pt.y = static_cast<float>(msgDataPtr[i+1]);
-        pt.z = static_cast<float>(msgDataPtr[i+2]);
+        pt.y = static_cast<float>(msgDataPtr[i + 1]);
+        pt.z = static_cast<float>(msgDataPtr[i + 2]);
         m_points.push_back(pt);
 
         m_intensity.values.push_back(static_cast<float>(pt.z));
@@ -95,7 +89,8 @@ void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
 
     sensor_msgs::msg::PointCloud cloud;
 
-    cloud.header.stamp.nanosec = rclcpp::Clock{RCL_ROS_TIME}.now().nanoseconds();
+    cloud.header.stamp.nanosec =
+        rclcpp::Clock{RCL_ROS_TIME}.now().nanoseconds();
     cloud.header.stamp.sec = rclcpp::Clock{RCL_ROS_TIME}.now().seconds();
     cloud.header.frame_id = "map";
 
@@ -106,14 +101,11 @@ void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
     sensor_msgs::convertPointCloudToPointCloud2(cloud, message);
 }
 
-sensor_msgs::msg::PointCloud2 XYZImageMsg::getMessagePointCloud()
-{
+sensor_msgs::msg::PointCloud2 XYZImageMsg::getMessagePointCloud() {
     return message;
 }
 
-void XYZImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub)
-{
-     pub.publish(message);
+void XYZImageMsg::publishMsg(
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub) {
+    pub.publish(message);
 }
-
-
