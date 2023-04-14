@@ -10,9 +10,15 @@
 
 # 2. ToF dependency
 ## Download debian package:
-* ([Tof lib for Ubuntu 18.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/out_ubuntu18/tof_lib.deb))
-* ([Tof lib for Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/out_ubuntu20/tof_lib.deb))
-* ([Tof lib for Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/out_ubuntu22/tof_lib.deb))
+### For Crosby:
+* Tof lib for ([Ubuntu 18.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu18/tof_lib.deb))
+* Tof lib for ([Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu20/tof_lib.deb))
+* Tof lib for ([Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu22/tof_lib.deb))
+
+### For Tembin:
+* Tof lib for ([Ubuntu 18.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/tembin/out_ubuntu18/tof_lib.deb))
+* Tof lib for ([Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/tembin/out_ubuntu20/tof_lib.deb))
+* Tof lib for ([Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/tembin/out_ubuntu22/tof_lib.deb))
 
 Install command: ```sudo dpkg -i tof_lib.deb```
 ## Building from sources
@@ -51,7 +57,7 @@ After cloning the repository in the ``ros2_ws/ run the following command:
 ```
 - Starting the node
 ```console
-  ros2 launch tof_ros2cpp camera_node.launch.xml
+  ros2 run tof_ros2cpp tof_ros2cpp ip=<ip addr> config_file=<config file path> mode=<mode number>
 ```
 ### Parameters
 Modify parameters in launch file prior to ```colcon build``` accoding to the approriate setup you have: 
