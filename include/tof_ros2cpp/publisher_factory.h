@@ -57,7 +57,7 @@ class PublisherFactory {
                    const std::shared_ptr<aditof::Camera> &camera,
                    aditof::Frame **frame, bool enableDepthCompute);
     void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,
-                          aditof::Frame **frame);
+                          aditof::Frame **frame,rclcpp ::Time timestamp);
     void deletePublishers(const std::shared_ptr<aditof::Camera> &camera);
     void setDepthFormat(const int val);
 

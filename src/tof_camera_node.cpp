@@ -102,7 +102,8 @@ class TofNode : public rclcpp::Node {
     void timer_callback() {
         if (m_streamOnFlag) {
             getNewFrame(camera, frame);
-            publishers.updatePublishers(camera, frame);
+	        rclcpp::Time TimeStamp= this->get_clock()->now();
+            publishers.updatePublishers(camera, frame,TimeStamp);
         }
     }
     rclcpp::TimerBase::SharedPtr timer_;

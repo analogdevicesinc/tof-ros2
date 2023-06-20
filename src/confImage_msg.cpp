@@ -37,15 +37,15 @@ ConfImageMsg::ConfImageMsg() {}
 ConfImageMsg::ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
                            aditof::Frame **frame, std::string encoding) {
     imgEncoding = encoding;
-    FrameDataToMsg(camera, frame);
+  //  FrameDataToMsg(camera, frame);
 }
 
 void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                  aditof::Frame **frame) {
+                                  aditof::Frame **frame, rclcpp::Time tStamp) {
     FrameDetails fDetails;
     (*frame)->getDetails(fDetails);
 
-    setMetadataMembers(fDetails.width, fDetails.height);
+    setMetadataMembers(fDetails.width, fDetails.height, tStamp);
 
     uint16_t *frameData = getFrameData(frame, "conf");
 
@@ -57,8 +57,8 @@ void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void ConfImageMsg::setMetadataMembers(int width, int height) {
-    // message.header.stamp = tStamp;
+void ConfImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
+    message.header.stamp = tStamp;
     message.header.frame_id = "aditof_conf_img";
 
     message.width = width;

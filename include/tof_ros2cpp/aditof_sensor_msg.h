@@ -44,7 +44,7 @@ class AditofSensorMsg {
   public:
     virtual ~AditofSensorMsg() = default;
     virtual void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                                aditof::Frame **frame) = 0;
+                                aditof::Frame **frame,rclcpp::Time tStamp) = 0;
     virtual sensor_msgs::msg::Image getMessage() = 0;
     virtual void
     publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) = 0;
