@@ -38,11 +38,10 @@ RAWImageMsg::RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
                          aditof::Frame **frame, std::string encoding) {
 
     message.encoding = encoding;
-    FrameDataToMsg(camera, frame);
 }
 
 void RAWImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                 aditof::Frame **frame) {
+                                 aditof::Frame **frame, rclcpp::Time tStamp) {
 
     aditof::CameraDetails *details_tmp = new aditof::CameraDetails;
     getCameraDataDetails(camera, *details_tmp);
@@ -52,7 +51,7 @@ void RAWImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
             message.height = iter.height;
         }
     }
-    setMetadataMembers(message.width, message.height);
+    setMetadataMembers(message.width, message.height, tStamp);
 
     uint16_t *frameData = getFrameData(frame, "raw");
     if (!frameData) {
@@ -63,8 +62,8 @@ void RAWImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void RAWImageMsg::setMetadataMembers(int width, int height) {
-    // message.header.stamp = tStamp;
+void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
+    message.header.stamp = tStamp;
     message.header.frame_id = "aditof_raw_img";
 
     message.encoding = message.encoding;

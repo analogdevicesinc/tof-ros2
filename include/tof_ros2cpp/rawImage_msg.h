@@ -50,11 +50,11 @@ class RAWImageMsg : public AditofSensorMsg {
      * @brief Converts the frame data to a message
      */
     void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                        aditof::Frame **frame) override;
+                        aditof::Frame **frame, rclcpp::Time tStamp) override;
     /**
      * @brief Assigns values to the message fields concerning metadata
      */
-    void setMetadataMembers(int width, int height);
+    void setMetadataMembers(int width, int height, rclcpp::Time tStamp);
 
     /**
      * @brief Assigns values to the message fields concerning the point data
