@@ -37,11 +37,10 @@ DepthImageMsg::DepthImageMsg() {}
 DepthImageMsg::DepthImageMsg(const std::shared_ptr<aditof::Camera> &camera,
                              aditof::Frame **frame, std::string encoding) {
     imgEncoding = encoding;
-  //  FrameDataToMsg(camera, frame);
 }
 
 void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                   aditof::Frame **frame,rclcpp::Time tStamp) {
+                                   aditof::Frame **frame, rclcpp::Time tStamp) {
     FrameDetails fDetails;
     (*frame)->getDetails(fDetails);
 
@@ -57,7 +56,7 @@ void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
     setDataMembers(camera, frameData);
 }
 
-void DepthImageMsg::setMetadataMembers(int width, int height,rclcpp::Time tStamp) {
+void DepthImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
     message.header.stamp = tStamp;
     message.header.frame_id = "aditof_depth_img";
 

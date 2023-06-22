@@ -83,9 +83,9 @@ void PublisherFactory::createNew(rclcpp::Node *node,
     // startCamera(camera);
 }
 void PublisherFactory::updatePublishers(
-    const std::shared_ptr<aditof::Camera> &camera, aditof::Frame **frame,rclcpp::Time timeStamp) {
+    const std::shared_ptr<aditof::Camera> &camera, aditof::Frame **frame, rclcpp::Time timeStamp) {
 	for (unsigned int i = 0; i < imgMsgs.size(); ++i) {
-        imgMsgs.at(i)->FrameDataToMsg(camera, frame,timeStamp);
+        imgMsgs.at(i)->FrameDataToMsg(camera, frame, timeStamp);
         imgMsgs.at(i)->publishMsg(*img_publishers.at(i));
     }
     for (unsigned int i = 0; i < pointCloudMsgs.size(); ++i) {

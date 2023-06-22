@@ -37,7 +37,6 @@ ConfImageMsg::ConfImageMsg() {}
 ConfImageMsg::ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
                            aditof::Frame **frame, std::string encoding) {
     imgEncoding = encoding;
-  //  FrameDataToMsg(camera, frame);
 }
 
 void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,

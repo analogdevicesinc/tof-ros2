@@ -38,7 +38,6 @@ RAWImageMsg::RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
                          aditof::Frame **frame, std::string encoding) {
 
     message.encoding = encoding;
-//    FrameDataToMsg(camera, frame);
 }
 
 void RAWImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
