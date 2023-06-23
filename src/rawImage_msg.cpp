@@ -34,60 +34,60 @@ using namespace aditof;
 
 RAWImageMsg::RAWImageMsg() {}
 
-RAWImageMsg::RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                         aditof::Frame **frame, std::string encoding) {
-
-    message.encoding = encoding;
+RAWImageMsg::RAWImageMsg(
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
+{
+  message.encoding = encoding;
 }
 
-void RAWImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                 aditof::Frame **frame, rclcpp::Time tStamp) {
-
-    aditof::CameraDetails *details_tmp = new aditof::CameraDetails;
-    getCameraDataDetails(camera, *details_tmp);
-    for (auto iter : (*details_tmp).frameType.dataDetails) {
-        if (!strcmp(iter.type.c_str(), "raw")) {
-            message.width = iter.width;
-            message.height = iter.height;
-        }
+void RAWImageMsg::FrameDataToMsg(
+  const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)
+{
+  aditof::CameraDetails * details_tmp = new aditof::CameraDetails;
+  getCameraDataDetails(camera, *details_tmp);
+  for (auto iter : (*details_tmp).frameType.dataDetails) {
+    if (!strcmp(iter.type.c_str(), "raw")) {
+      message.width = iter.width;
+      message.height = iter.height;
     }
-    setMetadataMembers(message.width, message.height, tStamp);
+  }
+  setMetadataMembers(message.width, message.height, tStamp);
 
-    uint16_t *frameData = getFrameData(frame, "raw");
-    if (!frameData) {
-        LOG(ERROR) << "getFrameData call failed";
-        return;
-    }
+  uint16_t * frameData = getFrameData(frame, "raw");
+  if (!frameData) {
+    LOG(ERROR) << "getFrameData call failed";
+    return;
+  }
 
-    setDataMembers(camera, frameData);
+  setDataMembers(camera, frameData);
 }
 
-void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
-    message.header.stamp = tStamp;
-    message.header.frame_id = "aditof_raw_img";
+void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
+{
+  message.header.stamp = tStamp;
+  message.header.frame_id = "aditof_raw_img";
 
-    message.encoding = message.encoding;
-    message.is_bigendian = false;
+  message.encoding = message.encoding;
+  message.is_bigendian = false;
 
-    int pixelByteCnt =
-        sensor_msgs::image_encodings::bitDepth(message.encoding) / 8 *
-        sensor_msgs::image_encodings::numChannels(message.encoding);
-    message.step = width * pixelByteCnt;
+  int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(message.encoding) / 8 *
+                     sensor_msgs::image_encodings::numChannels(message.encoding);
+  message.step = width * pixelByteCnt;
 
-    message.data.resize(message.step * height);
+  message.data.resize(message.step * height);
 }
 
-void RAWImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                 uint16_t *frameData) {
-    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
-
-        uint8_t *msgDataPtr = message.data.data();
-        memcpy(msgDataPtr, frameData, message.step * message.height);
-    } else
-        LOG(ERROR) << "Image encoding invalid or not available";
+void RAWImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+{
+  if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
+    uint8_t * msgDataPtr = message.data.data();
+    memcpy(msgDataPtr, frameData, message.step * message.height);
+  } else
+    LOG(ERROR) << "Image encoding invalid or not available";
 }
 
 sensor_msgs::msg::Image RAWImageMsg::getMessage() { return message; }
-void RAWImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
-    pub.publish(message);
+void RAWImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> & pub)
+{
+  pub.publish(message);
 }
