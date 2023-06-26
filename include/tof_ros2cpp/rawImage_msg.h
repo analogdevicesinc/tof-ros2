@@ -37,40 +37,41 @@
 #include "aditof_sensor_msg.h"
 #include "aditof_utils.h"
 
-class RAWImageMsg : public AditofSensorMsg {
-  public:
-    RAWImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                aditof::Frame **frame, std::string encoding);
-    /**
+class RAWImageMsg : public AditofSensorMsg
+{
+public:
+  RAWImageMsg(
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding);
+  /**
      * @brief Each message corresponds to one frame
      */
-    sensor_msgs::msg::Image message;
+  sensor_msgs::msg::Image message;
 
-    /**
+  /**
      * @brief Converts the frame data to a message
      */
-    void FrameDataToMsg(const std::shared_ptr<aditof::Camera> &camera,
-                        aditof::Frame **frame, rclcpp::Time tStamp) override;
-    /**
+  void FrameDataToMsg(
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+    rclcpp::Time tStamp) override;
+  /**
      * @brief Assigns values to the message fields concerning metadata
      */
-    void setMetadataMembers(int width, int height, rclcpp::Time tStamp);
+  void setMetadataMembers(int width, int height, rclcpp::Time tStamp);
 
-    /**
+  /**
      * @brief Assigns values to the message fields concerning the point data
      */
-    void setDataMembers(const std::shared_ptr<aditof::Camera> &camera,
-                        uint16_t *frameData);
+  void setDataMembers(const std::shared_ptr<aditof::Camera> & camera, uint16_t * frameData);
 
-    /**
+  /**
      * @brief Publishes a message
      */
-    void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) override;
+  void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> & pub) override;
 
-    sensor_msgs::msg::Image getMessage() override;
+  sensor_msgs::msg::Image getMessage() override;
 
-  private:
-    RAWImageMsg();
+private:
+  RAWImageMsg();
 };
 
-#endif // RAWIMAGE_MSG_H
+#endif  // RAWIMAGE_MSG_H

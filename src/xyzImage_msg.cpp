@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "xyzImage_msg.h"
+
 #include <chrono>
 #include <rclcpp/rclcpp.hpp>
 #include <string>
@@ -38,74 +39,73 @@ using namespace aditof;
 
 XYZImageMsg::XYZImageMsg() {}
 
-XYZImageMsg::XYZImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                         aditof::Frame **frame, std::string encoding) {
-    imgEncoding = encoding;
-    FrameDataToMsg(camera, frame);
+XYZImageMsg::XYZImageMsg(
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
+{
+  imgEncoding = encoding;
+  FrameDataToMsg(camera, frame);
 }
 
-void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                 aditof::Frame **frame) {
-    FrameDetails fDetails;
-    (*frame)->getDetails(fDetails);
+void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> & camera, aditof::Frame ** frame)
+{
+  FrameDetails fDetails;
+  (*frame)->getDetails(fDetails);
 
-    setMetadataMembers(fDetails.width, fDetails.height);
+  setMetadataMembers(fDetails.width, fDetails.height);
 
-    uint16_t *frameData = getFrameData(frame, "xyz");
+  uint16_t * frameData = getFrameData(frame, "xyz");
 
-    if (!frameData) {
-        LOG(ERROR) << "getFrameData call failed";
-        return;
-    }
+  if (!frameData) {
+    LOG(ERROR) << "getFrameData call failed";
+    return;
+  }
 
-    setDataMembers(camera, frameData);
+  setDataMembers(camera, frameData);
 }
 
-void XYZImageMsg::setMetadataMembers(int width, int height) {
-    message.header.frame_id = "aditof_xyz_img";
-    message.width = width;
-    message.height = height;
-    message.is_bigendian = false;
+void XYZImageMsg::setMetadataMembers(int width, int height)
+{
+  message.header.frame_id = "aditof_xyz_img";
+  message.width = width;
+  message.height = height;
+  message.is_bigendian = false;
 }
 
-void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                 uint16_t *frameData) {
-    m_points.clear();
-    m_intensity.values.clear();
-    m_range.values.clear();
+void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+{
+  m_points.clear();
+  m_intensity.values.clear();
+  m_range.values.clear();
 
-    int16_t *msgDataPtr = (int16_t *)frameData;
+  int16_t * msgDataPtr = (int16_t *)frameData;
 
-    for (int i = 0; i < message.width * message.height * 3; i += 3) {
-        auto pt = geometry_msgs::msg::Point32();
-        pt.x = static_cast<float>(msgDataPtr[i]);
-        pt.y = static_cast<float>(msgDataPtr[i + 1]);
-        pt.z = static_cast<float>(msgDataPtr[i + 2]);
-        m_points.push_back(pt);
+  for (int i = 0; i < message.width * message.height * 3; i += 3) {
+    auto pt = geometry_msgs::msg::Point32();
+    pt.x = static_cast<float>(msgDataPtr[i]);
+    pt.y = static_cast<float>(msgDataPtr[i + 1]);
+    pt.z = static_cast<float>(msgDataPtr[i + 2]);
+    m_points.push_back(pt);
 
-        m_intensity.values.push_back(static_cast<float>(pt.z));
-        m_range.values.push_back(static_cast<float>(pt.z));
-    }
+    m_intensity.values.push_back(static_cast<float>(pt.z));
+    m_range.values.push_back(static_cast<float>(pt.z));
+  }
 
-    sensor_msgs::msg::PointCloud cloud;
+  sensor_msgs::msg::PointCloud cloud;
 
-    cloud.header.stamp.nanosec =
-        rclcpp::Clock{RCL_ROS_TIME}.now().nanoseconds();
-    cloud.header.stamp.sec = rclcpp::Clock{RCL_ROS_TIME}.now().seconds();
-    cloud.header.frame_id = "map";
+  cloud.header.stamp.nanosec = rclcpp::Clock{RCL_ROS_TIME}.now().nanoseconds();
+  cloud.header.stamp.sec = rclcpp::Clock{RCL_ROS_TIME}.now().seconds();
+  cloud.header.frame_id = "map";
 
-    cloud.points = m_points;
-    cloud.channels.push_back(m_intensity);
-    cloud.channels.push_back(m_range);
+  cloud.points = m_points;
+  cloud.channels.push_back(m_intensity);
+  cloud.channels.push_back(m_range);
 
-    sensor_msgs::convertPointCloudToPointCloud2(cloud, message);
+  sensor_msgs::convertPointCloudToPointCloud2(cloud, message);
 }
 
-sensor_msgs::msg::PointCloud2 XYZImageMsg::getMessagePointCloud() {
-    return message;
-}
+sensor_msgs::msg::PointCloud2 XYZImageMsg::getMessagePointCloud() { return message; }
 
-void XYZImageMsg::publishMsg(
-    rclcpp::Publisher<sensor_msgs::msg::PointCloud2> &pub) {
-    pub.publish(message);
+void XYZImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> & pub)
+{
+  pub.publish(message);
 }

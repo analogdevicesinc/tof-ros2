@@ -32,43 +32,42 @@
 #ifndef PUBLISHER_FACTORY_H
 #define PUBLISHER_FACTORY_H
 
-#include "aditof/camera.h"
-#include <aditof_utils.h>
-#include <memory>
-
-#include "image_transport/image_transport.hpp"
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/point_cloud2.hpp>
-
 #include <aditof_sensor_msg.h>
+#include <aditof_utils.h>
 #include <confImage_msg.h>
 #include <depthImage_msg.h>
 #include <irImage_msg.h>
 #include <rawImage_msg.h>
 #include <xyzImage_msg.h>
 
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <typeinfo>
 #include <vector>
 
-class PublisherFactory {
-  public:
-    PublisherFactory();
-    void createNew(rclcpp::Node *node,
-                   const std::shared_ptr<aditof::Camera> &camera,
-                   aditof::Frame **frame, bool enableDepthCompute);
-    void updatePublishers(const std::shared_ptr<aditof::Camera> &camera,
-                          aditof::Frame **frame, rclcpp ::Time timestamp);
-    void deletePublishers(const std::shared_ptr<aditof::Camera> &camera);
-    void setDepthFormat(const int val);
+#include "aditof/camera.h"
+#include "image_transport/image_transport.hpp"
 
-  private:
-    std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr>
-        img_publishers;
-    std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
+class PublisherFactory
+{
+public:
+  PublisherFactory();
+  void createNew(
+    rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+    bool enableDepthCompute);
+  void updatePublishers(
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+    rclcpp ::Time timestamp);
+  void deletePublishers(const std::shared_ptr<aditof::Camera> & camera);
+  void setDepthFormat(const int val);
 
-    std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr>
-        pointCloud_publisher;
-    std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
+private:
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> img_publishers;
+  std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
+
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloud_publisher;
+  std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
 };
 
-#endif // PUBLISHER_FACTORY_H
+#endif  // PUBLISHER_FACTORY_H

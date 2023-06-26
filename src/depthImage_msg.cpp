@@ -34,130 +34,130 @@ using namespace aditof;
 
 DepthImageMsg::DepthImageMsg() {}
 
-DepthImageMsg::DepthImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                             aditof::Frame **frame, std::string encoding) {
-    imgEncoding = encoding;
+DepthImageMsg::DepthImageMsg(
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
+{
+  imgEncoding = encoding;
 }
 
-void DepthImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                   aditof::Frame **frame, rclcpp::Time tStamp) {
-    FrameDetails fDetails;
-    (*frame)->getDetails(fDetails);
+void DepthImageMsg::FrameDataToMsg(
+  const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)
+{
+  FrameDetails fDetails;
+  (*frame)->getDetails(fDetails);
 
-    setMetadataMembers(fDetails.width, fDetails.height, tStamp);
+  setMetadataMembers(fDetails.width, fDetails.height, tStamp);
 
-    uint16_t *frameData = getFrameData(frame, "depth");
+  uint16_t * frameData = getFrameData(frame, "depth");
 
-    if (!frameData) {
-        LOG(ERROR) << "getFrameData call failed";
-        return;
-    }
+  if (!frameData) {
+    LOG(ERROR) << "getFrameData call failed";
+    return;
+  }
 
-    setDataMembers(camera, frameData);
+  setDataMembers(camera, frameData);
 }
 
-void DepthImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
-    message.header.stamp = tStamp;
-    message.header.frame_id = "aditof_depth_img";
+void DepthImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
+{
+  message.header.stamp = tStamp;
+  message.header.frame_id = "aditof_depth_img";
 
-    message.width = width;
-    message.height = height;
-    message.encoding = imgEncoding;
-    message.is_bigendian = false;
+  message.width = width;
+  message.height = height;
+  message.encoding = imgEncoding;
+  message.is_bigendian = false;
 
-    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
-                       sensor_msgs::image_encodings::numChannels(imgEncoding);
-    message.step = width * pixelByteCnt;
+  int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
+                     sensor_msgs::image_encodings::numChannels(imgEncoding);
+  message.step = width * pixelByteCnt;
 
-    message.data.resize(message.step * height);
+  message.data.resize(message.step * height);
 }
 
-void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                   uint16_t *frameData) {
-
-    if (message.encoding.compare(sensor_msgs::image_encodings::RGBA8) == 0) {
-        std::vector<uint16_t> depthData(
-            frameData, frameData + message.width * message.height);
-        dataToRGBA8(0, 0x0fff, frameData);
-    } else if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) ==
-               0) {
-        memcpy(message.data.data(), frameData,
-               2 * message.width * message.height);
-    } else
-        LOG(ERROR) << "Image encoding invalid or not available";
+void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+{
+  if (message.encoding.compare(sensor_msgs::image_encodings::RGBA8) == 0) {
+    std::vector<uint16_t> depthData(frameData, frameData + message.width * message.height);
+    dataToRGBA8(0, 0x0fff, frameData);
+  } else if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
+    memcpy(message.data.data(), frameData, 2 * message.width * message.height);
+  } else
+    LOG(ERROR) << "Image encoding invalid or not available";
 }
 
-void DepthImageMsg::dataToRGBA8(uint16_t min_range, uint16_t max_range,
-                                uint16_t *data) {
-    uint8_t *msgDataPtr = message.data.data();
-    int32_t delta = static_cast<uint32_t>(max_range - min_range);
+void DepthImageMsg::dataToRGBA8(uint16_t min_range, uint16_t max_range, uint16_t * data)
+{
+  uint8_t * msgDataPtr = message.data.data();
+  int32_t delta = static_cast<uint32_t>(max_range - min_range);
 
-    for (unsigned int i = 0; i < message.width * message.height; i++) {
-        // normalized value
-        double norm_val = static_cast<double>(
-            static_cast<double>(data[i] - min_range) / delta);
-        double hue = norm_val * INDIGO + (1.0f - norm_val) * RED;
+  for (unsigned int i = 0; i < message.width * message.height; i++) {
+    // normalized value
+    double norm_val = static_cast<double>(static_cast<double>(data[i] - min_range) / delta);
+    double hue = norm_val * INDIGO + (1.0f - norm_val) * RED;
 
-        Rgba8Color color = HSVtoRGBA8(hue, SAT, VAL);
-        memcpy(msgDataPtr, &color, 4);
-        msgDataPtr += 4;
-    }
+    Rgba8Color color = HSVtoRGBA8(hue, SAT, VAL);
+    memcpy(msgDataPtr, &color, 4);
+    msgDataPtr += 4;
+  }
 }
 
-Rgba8Color DepthImageMsg::HSVtoRGBA8(double hue, double sat, double val) {
-    double c = 0.0, m = 0.0, x = 0.0;
-    double h = hue / 60.0;
+Rgba8Color DepthImageMsg::HSVtoRGBA8(double hue, double sat, double val)
+{
+  double c = 0.0, m = 0.0, x = 0.0;
+  double h = hue / 60.0;
 
-    c = sat * val;
-    x = c * (1.0 - std::abs(std::fmod(h, 2) - 1.0));
-    m = val - c;
+  c = sat * val;
+  x = c * (1.0 - std::abs(std::fmod(h, 2) - 1.0));
+  m = val - c;
 
-    Rgb32Color rgb32;
+  Rgb32Color rgb32;
 
-    rgb32.r = m;
-    rgb32.g = m;
-    rgb32.b = m;
+  rgb32.r = m;
+  rgb32.g = m;
+  rgb32.b = m;
 
-    if (h <= 1.0) {
-        rgb32.r += c;
-        rgb32.g += x;
-    } else if (h <= 2.0) {
-        rgb32.r += x;
-        rgb32.g += c;
-    } else if (h <= 3.0) {
-        rgb32.g += c;
-        rgb32.b += x;
-    } else if (h <= 4.0) {
-        rgb32.g += x;
-        rgb32.b += c;
-    } else if (h <= 5.0) {
-        rgb32.r += x;
-        rgb32.b += c;
-    } else if (h <= 6.0) {
-        rgb32.r += c;
-        rgb32.b += x;
-    }
+  if (h <= 1.0) {
+    rgb32.r += c;
+    rgb32.g += x;
+  } else if (h <= 2.0) {
+    rgb32.r += x;
+    rgb32.g += c;
+  } else if (h <= 3.0) {
+    rgb32.g += c;
+    rgb32.b += x;
+  } else if (h <= 4.0) {
+    rgb32.g += x;
+    rgb32.b += c;
+  } else if (h <= 5.0) {
+    rgb32.r += x;
+    rgb32.b += c;
+  } else if (h <= 6.0) {
+    rgb32.r += c;
+    rgb32.b += x;
+  }
 
-    Rgba8Color rgba8;
+  Rgba8Color rgba8;
 
-    rgba8.r = floor(rgb32.r >= 1.0 ? 255 : rgb32.r * 256.0);
-    rgba8.g = floor(rgb32.g >= 1.0 ? 255 : rgb32.g * 256.0);
-    rgba8.b = floor(rgb32.b >= 1.0 ? 255 : rgb32.b * 256.0);
-    rgba8.a = 0XFF;
+  rgba8.r = floor(rgb32.r >= 1.0 ? 255 : rgb32.r * 256.0);
+  rgba8.g = floor(rgb32.g >= 1.0 ? 255 : rgb32.g * 256.0);
+  rgba8.b = floor(rgb32.b >= 1.0 ? 255 : rgb32.b * 256.0);
+  rgba8.a = 0XFF;
 
-    return rgba8;
+  return rgba8;
 }
 
-void DepthImageMsg::publishMsg(
-    rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
-    pub.publish(message);
+void DepthImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> & pub)
+{
+  pub.publish(message);
 }
 
-void DepthImageMsg::setDepthDataFormat(int value) {
-    message.encoding = (value == 0) ? sensor_msgs::image_encodings::RGBA8
-                                    : sensor_msgs::image_encodings::MONO16;
-    imgEncoding = (value == 0) ? sensor_msgs::image_encodings::RGBA8
-                               : sensor_msgs::image_encodings::MONO16;
+void DepthImageMsg::setDepthDataFormat(int value)
+{
+  message.encoding =
+    (value == 0) ? sensor_msgs::image_encodings::RGBA8 : sensor_msgs::image_encodings::MONO16;
+  imgEncoding =
+    (value == 0) ? sensor_msgs::image_encodings::RGBA8 : sensor_msgs::image_encodings::MONO16;
 }
 
 sensor_msgs::msg::Image DepthImageMsg::getMessage() { return message; }

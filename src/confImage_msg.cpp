@@ -34,57 +34,61 @@ using namespace aditof;
 
 ConfImageMsg::ConfImageMsg() {}
 
-ConfImageMsg::ConfImageMsg(const std::shared_ptr<aditof::Camera> &camera,
-                           aditof::Frame **frame, std::string encoding) {
-    imgEncoding = encoding;
+ConfImageMsg::ConfImageMsg(
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
+{
+  imgEncoding = encoding;
 }
 
-void ConfImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> &camera,
-                                  aditof::Frame **frame, rclcpp::Time tStamp) {
-    FrameDetails fDetails;
-    (*frame)->getDetails(fDetails);
+void ConfImageMsg::FrameDataToMsg(
+  const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)
+{
+  FrameDetails fDetails;
+  (*frame)->getDetails(fDetails);
 
-    setMetadataMembers(fDetails.width, fDetails.height, tStamp);
+  setMetadataMembers(fDetails.width, fDetails.height, tStamp);
 
-    uint16_t *frameData = getFrameData(frame, "conf");
+  uint16_t * frameData = getFrameData(frame, "conf");
 
-    if (!frameData) {
-        LOG(ERROR) << "getFrameData call failed";
-        return;
-    }
+  if (!frameData) {
+    LOG(ERROR) << "getFrameData call failed";
+    return;
+  }
 
-    setDataMembers(camera, frameData);
+  setDataMembers(camera, frameData);
 }
 
-void ConfImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp) {
-    message.header.stamp = tStamp;
-    message.header.frame_id = "aditof_conf_img";
+void ConfImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
+{
+  message.header.stamp = tStamp;
+  message.header.frame_id = "aditof_conf_img";
 
-    message.width = width;
-    message.height = height;
+  message.width = width;
+  message.height = height;
 
-    message.encoding = imgEncoding;
-    message.is_bigendian = false;
+  message.encoding = imgEncoding;
+  message.is_bigendian = false;
 
-    int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
-                       sensor_msgs::image_encodings::numChannels(imgEncoding);
-    message.step = width * pixelByteCnt;
+  int pixelByteCnt = sensor_msgs::image_encodings::bitDepth(imgEncoding) / 8 *
+                     sensor_msgs::image_encodings::numChannels(imgEncoding);
+  message.step = width * pixelByteCnt;
 
-    message.data.resize(message.step * height);
+  message.data.resize(message.step * height);
 }
 
-void ConfImageMsg::setDataMembers(const std::shared_ptr<Camera> &camera,
-                                  uint16_t *frameData) {
-    if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
-        irTo16bitGrayscale(frameData, message.width, message.height, true);
-        uint8_t *msgDataPtr = message.data.data();
-        memcpy(msgDataPtr, frameData, message.step * message.height);
-    } else
-        LOG(ERROR) << "Image encoding invalid or not available";
+void ConfImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+{
+  if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
+    irTo16bitGrayscale(frameData, message.width, message.height, true);
+    uint8_t * msgDataPtr = message.data.data();
+    memcpy(msgDataPtr, frameData, message.step * message.height);
+  } else
+    LOG(ERROR) << "Image encoding invalid or not available";
 }
 
 sensor_msgs::msg::Image ConfImageMsg::getMessage() { return message; }
 
-void ConfImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> &pub) {
-    pub.publish(message);
+void ConfImageMsg::publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> & pub)
+{
+  pub.publish(message);
 }
