@@ -1,0 +1,56 @@
+trigger:
+- main
+
+pr: 
+- main
+
+resources:
+  containers:
+  - container: ubuntu_20_04_ros2_foxy
+    image: ros:foxy-ros-base
+    options: '-u root:sudo'
+  - container: ubuntu_22_04_ros2_humble
+    image: ros:humble-ros-base
+    options: '-u root:sudo'
+  - container: ubuntu_22_04_ros2_rolling
+    image: ros:rolling-ros-base
+    options: '-u root:sudo'
+
+
+strategy:
+  matrix:
+    ubuntu_20_04_foxy:
+      buildContainer: ubuntu_20_04_ros2_foxy
+    ubuntu_22_04_humble:
+      buildContainer: ubuntu_22_04_ros2_humble
+    ubuntu_22_04_rolling:
+      buildContainer: ubuntu_22_04_ros2_rolling
+
+container: $[ variables ['buildContainer'] ]
+
+steps:
+  - script: ./CI/dependencies_setup.sh
+    displayName: 'Dependencies Setup'
+
+  - script: |
+      #!/bin/bash
+      rm -rf ToF && git clone https://github.com/analogdevicesinc/ToF && cd ToF && mkdir build && cd build && sudo cmake -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" -DUSE_DEPTH_COMPUTE_STUBS=1 .. && sudo make install .
+    displayName: 'ToF Build'
+
+  - script: |
+      #!/bin/bash
+      rm -rf ros2_ws && mkdir -p ros2_ws/src && cd ros2_ws/src && git clone https://github.com/analogdevicesinc/tof-ros2 && cd ../ && . /opt/ros/foxy/setup.sh && colcon build
+    condition: eq( variables['buildContainer'], 'ubuntu_20_04_ros2_foxy' )
+    displayName: 'ros2_foxy'
+
+  - script: |
+      #!/bin/bash
+      rm -rf ros2_ws && mkdir -p ros2_ws/src && cd ros2_ws/src && git clone https://github.com/analogdevicesinc/tof-ros2 && cd ../ && . /opt/ros/humble/setup.sh && colcon build
+    condition: eq( variables['buildContainer'], 'ubuntu_22_04_ros2_humble' )
+    displayName: 'ros2_humble'
+
+  - script: |
+      #!/bin/bash
+      rm -rf ros2_ws && mkdir -p ros2_ws/src && cd ros2_ws/src && git clone https://github.com/analogdevicesinc/tof-ros2 && cd ../ && . /opt/ros/rolling/setup.sh && colcon build
+    condition: eq( variables['buildContainer'], 'ubuntu_22_04_ros2_rolling' )
+    displayName: 'ros2_rolling'
