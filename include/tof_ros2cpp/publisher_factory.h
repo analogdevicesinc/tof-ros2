@@ -47,7 +47,6 @@
 #include <vector>
 
 #include "aditof/camera.h"
-#include "image_transport/image_transport.hpp"
 
 class PublisherFactory
 {

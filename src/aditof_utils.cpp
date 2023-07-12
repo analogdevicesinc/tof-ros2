@@ -99,7 +99,7 @@ std::shared_ptr<Camera> initCamera(std::string * arguments)
   if (arguments[0].empty()) {
     system.getCameraList(cameras);
   } else {
-    system.getCameraListAtIp(cameras, arguments[0]);
+    system.getCameraList(cameras, arguments[0]);
   }
 
   if (cameras.empty()) {
