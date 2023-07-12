@@ -42,7 +42,6 @@
 
 #include "aditof/camera.h"
 #include "aditof/system.h"
-#include "image_transport/image_transport.hpp"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
