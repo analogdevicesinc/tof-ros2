@@ -50,8 +50,7 @@ After cloning the repository in the ``ros2_ws/ run the following command:
 
 ### With ```roslaunch```
 
-* EVAL-ADTF3175-NXZ : ```ros2 launch tof_ros2cpp camera_EVAL-ADTF3175-NXZ.launch.xml```
-* EVAL-ADTF3175D-NXZ : ```ros2 launch tof_ros2cpp camera_EVAL-ADTF3175D-NXZ.launch.xml```
+* EVAL-ADTF3175D : ```ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml```
 
 ### With ```ros2 run```
 - In the general ROS2 workspace run the following code, setting up the path towards shaed library:
