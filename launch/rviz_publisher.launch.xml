@@ -1,26 +1,25 @@
 <launch>
-  <let name='ip' value='10.42.0.1'/>
-  <let name='config_file' value='config/config_adsd3500_adsd3030_new_modes.json'/>
-  <let name='mode' value='1'/>
-  <node 
-    pkg = 'tof_ros2cpp' 
-    exec = 'tof_ros2cpp' 
-    name = 'tof_ros2cpp' 
-    args = 'ip=$(var ip) config_file=$(var config_file) mode=$(var mode)' 
-    output = 'screen'
-  />
-  <node 
-    pkg = 'tf2_ros' 
-    type = 'static_transform_publisher'
-    args = '0 0 0 0 1.57 1.57 base_link pointcloud'
-  />
-
-
-  <!-- <node 
-    name='rviz2' 
-    pkg='rviz2' 
-    exec='rviz2' 
-    args='-d /home/robi/ros2_ws/src/tof-ros2/rviz/pointcloud.rviz'
-  /> -->
-
+	<let name='ip' value='10.42.0.1'/>
+	<let name='config_file' value='config/config_adsd3500_adsd3100.json'/>
+	<let name='mode' value='2'/>
+	<node 
+		pkg = 'tof_ros2cpp' 
+		exec = 'tof_ros2cpp' 
+		name = 'tof_ros2cpp' 
+		args = 'ip=$(var ip) config_file=$(var config_file) mode=$(var mode)' 
+		output = 'screen'
+	/>
+	<node 
+		pkg = 'tf2_ros' 
+		exec='static_transform_publisher' 
+		args ="'0', '0', '0', '0', '0', '1', 'world', 'mystaticturtle'" 
+		launch-prefix="bash -c 'sleep 10'"
+	/>
+	<!-- Wait for starting the camera node -->
+	<!-- <node 
+		name='rviz2' 
+		pkg='rviz2' 
+		exec='rviz2' 
+		args='-d /home/robi/ros2_ws/src/tof-ros2/rviz/pointcloud.rviz'
+	/> -->
 </launch>
