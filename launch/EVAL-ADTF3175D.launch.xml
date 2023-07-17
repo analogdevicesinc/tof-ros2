@@ -1,0 +1,13 @@
+<launch>
+        <let name='ip' value='10.42.0.1'/>
+        <let name='config_file' value='config/config_adsd3500_adsd3100.json'/>
+        <let name='mode' value='2'/>
+        <node 
+                pkg='tof_ros2cpp' 
+                exec='tof_ros2cpp' 
+                name='tof_ros2cpp' 
+                args='ip=$(var ip) config_file=$(var config_file) mode=$(var mode)' 
+                output='screen'
+        />
+</launch>
+  
