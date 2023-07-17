@@ -30,14 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "aditof_utils.h"
-
 #include <aditof/system.h>
-
 #include <regex>
-// #include <ros/package.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <rclcpp/rclcpp.hpp>
 
 std::mutex mtx_dynamic_rec;
@@ -47,7 +43,6 @@ std::string * parseArgs(int argc, char ** argv)
 {
   google::InitGoogleLogging(argv[0]);
   FLAGS_alsologtostderr = 1;
-
   std::string ip = "";
   std::string config_path = "";
   std::string use_depthCompute = "";
@@ -81,7 +76,7 @@ std::string * parseArgs(int argc, char ** argv)
   }
 
   std::string * result = new std::string[5];
-  result[0] = ip;
+  result[0] = std::string("ip:") + ip;
   result[1] = config_path;
   result[2] = mode;
 
