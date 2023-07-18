@@ -14,14 +14,12 @@
 ## 2. ToF dependency
 ### Download debian package:
 #### For Crosby:
-* Tof lib for ([Ubuntu 18.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu18/tof_lib.deb)) [Deprecated]
-* Tof lib for ([Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu20/tof_lib.deb)) [Rel. ver. 4.2.0]
-* Tof lib for ([Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu22/tof_lib.deb)) [Rel. ver. 4.2.0]
+* Tof lib for ([Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu20/tof_lib.deb)) [Latest SDK master]
+* Tof lib for ([Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/crosby/out_ubuntu22/tof_lib.deb)) [Latest SDK master]
 
 #### For Adsd3030:
-* Tof lib for ([Ubuntu 18.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/adsd3030/out_ubuntu18/tof_lib.deb)) [Deprecated]
-* Tof lib for ([Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/adsd3030/out_ubuntu20/tof_lib.deb)) [Rel. ver. 4.2.0]
-* Tof lib for ([Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/adsd3030/out_ubuntu22/tof_lib.deb)) [Rel. ver. 4.2.0]
+* Tof lib for ([Ubuntu 20.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/adsd3030/out_ubuntu20/tof_lib.deb)) [Latest SDK master]
+* Tof lib for ([Ubuntu 22.04](https://swdownloads.analog.com/cse/aditof/tof_deb_pkg/adsd3030/out_ubuntu22/tof_lib.deb)) [Latest SDK master]
 
 Install command: ```sudo dpkg -i tof_lib.deb```
 ### Building from sources
@@ -47,16 +45,20 @@ After cloning the repository in the ``ros2_ws/ run the following command:
 ```
 
 ## Starting camera node
-
-### With ```roslaunch```
-
-* EVAL-ADTF3175D : ```ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml```
-
-### With ```ros2 run```
 - In the general ROS2 workspace run the following code, setting up the path towards shaed library:
+
 ```console
   export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/opt/websockets/lib;/usr/local/lib"
 ```
+### With ```roslaunch```
+
+* EVAL-ADTF3175D : 
+```console
+ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
+```
+
+### With ```ros2 run```
+
 - Starting the node
 ```console
   ros2 run tof_ros2cpp tof_ros2cpp ip=10.42.0.1 config_file=<config file path> mode=<mode number>
