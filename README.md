@@ -76,6 +76,6 @@ ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
  * 2: sr-qnative (short-range quarter native)
  * 3: lr-qnative (long-range quarter native)
  * 4: pcm-native 
- * 6: sr-mixed (short-range mixed)
- * 5: lr-mixed (long-range mixed)
+ * 5: sr-mixed (short-range mixed)
+ * 6: lr-mixed (long-range mixed)
 
