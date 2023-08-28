@@ -33,24 +33,24 @@ set(SOURCES ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
 FILE(GLOB_RECURSE HeaderFiles ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp/*.h)
 file(GLOB SOURCES SourceFiles ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
-add_executable(tof_ros2cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/tof_camera_node.cpp ${SOURCES} ${HeaderFiles} ${SourceFiles})
+add_executable(tof_ros2cpp_node ${CMAKE_CURRENT_SOURCE_DIR}/src/tof_camera_node.cpp ${SOURCES} ${HeaderFiles} ${SourceFiles})
 
-target_include_directories(tof_ros2cpp PUBLIC ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
-target_sources(tof_ros2cpp INTERFACE ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
+target_include_directories(tof_ros2cpp_node PUBLIC ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
+target_sources(tof_ros2cpp_node INTERFACE ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
 
-ament_target_dependencies(tof_ros2cpp rclcpp std_msgs glog sensor_msgs)
+ament_target_dependencies(tof_ros2cpp_node rclcpp std_msgs glog sensor_msgs)
 
-target_include_directories(tof_ros2cpp PUBLIC "${ADITOF_INCLUDE_DIRS}")
-target_include_directories(tof_ros2cpp PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS}")
-target_link_libraries(tof_ros2cpp "${ADITOF_LIBRARIES}")
-target_link_libraries(tof_ros2cpp aditof)
-target_link_libraries(tof_ros2cpp websockets_shared)
-target_link_libraries(tof_ros2cpp tofi_compute)
-target_link_libraries(tof_ros2cpp tofi_config)
-target_link_libraries(tof_ros2cpp glog::glog)
+target_include_directories(tof_ros2cpp_node PUBLIC "${ADITOF_INCLUDE_DIRS}")
+target_include_directories(tof_ros2cpp_node PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS}")
+target_link_libraries(tof_ros2cpp_node "${ADITOF_LIBRARIES}")
+target_link_libraries(tof_ros2cpp_node aditof)
+target_link_libraries(tof_ros2cpp_node websockets_shared)
+target_link_libraries(tof_ros2cpp_node tofi_compute)
+target_link_libraries(tof_ros2cpp_node tofi_config)
+target_link_libraries(tof_ros2cpp_node glog::glog)
 
 install(TARGETS
-tof_ros2cpp
+tof_ros2cpp_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

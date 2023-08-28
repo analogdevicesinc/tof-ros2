@@ -61,7 +61,7 @@ ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
 
 - Starting the node
 ```console
-  ros2 run tof_ros2cpp tof_ros2cpp ip=10.42.0.1 config_file=<config file path> mode=<mode number>
+  ros2 run tof_ros2cpp tof_ros2cpp_node ip=10.42.0.1 config_file=<config file path> mode=<mode number>
 ```
 
 #### Parameters:

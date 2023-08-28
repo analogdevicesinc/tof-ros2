@@ -4,7 +4,7 @@
 	<let name='mode' value='2'/>
 	<node 
 		pkg = 'tof_ros2cpp' 
-		exec = 'tof_ros2cpp' 
+		exec = 'tof_ros2cpp_node' 
 		name = 'tof_ros2cpp' 
 		args = 'ip=$(var ip) config_file=$(var config_file) mode=$(var mode)' 
 		output = 'screen'
