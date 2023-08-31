@@ -31,10 +31,6 @@ else()
     message(STATUS "Compiling with aditof_VERSION ${aditof_VERSION}")
 endif()
 
-find_library(TOFI_COMPUTE
-  NAMES tofi_compute
-  PATHS /usr/lib)
-
 set(SOURCE ${CMAKE_SOURCE_DIR}/include/tof-ros2)
 set(SOURCES ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
 
@@ -53,8 +49,6 @@ target_include_directories(tof_ros2cpp_node PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS
 target_link_libraries(tof_ros2cpp_node "${ADITOF_LIBRARIES}")
 target_link_libraries(tof_ros2cpp_node aditof)
 target_link_libraries(tof_ros2cpp_node websockets_shared)
-target_link_libraries(tof_ros2cpp_node tofi_compute)
-target_link_libraries(tof_ros2cpp_node tofi_config)
 target_link_libraries(tof_ros2cpp_node glog::glog)
 
 install(TARGETS
