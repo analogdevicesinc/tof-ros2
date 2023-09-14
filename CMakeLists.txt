@@ -23,7 +23,7 @@ find_package(Libwebsockets REQUIRED)
 find_package(glog REQUIRED)
 find_package(Protobuf REQUIRED)
 
-set(ADITOF_MIN_VERSION "4.2.0")
+set(ADITOF_MIN_VERSION "4.3.0")
 
 if(aditof_VERSION VERSION_LESS ${ADITOF_MIN_VERSION})
     message(FATAL_ERROR "You can not compile with aditof version less than ${ADITOF_MIN_VERSION}" )
@@ -34,6 +34,10 @@ endif()
 find_library(TOFI_COMPUTE
   NAMES tofi_compute
   PATHS /usr/lib)
+
+if(UNIX)
+    set(CMAKE_POSITION_INDEPENDENT_CODE "1")
+endif()
 
 set(SOURCE ${CMAKE_SOURCE_DIR}/include/tof-ros2)
 set(SOURCES ${CMAKE_SOURCE_DIR}/include/tof_ros2cpp)
@@ -48,14 +52,13 @@ target_sources(tof_ros2cpp_node INTERFACE ${CMAKE_SOURCE_DIR}/include/tof_ros2cp
 
 ament_target_dependencies(tof_ros2cpp_node rclcpp std_msgs glog sensor_msgs)
 
-target_include_directories(tof_ros2cpp_node PUBLIC "${ADITOF_INCLUDE_DIRS}")
-target_include_directories(tof_ros2cpp_node PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS}")
-target_link_libraries(tof_ros2cpp_node "${ADITOF_LIBRARIES}")
-target_link_libraries(tof_ros2cpp_node aditof)
 target_link_libraries(tof_ros2cpp_node websockets_shared)
 target_link_libraries(tof_ros2cpp_node tofi_compute)
 target_link_libraries(tof_ros2cpp_node tofi_config)
 target_link_libraries(tof_ros2cpp_node glog::glog)
+target_link_libraries(tof_ros2cpp_node aditof)
+target_include_directories(tof_ros2cpp_node PUBLIC "${ADITOF_INCLUDE_DIRS}")
+target_include_directories(tof_ros2cpp_node PUBLIC "${LIBWEBSOCKETS_INCLUDE_DIRS}")
 
 install(TARGETS
 tof_ros2cpp_node
