@@ -55,7 +55,7 @@ void DepthImageMsg::FrameDataToMsg(
     return;
   }
 
-  setDataMembers(camera, frameData);
+  setDataMembers(frameData);
 }
 
 void DepthImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
@@ -75,7 +75,7 @@ void DepthImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStam
   message.data.resize(message.step * height);
 }
 
-void DepthImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+void DepthImageMsg::setDataMembers(uint16_t * frameData)
 {
   if (message.encoding.compare(sensor_msgs::image_encodings::RGBA8) == 0) {
     std::vector<uint16_t> depthData(frameData, frameData + message.width * message.height);

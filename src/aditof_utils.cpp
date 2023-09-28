@@ -30,11 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "aditof_utils.h"
+
 #include <aditof/system.h>
-#include <regex>
 #include <string.h>
 #include <unistd.h>
+
 #include <rclcpp/rclcpp.hpp>
+#include <regex>
 
 std::mutex mtx_dynamic_rec;
 using namespace aditof;

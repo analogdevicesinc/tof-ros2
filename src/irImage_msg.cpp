@@ -55,7 +55,7 @@ void IRImageMsg::FrameDataToMsg(
     return;
   }
 
-  setDataMembers(camera, frameData);
+  setDataMembers(frameData);
 }
 
 void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
@@ -76,7 +76,7 @@ void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
   message.data.resize(message.step * height);
 }
 
-void IRImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+void IRImageMsg::setDataMembers(uint16_t * frameData)
 {
   if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
     irTo16bitGrayscale(frameData, message.width, message.height);

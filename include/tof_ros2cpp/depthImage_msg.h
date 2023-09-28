@@ -91,7 +91,7 @@ public:
   /**
      * @brief Assigns values to the message fields concerning the point data
      */
-  void setDataMembers(const std::shared_ptr<aditof::Camera> & camera, uint16_t * frameData);
+  void setDataMembers(uint16_t * frameData);
 
   /**
      * @brief Converts depth data to RGBA8 color
