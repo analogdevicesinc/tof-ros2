@@ -60,7 +60,7 @@ void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> & camera, aditof:
     return;
   }
 
-  setDataMembers(camera, frameData);
+  setDataMembers(frameData);
 }
 
 void XYZImageMsg::setMetadataMembers(int width, int height)
@@ -71,7 +71,7 @@ void XYZImageMsg::setMetadataMembers(int width, int height)
   message.is_bigendian = false;
 }
 
-void XYZImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+void XYZImageMsg::setDataMembers(uint16_t * frameData)
 {
   m_points.clear();
   m_intensity.values.clear();

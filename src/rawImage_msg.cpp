@@ -59,7 +59,7 @@ void RAWImageMsg::FrameDataToMsg(
     return;
   }
 
-  setDataMembers(camera, frameData);
+  setDataMembers(frameData);
 }
 
 void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
@@ -77,7 +77,7 @@ void RAWImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
   message.data.resize(message.step * height);
 }
 
-void RAWImageMsg::setDataMembers(const std::shared_ptr<Camera> & camera, uint16_t * frameData)
+void RAWImageMsg::setDataMembers(uint16_t * frameData)
 {
   if (message.encoding.compare(sensor_msgs::image_encodings::MONO16) == 0) {
     uint8_t * msgDataPtr = message.data.data();
