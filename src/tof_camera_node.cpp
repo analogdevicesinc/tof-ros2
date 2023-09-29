@@ -47,6 +47,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#include "ros_publisher_worker.h"
+#include "worker_thread.h"
+
 using namespace std::chrono_literals;
 using namespace aditof;
 bool m_streamOnFlag = false;
@@ -69,6 +72,12 @@ private:
   int m_adsd3500JBLFfilterSize_;
   int m_adsd3500RadialThresholdMin_;
   int m_adsd3500RadialThresholdMax_;
+
+public:
+  PublisherFactory* getPublisherFactory()
+  {
+    return &publishers;
+  }
 
 private:
   rcl_interfaces::msg::SetParametersResult parameterCallback(
@@ -144,6 +153,7 @@ public:
       publishers.updatePublishers(camera, frame, m_frameTimeStamp);
     }
   }
+
 };
 
 int main(int argc, char * argv[])
@@ -192,9 +202,39 @@ int main(int argc, char * argv[])
   //Start frame capturing thread. TO DO: make threadsafe the camera and the frame
   // std::thread frameCapturing(updateFrameThread, camera, frame);
 
+  std::vector<RosPublisherWorker*> rospubworker;
+  std::vector<WorkerThread*> workerTh;
+
+  int sizePub = tof_node->getPublisherFactory()->getPublishersIndex().size();
+  for(int i=0; i<sizePub; i++)
+  {
+    rospubworker.emplace_back(new RosPublisherWorker(
+                                tof_node->getPublisherFactory(), i));
+    workerTh.emplace_back(new WorkerThread(rospubworker.at(i)));
+  }
+
+  LOG(INFO) << "sizePublishers=" << sizePub << " " << rospubworker.size();
+
   while (rclcpp::ok()) {
-    tof_node->service_callback();
+    getNewFrame(camera, frame);
+    auto frameTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
+
+    for(int i=0; i<sizePub; i++)
+    {
+      rospubworker.at(i)->setCameraData(&camera, frame, frameTimeStamp);
+    }
     rclcpp::spin_some(tof_node);
+  }
+
+  for(int i=0; i<sizePub; i++)
+  {
+    workerTh.at(i)->join();
+  }
+
+  for(int i=0; i<sizePub; i++)
+  {
+    delete rospubworker.at(i);
+    delete workerTh.at(i);
   }
 
   // frameCapturing.join();

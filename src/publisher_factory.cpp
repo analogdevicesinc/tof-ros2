@@ -47,27 +47,32 @@ void PublisherFactory::createNew(
       img_publishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/ir", 2));
       imgMsgs.emplace_back(new IRImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      publishersIndex.emplace_back(img_publishers.size()-1);
       LOG(INFO) << "Added ir publisher";
     } else if (!strcmp(iter.type.c_str(), "depth")) {
       img_publishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/depth", 2));
       imgMsgs.emplace_back(new DepthImageMsg(camera, frame, sensor_msgs::image_encodings::RGBA8));
+      publishersIndex.emplace_back(img_publishers.size()-1);
       LOG(INFO) << "Added depth publisher";
     } else if (!strcmp(iter.type.c_str(), "raw")) {
       img_publishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/raw", 2));
       imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      publishersIndex.emplace_back(img_publishers.size()-1);
       LOG(INFO) << "Added raw data publisher";
     } else if (!strcmp(iter.type.c_str(), "xyz")) {
       pointCloud_publisher.emplace_back(
         node->create_publisher<sensor_msgs::msg::PointCloud2>("tof_camera/xyz", 2));
       pointCloudMsgs.emplace_back(
         new XYZImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      publishersIndex.emplace_back(img_publishers.size()-1);
       LOG(INFO) << "Added xyz data publisher";
     } else if (!strcmp(iter.type.c_str(), "conf")) {
       img_publishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/conf", 2));
       imgMsgs.emplace_back(new ConfImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      publishersIndex.emplace_back(img_publishers.size()-1);
       LOG(INFO) << "Added conf data publisher";
     }
   }
@@ -85,6 +90,22 @@ void PublisherFactory::updatePublishers(
     pointCloudMsgs.at(i)->publishMsg(*pointCloud_publisher.at(i));
   }
 }
+
+std::vector<int> PublisherFactory::getPublishersIndex()
+{
+  return publishersIndex;
+}
+
+void PublisherFactory::updateOnePublisher(std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+                            rclcpp ::Time timestamp, int index)
+{
+  if(index >=0 && index <publishersIndex.size())
+  {
+    imgMsgs.at(publishersIndex.at(index))->FrameDataToMsg(camera, frame, timestamp);
+    imgMsgs.at(publishersIndex.at(index))->publishMsg(*img_publishers.at(publishersIndex.at(index)));
+  }
+}
+
 void PublisherFactory::deletePublishers(const std::shared_ptr<aditof::Camera> & camera)
 {
   stopCamera(camera);

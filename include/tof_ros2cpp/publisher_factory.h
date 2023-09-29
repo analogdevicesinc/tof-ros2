@@ -61,12 +61,17 @@ public:
   void deletePublishers(const std::shared_ptr<aditof::Camera> & camera);
   void setDepthFormat(const int val);
 
+  void updateOnePublisher(std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+                              rclcpp ::Time timestamp, int index);
+
+  std::vector<int> getPublishersIndex();
 private:
   std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> img_publishers;
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
 
   std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloud_publisher;
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
+  std::vector<int> publishersIndex;
 };
 
 #endif  // PUBLISHER_FACTORY_H
