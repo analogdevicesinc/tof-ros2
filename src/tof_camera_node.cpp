@@ -134,14 +134,14 @@ public:
 
     callback_handle_ = this->add_on_set_parameters_callback(
       std::bind(&TofNode::parameterCallback, this, std::placeholders::_1));
+
+    publishers.startThreads(camera, frame);
   }
 
   void service_callback()
   {
     if (m_streamOnFlag) {
       getNewFrame(camera, frame);
-      m_frameTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
-      publishers.updatePublishers(camera, frame, m_frameTimeStamp);
     }
   }
 };
@@ -150,10 +150,6 @@ int main(int argc, char * argv[])
 {
   // Initialize ROS 2
   rclcpp::init(argc, argv);
-
-  // pos 0 - ip
-  // pos 1 - config_path
-  // pos 2 - mode
 
   std::string * arguments = parseArgs(argc, argv);
   // find camera (local/usb/network), set config file and initialize the camera
@@ -189,15 +185,10 @@ int main(int argc, char * argv[])
   // Create ToF Node
   std::shared_ptr<TofNode> tof_node = std::make_shared<TofNode>(arguments, camera, frame);
 
-  //Start frame capturing thread. TO DO: make threadsafe the camera and the frame
-  // std::thread frameCapturing(updateFrameThread, camera, frame);
-
   while (rclcpp::ok()) {
     tof_node->service_callback();
     rclcpp::spin_some(tof_node);
   }
-
-  // frameCapturing.join();
 
   // Shutdown the node when finished
   rclcpp::shutdown();

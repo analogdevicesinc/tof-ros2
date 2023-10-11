@@ -43,10 +43,22 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <thread>
 #include <typeinfo>
 #include <vector>
 
 #include "aditof/camera.h"
+
+static bool stopPublisherThreads = false;
+
+void publisherImgMsgsWorker(
+  std::shared_ptr<AditofSensorMsg> imgMsgs,
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr img_publisher,
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+void publisherPointCloudMsgsWorker(
+  std::shared_ptr<AditofSensorPointCloudMsg> pointCloudMsgs,
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointCloudPublishers,
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
 
 class PublisherFactory
 {
@@ -55,18 +67,17 @@ public:
   void createNew(
     rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
     bool enableDepthCompute);
-  void updatePublishers(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
-    rclcpp ::Time timestamp);
+  void startThreads(const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
   void deletePublishers(const std::shared_ptr<aditof::Camera> & camera);
   void setDepthFormat(const int val);
+  void stopThreadsFnc();
 
 private:
-  std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> img_publishers;
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> imgPublishers;
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
-
-  std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloud_publisher;
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers;
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
+  std::vector<std::shared_ptr<std::thread>> tofThreads;
 };
 
 #endif  // PUBLISHER_FACTORY_H
