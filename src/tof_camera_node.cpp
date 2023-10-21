@@ -137,9 +137,9 @@ public:
     if (
       (std::strcmp(arguments[3].c_str(), "True") == 0) ||
       (std::strcmp(arguments[3].c_str(), "true") == 0))
-      publishers.startMultiThreadImpl(camera, frame);
+      publishers.createMultiThreadPublisherWorkers(camera, frame);
     else
-      publishers.startSingleThreadImpl(camera, frame);
+      publishers.createSingleThreadPublisherWorker(camera, frame);
   }
 
   void service_callback()

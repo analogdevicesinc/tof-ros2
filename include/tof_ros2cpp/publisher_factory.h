@@ -49,7 +49,7 @@
 
 #include "aditof/camera.h"
 
-static bool stopPublisherThreads = false;
+static bool deletePublisherWorkers = false;
 
 void publisherImgMsgsWorker(
   std::shared_ptr<AditofSensorMsg> imgMsgs,
@@ -59,6 +59,12 @@ void publisherPointCloudMsgsWorker(
   std::shared_ptr<AditofSensorPointCloudMsg> pointCloudMsgs,
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointCloudPublishers,
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+void publisherSingleThreadWorker(
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> imgPublisher,
+  std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs,
+  std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers,
+  std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs,
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
 
 class PublisherFactory
 {
@@ -66,11 +72,11 @@ public:
   PublisherFactory();
   void createNew(
     rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
-  void startSingleThreadImpl(
+  void createSingleThreadPublisherWorker(
     const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
-  void startMultiThreadImpl(const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
-  void stopSingleThreadImpl();
-  void stopMultiThreadImpl();
+  void createMultiThreadPublisherWorkers(
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  void removePublisherWorkers();
   void deletePublishers(const std::shared_ptr<aditof::Camera> & camera);
   void setDepthFormat(const int val);
 
