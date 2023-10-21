@@ -129,13 +129,17 @@ public:
       m_streamOnFlag = true;
     }
 
-    publishers.createNew(
-      this, camera, frame, (arguments[2] == "true" || arguments[2] == "1") ? true : false);
+    publishers.createNew(this, camera, frame);
 
     callback_handle_ = this->add_on_set_parameters_callback(
       std::bind(&TofNode::parameterCallback, this, std::placeholders::_1));
 
-    publishers.startThreads(camera, frame);
+    if (
+      (std::strcmp(arguments[3].c_str(), "True") == 0) ||
+      (std::strcmp(arguments[3].c_str(), "true") == 0))
+      publishers.startMultiThreadImpl(camera, frame);
+    else
+      publishers.startSingleThreadImpl(camera, frame);
   }
 
   void service_callback()

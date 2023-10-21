@@ -65,12 +65,14 @@ class PublisherFactory
 public:
   PublisherFactory();
   void createNew(
-    rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
-    bool enableDepthCompute);
-  void startThreads(const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+    rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  void startSingleThreadImpl(
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  void startMultiThreadImpl(const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  void stopSingleThreadImpl();
+  void stopMultiThreadImpl();
   void deletePublishers(const std::shared_ptr<aditof::Camera> & camera);
   void setDepthFormat(const int val);
-  void stopThreadsFnc();
 
 private:
   std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> imgPublishers;

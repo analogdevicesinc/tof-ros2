@@ -50,9 +50,9 @@ std::string * parseArgs(int argc, char ** argv)
   google::InitGoogleLogging(argv[0]);
   FLAGS_alsologtostderr = 1;
   std::string ip = "";
-  std::string config_path = "";
-  std::string use_depthCompute = "";
-  std::string mode = "";
+  std::string config_path = "config/config_adsd3500_adsd3100.json";
+  std::string mode = "0";
+  std::string enable_multithread = "False";
 
   for (int i = 1; i < argc; i++) {
     std::string left;
@@ -68,6 +68,8 @@ std::string * parseArgs(int argc, char ** argv)
       config_path = right;
     else if (std::strcmp(left.c_str(), "mode") == 0)
       mode = right;
+    else if (std::strcmp(left.c_str(), "enable_multithread") == 0)
+      enable_multithread = right;
   }
 
   if (ip.empty()) {
@@ -81,12 +83,13 @@ std::string * parseArgs(int argc, char ** argv)
     LOG(INFO) << "Camera mode not provided!";
   }
 
-  std::string * result = new std::string[5];
+  std::string * result = new std::string[4];
   if (!ip.empty()) {
     result[0] = std::string("ip:") + ip;
   }
   result[1] = config_path;
   result[2] = mode;
+  result[3] = enable_multithread;
 
   return result;
 }
