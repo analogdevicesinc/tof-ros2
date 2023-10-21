@@ -49,7 +49,6 @@
 
 using namespace std::chrono_literals;
 using namespace aditof;
-bool m_streamOnFlag = false;
 static rclcpp::Time m_frameTimeStamp;
 
 // Create the node class named MinimalPublisher which inherits the attributes

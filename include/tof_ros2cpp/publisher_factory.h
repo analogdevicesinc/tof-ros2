@@ -50,6 +50,7 @@
 #include "aditof/camera.h"
 
 static bool deletePublisherWorkers = false;
+static bool m_streamOnFlag = false;
 
 void publisherImgMsgsWorker(
   std::shared_ptr<AditofSensorMsg> imgMsgs,
