@@ -61,7 +61,7 @@ ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
 
 - Starting the node
 ```console
-  ros2 run tof_ros2cpp tof_ros2cpp_node ip=10.42.0.1 config_file=<config file path> mode=<mode number>
+  ros2 run tof_ros2cpp tof_ros2cpp_node ip=10.42.0.1 config_file=<config file path> mode=<mode number> enable_multithread=<true/false>
 ```
 
 #### Parameters:
@@ -69,6 +69,7 @@ ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
 * ```config/config_adsd3500_adsd3100.json``` ("Crosby")
 * ```config/config_adsd3500_adsd3030.json``` ("Adsd3030")
 
+Default value: ```config/config_adsd3500_adsd3100.json```
 
  [mode = "<<b>mode></b>"] (for both cameras):
  * 0: sr-native (short-range native)
@@ -79,3 +80,12 @@ ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
  * 5: sr-mixed (short-range mixed)
  * 6: lr-mixed (long-range mixed)
 
+Default value: ```0```
+
+ [enable_multithread = "<<b>True/False</b>>"]:
+ * True: Node creates different threads for each publishing topics
+ * False: All publishers are updated on the same thread
+ 
+Default value: ```False```
+
+Note: Although multithreading provides a faster publishing rate on certain platforms, on less performant Hosts this might not be beneficial and the single thread implementation can be more relevant.
