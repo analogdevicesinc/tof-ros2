@@ -124,7 +124,7 @@ void publisherImgMsgsWorker(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
   while (rclcpp::ok() && !deletePublisherWorkers) {
-    if (m_streamOnFlag) {
+    if (m_streamOnFlag && imgMsgs->publisherEnabled) {
       rclcpp::Time timeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
       imgMsgs->FrameDataToMsg(camera, frame, timeStamp);
       imgMsgs->publishMsg(*img_publisher);
@@ -138,7 +138,7 @@ void publisherPointCloudMsgsWorker(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
   while (rclcpp::ok() && !deletePublisherWorkers) {
-    if (m_streamOnFlag) {
+    if (m_streamOnFlag && pointCloudMsgs->publisherEnabled) {
       rclcpp::Time timeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
       pointCloudMsgs->FrameDataToMsg(camera, frame);
       pointCloudMsgs->publishMsg(*pointCloudPublishers);
@@ -157,12 +157,16 @@ void publisherSingleThreadWorker(
     if (m_streamOnFlag) {
       rclcpp::Time timeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
       for (unsigned int i = 0; i < imgMsgs.size(); ++i) {
-        imgMsgs.at(i)->FrameDataToMsg(camera, frame, timeStamp);
-        imgMsgs.at(i)->publishMsg(*imgPublishers.at(i));
+        if (imgMsgs.at(i)->publisherEnabled) {
+          imgMsgs.at(i)->FrameDataToMsg(camera, frame, timeStamp);
+          imgMsgs.at(i)->publishMsg(*imgPublishers.at(i));
+        }
       }
       for (unsigned int i = 0; i < pointCloudMsgs.size(); ++i) {
-        pointCloudMsgs.at(i)->FrameDataToMsg(camera, frame);
-        pointCloudMsgs.at(i)->publishMsg(*pointCloudPublishers.at(i));
+        if (pointCloudMsgs.at(i)->publisherEnabled) {
+          pointCloudMsgs.at(i)->FrameDataToMsg(camera, frame);
+          pointCloudMsgs.at(i)->publishMsg(*pointCloudPublishers.at(i));
+        }
       }
     }
   }
