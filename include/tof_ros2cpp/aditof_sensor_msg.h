@@ -44,6 +44,7 @@
 class AditofSensorMsg
 {
 public:
+  bool publisherEnabled = true;
   virtual ~AditofSensorMsg() = default;
   virtual void FrameDataToMsg(
     const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
@@ -55,6 +56,7 @@ public:
 class AditofSensorPointCloudMsg
 {
 public:
+  bool publisherEnabled = true;
   virtual ~AditofSensorPointCloudMsg() = default;
   virtual void FrameDataToMsg(
     const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame) = 0;
