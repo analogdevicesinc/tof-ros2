@@ -35,8 +35,7 @@
 PublisherFactory::PublisherFactory(){};
 
 void PublisherFactory::createNew(
-  rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
-  bool enableDepthCompute)
+  rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
   // Get frame types
   aditof::CameraDetails * details_tmp = new aditof::CameraDetails;
@@ -73,7 +72,7 @@ void PublisherFactory::createNew(
   }
 }
 
-void PublisherFactory::startThreads(
+void PublisherFactory::startMultiThreadImpl(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
   for (unsigned int i = 0; i < imgMsgs.size(); ++i) {
@@ -87,7 +86,18 @@ void PublisherFactory::startThreads(
   }
 }
 
-void PublisherFactory::stopThreadsFnc()
+void PublisherFactory::startSingleThreadImpl(
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
+{
+}
+
+void PublisherFactory::stopMultiThreadImpl()
+{
+  stopPublisherThreads = true;
+  for (int i = 0; i < tofThreads.size(); i++) tofThreads[i]->join();
+}
+
+void PublisherFactory::stopSingleThreadImpl()
 {
   stopPublisherThreads = true;
   for (int i = 0; i < tofThreads.size(); i++) tofThreads[i]->join();
