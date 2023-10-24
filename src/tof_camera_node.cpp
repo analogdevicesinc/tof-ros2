@@ -49,10 +49,10 @@
 
 using namespace std::chrono_literals;
 using namespace aditof;
-static rclcpp::Time m_frameTimeStamp;
 
 // Create the node class named MinimalPublisher which inherits the attributes
 // and methods of the rclcpp::Node class.
+
 class TofNode : public rclcpp::Node
 {
 private:
@@ -74,7 +74,6 @@ private:
     const std::vector<rclcpp::Parameter> & parameters)
   {
     // Stream off //temporary solution, replace if we can modify during runtime of the camera
-
     stopCamera(camera);
     m_streamOnFlag = false;
 
@@ -180,8 +179,6 @@ int main(int argc, char * argv[])
     return 0;
   }
 
-  startCamera(camera);
-  m_streamOnFlag = true;
   auto tmp = new Frame;
   aditof::Frame ** frame = &tmp;
 
