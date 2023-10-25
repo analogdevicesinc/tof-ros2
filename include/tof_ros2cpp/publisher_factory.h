@@ -50,7 +50,8 @@
 #include "aditof/camera.h"
 
 static bool deletePublisherWorkers = false;
-extern bool m_streamOnFlag;
+extern bool streamOnFlag;
+extern rclcpp::Time globalTimeStamp;
 
 void publisherImgMsgsWorker(
   std::shared_ptr<AditofSensorMsg> imgMsgs,
