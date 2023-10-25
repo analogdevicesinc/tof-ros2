@@ -75,7 +75,7 @@ private:
   {
     // Stream off //temporary solution, replace if we can modify during runtime of the camera
     stopCamera(camera);
-    m_streamOnFlag = false;
+    streamOnFlag = false;
 
     control_adsd3500SetABinvalidationThreshold(
       camera, get_parameter("adsd3500ABinvalidationThreshold").as_int());
@@ -90,7 +90,7 @@ private:
       camera, get_parameter("adsd3500RadialThresholdMax").as_int());
 
     startCamera(camera);
-    m_streamOnFlag = true;
+    streamOnFlag = true;
 
     rcl_interfaces::msg::SetParametersResult result;
     result.successful = true;
@@ -122,9 +122,9 @@ public:
     this->camera = camera;
     this->frame = frame;
 
-    if (!m_streamOnFlag) {
+    if (!streamOnFlag) {
       startCamera(camera);
-      m_streamOnFlag = true;
+      streamOnFlag = true;
     }
 
     publishers.createNew(this, camera, frame);
@@ -142,7 +142,8 @@ public:
 
   void service_callback()
   {
-    if (m_streamOnFlag) {
+    if (streamOnFlag) {
+      globalTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
       getNewFrame(camera, frame);
     }
   }
