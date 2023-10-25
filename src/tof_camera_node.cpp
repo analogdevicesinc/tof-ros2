@@ -69,28 +69,68 @@ private:
   int m_adsd3500RadialThresholdMin_;
   int m_adsd3500RadialThresholdMax_;
 
+  bool m_ir_thread;
+  bool m_depth_thread;
+  bool m_raw_thread;
+  bool m_conf_thread;
+  bool m_xyz_thread;
+
 private:
   rcl_interfaces::msg::SetParametersResult parameterCallback(
     const std::vector<rclcpp::Parameter> & parameters)
   {
-    // Stream off //temporary solution, replace if we can modify during runtime of the camera
-    stopCamera(camera);
-    streamOnFlag = false;
+    if (
+      m_ir_thread != get_parameter("ir").as_bool() ||
+      m_depth_thread != get_parameter("depth").as_bool() ||
+      m_raw_thread != get_parameter("raw").as_bool() ||
+      m_conf_thread != get_parameter("conf").as_bool() ||
+      m_xyz_thread != get_parameter("xyz").as_bool()) {
+      publishers.setThreadMode("ir", get_parameter("ir").as_bool());
+      publishers.setThreadMode("depth", get_parameter("depth").as_bool());
+      publishers.setThreadMode("raw", get_parameter("raw").as_bool());
+      publishers.setThreadMode("conf", get_parameter("conf").as_bool());
+      publishers.setThreadMode("xyz", get_parameter("xyz").as_bool());
 
-    control_adsd3500SetABinvalidationThreshold(
-      camera, get_parameter("adsd3500ABinvalidationThreshold").as_int());
-    control_adsd3500SetConfidenceThreshold(
-      camera, get_parameter("adsd3500ConfidenceThreshold").as_int());
-    control_adsd3500SetJBLFfilterEnableState(
-      camera, get_parameter("adsd3500JBLFfilterEnableStat").as_bool());
-    control_adsd3500SetJBLFfilterSize(camera, get_parameter("adsd3500JBLFfilterSize").as_int());
-    control_adsd3500SetRadialThresholdMin(
-      camera, get_parameter("adsd3500RadialThresholdMin").as_int());
-    control_adsd3500SetRadialThresholdMax(
-      camera, get_parameter("adsd3500RadialThresholdMax").as_int());
+      m_ir_thread = get_parameter("ir").as_bool();
+      m_depth_thread = get_parameter("depth").as_bool();
+      m_raw_thread = get_parameter("raw").as_bool();
+      m_conf_thread = get_parameter("conf").as_bool();
+      m_xyz_thread = get_parameter("xyz").as_bool();
+    } else if (
+      m_adsd3500ABinvalidationThreshold_ !=
+        get_parameter("adsd3500ABinvalidationThreshold").as_int() ||
+      m_adsd3500ConfidenceThreshold_ != get_parameter("adsd3500ConfidenceThreshold").as_int() ||
+      m_adsd3500JBLFfilterEnableState_ != get_parameter("adsd3500JBLFfilterEnableStat").as_bool() ||
+      m_adsd3500JBLFfilterSize_ != get_parameter("adsd3500JBLFfilterSize").as_int() ||
+      m_adsd3500RadialThresholdMin_ != get_parameter("adsd3500RadialThresholdMin").as_int() ||
+      m_adsd3500RadialThresholdMax_ != get_parameter("adsd3500RadialThresholdMax").as_int()) {
+      // Stream off //temporary solution, replace if we can modify during runtime of the camera
+      stopCamera(camera);
+      streamOnFlag = false;
 
-    startCamera(camera);
-    streamOnFlag = true;
+      control_adsd3500SetABinvalidationThreshold(
+        camera, get_parameter("adsd3500ABinvalidationThreshold").as_int());
+      control_adsd3500SetConfidenceThreshold(
+        camera, get_parameter("adsd3500ConfidenceThreshold").as_int());
+      control_adsd3500SetJBLFfilterEnableState(
+        camera, get_parameter("adsd3500JBLFfilterEnableStat").as_bool());
+      control_adsd3500SetJBLFfilterSize(camera, get_parameter("adsd3500JBLFfilterSize").as_int());
+      control_adsd3500SetRadialThresholdMin(
+        camera, get_parameter("adsd3500RadialThresholdMin").as_int());
+      control_adsd3500SetRadialThresholdMax(
+        camera, get_parameter("adsd3500RadialThresholdMax").as_int());
+
+      startCamera(camera);
+      streamOnFlag = true;
+
+      m_adsd3500ABinvalidationThreshold_ =
+        get_parameter("adsd3500ABinvalidationThreshold").as_int();
+      m_adsd3500ConfidenceThreshold_ = get_parameter("adsd3500ConfidenceThreshold").as_int();
+      m_adsd3500JBLFfilterEnableState_ = get_parameter("adsd3500JBLFfilterEnableStat").as_bool();
+      m_adsd3500JBLFfilterSize_ = get_parameter("adsd3500JBLFfilterSize").as_int();
+      m_adsd3500RadialThresholdMin_ = get_parameter("adsd3500RadialThresholdMin").as_int();
+      m_adsd3500RadialThresholdMax_ = get_parameter("adsd3500RadialThresholdMax").as_int();
+    }
 
     rcl_interfaces::msg::SetParametersResult result;
     result.successful = true;
@@ -105,6 +145,24 @@ public:
   TofNode(std::string * arguments, std::shared_ptr<Camera> camera, aditof::Frame ** frame)
   : Node("tof_camera_node")
   {
+    m_ir_thread = true;
+    m_depth_thread = true;
+    m_raw_thread = true;
+    m_conf_thread = true;
+    m_xyz_thread = true;
+
+    this->declare_parameter("ir", true);
+    this->declare_parameter("depth", true);
+    this->declare_parameter("raw", true);
+    this->declare_parameter("conf", true);
+    this->declare_parameter("xyz", true);
+
+    this->get_parameter("ir", m_ir_thread);
+    this->get_parameter("depth", m_depth_thread);
+    this->get_parameter("raw", m_raw_thread);
+    this->get_parameter("conf", m_conf_thread);
+    this->get_parameter("xyz", m_xyz_thread);
+
     this->declare_parameter("adsd3500ABinvalidationThreshold", 0);
     this->declare_parameter("adsd3500ConfidenceThreshold", 0);
     this->declare_parameter("adsd3500JBLFfilterEnableStat", false);

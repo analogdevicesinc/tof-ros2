@@ -89,3 +89,15 @@ Default value: ```0```
 Default value: ```False```
 
 Note: Although multithreading provides a faster publishing rate on certain platforms, on less performant Hosts this might not be beneficial and the single thread implementation can be more relevant.
+
+## ROS Parameters
+### Thread parameters:
+To enable or disable a publisher thread you can use ros2 param set commnad:
+
+```console
+  ros2 param set /tof_camera_node depth false
+```
+
+The thread parameter name are: ir, depth, raw, conf and xyz.
+The thread parameter type are bool: true, false.
+Info: You must run twice the ros2 param set commnad to have effect on the node.

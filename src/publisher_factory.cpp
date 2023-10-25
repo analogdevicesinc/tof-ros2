@@ -75,6 +75,24 @@ void PublisherFactory::createNew(
   }
 }
 
+void PublisherFactory::setThreadMode(std::string topicIndex, bool mode)
+{
+  int size = imgPublishers.size();
+  for (int i = 0; i < size; i++) {
+    const std::string topicname = std::string(imgPublishers.at(i)->get_topic_name());
+    if (strstr(topicname.c_str(), topicIndex.c_str())) {
+      imgMsgs.at(i)->publisherEnabled = mode;
+    }
+  }
+  size = pointCloudPublishers.size();
+  for (int i = 0; i < size; i++) {
+    const std::string topicname = std::string(pointCloudPublishers.at(i)->get_topic_name());
+    if (strstr(topicname.c_str(), topicIndex.c_str())) {
+      pointCloudMsgs.at(i)->publisherEnabled = mode;
+    }
+  }
+}
+
 void PublisherFactory::createMultiThreadPublisherWorkers(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
@@ -127,6 +145,7 @@ void publisherImgMsgsWorker(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
   rclcpp::Time localTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
+  rclcpp::Rate loop_rate(1.0 / 10);
 
   while (!deletePublisherWorkers) {
     if (rclcpp::ok() && streamOnFlag && imgMsgs->publisherEnabled) {
@@ -135,6 +154,13 @@ void publisherImgMsgsWorker(
         imgMsgs->FrameDataToMsg(camera, frame, localTimeStamp);
         imgMsgs->publishMsg(*img_publisher);
       }
+    } else {
+      std::stringstream ss;
+      ss << std::this_thread::get_id();
+      uint64_t id = std::stoull(ss.str());
+
+      LOG(INFO) << "Thread sleep id=" << id;
+      loop_rate.sleep();
     }
   }
 }
@@ -145,6 +171,7 @@ void publisherPointCloudMsgsWorker(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame)
 {
   rclcpp::Time localTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
+  rclcpp::Rate loop_rate(1.0 / 10);
 
   while (!deletePublisherWorkers) {
     if (rclcpp::ok() && streamOnFlag && pointCloudMsgs->publisherEnabled) {
@@ -153,6 +180,13 @@ void publisherPointCloudMsgsWorker(
         pointCloudMsgs->FrameDataToMsg(camera, frame);
         pointCloudMsgs->publishMsg(*pointCloudPublishers);
       }
+    } else {
+      std::stringstream ss;
+      ss << std::this_thread::get_id();
+      uint64_t id = std::stoull(ss.str());
+
+      LOG(INFO) << "Thread sleep id=" << id;
+      loop_rate.sleep();
     }
   }
 }

@@ -43,6 +43,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <string>
 #include <thread>
 #include <typeinfo>
 #include <vector>
@@ -81,6 +82,8 @@ public:
   void removePublisherWorkers();
   void deletePublishers(const std::shared_ptr<aditof::Camera> & camera);
   void setDepthFormat(const int val);
+
+  void setThreadMode(std::string topicIndex, bool mode);
 
 private:
   std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> imgPublishers;
