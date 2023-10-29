@@ -40,8 +40,7 @@
 class ConfImageMsg : public AditofSensorMsg
 {
 public:
-  ConfImageMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding);
+  ConfImageMsg(std::string encoding);
   /**
    * @brief Each message corresponds to one frame
    */

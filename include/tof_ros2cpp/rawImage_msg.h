@@ -40,8 +40,7 @@
 class RAWImageMsg : public AditofSensorMsg
 {
 public:
-  RAWImageMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding);
+  RAWImageMsg(std::string encoding);
   /**
      * @brief Each message corresponds to one frame
      */

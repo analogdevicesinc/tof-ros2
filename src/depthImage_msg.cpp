@@ -34,11 +34,7 @@ using namespace aditof;
 
 DepthImageMsg::DepthImageMsg() {}
 
-DepthImageMsg::DepthImageMsg(
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
-{
-  imgEncoding = encoding;
-}
+DepthImageMsg::DepthImageMsg(std::string encoding) { imgEncoding = encoding; }
 
 void DepthImageMsg::FrameDataToMsg(
   const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)

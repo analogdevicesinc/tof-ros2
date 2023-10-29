@@ -34,11 +34,7 @@ using namespace aditof;
 
 RAWImageMsg::RAWImageMsg() {}
 
-RAWImageMsg::RAWImageMsg(
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
-{
-  message.encoding = encoding;
-}
+RAWImageMsg::RAWImageMsg(std::string encoding) { message.encoding = encoding; }
 
 void RAWImageMsg::FrameDataToMsg(
   const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)

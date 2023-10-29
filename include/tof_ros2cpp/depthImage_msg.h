@@ -63,8 +63,7 @@ typedef struct Rgb32Color
 class DepthImageMsg : public AditofSensorMsg
 {
 public:
-  DepthImageMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding);
+  DepthImageMsg(std::string encoding);
 
   /**
      * @brief Each message corresponds to one frame

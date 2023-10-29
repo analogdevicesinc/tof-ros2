@@ -34,11 +34,7 @@ using namespace aditof;
 
 ConfImageMsg::ConfImageMsg() {}
 
-ConfImageMsg::ConfImageMsg(
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
-{
-  imgEncoding = encoding;
-}
+ConfImageMsg::ConfImageMsg(std::string encoding) { imgEncoding = encoding; }
 
 void ConfImageMsg::FrameDataToMsg(
   const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)

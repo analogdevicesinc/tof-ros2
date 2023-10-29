@@ -48,28 +48,27 @@ void PublisherFactory::createNew(
     if (!strcmp(iter.type.c_str(), "ir")) {
       imgPublishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/ir", 2));
-      imgMsgs.emplace_back(new IRImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      imgMsgs.emplace_back(new IRImageMsg(sensor_msgs::image_encodings::MONO16));
       LOG(INFO) << "Added ir publisher";
     } else if (!strcmp(iter.type.c_str(), "depth")) {
       imgPublishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/depth", 2));
-      imgMsgs.emplace_back(new DepthImageMsg(camera, frame, sensor_msgs::image_encodings::RGBA8));
+      imgMsgs.emplace_back(new DepthImageMsg(sensor_msgs::image_encodings::RGBA8));
       LOG(INFO) << "Added depth publisher";
     } else if (!strcmp(iter.type.c_str(), "raw")) {
       imgPublishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/raw", 2));
-      imgMsgs.emplace_back(new RAWImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      imgMsgs.emplace_back(new RAWImageMsg(sensor_msgs::image_encodings::MONO16));
       LOG(INFO) << "Added raw data publisher";
     } else if (!strcmp(iter.type.c_str(), "xyz")) {
       pointCloudPublishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::PointCloud2>("tof_camera/xyz", 2));
-      pointCloudMsgs.emplace_back(
-        new XYZImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      pointCloudMsgs.emplace_back(new XYZImageMsg(sensor_msgs::image_encodings::MONO16));
       LOG(INFO) << "Added xyz data publisher";
     } else if (!strcmp(iter.type.c_str(), "conf")) {
       imgPublishers.emplace_back(
         node->create_publisher<sensor_msgs::msg::Image>("tof_camera/conf", 2));
-      imgMsgs.emplace_back(new ConfImageMsg(camera, frame, sensor_msgs::image_encodings::MONO16));
+      imgMsgs.emplace_back(new ConfImageMsg(sensor_msgs::image_encodings::MONO16));
       LOG(INFO) << "Added conf data publisher";
     }
   }

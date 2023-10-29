@@ -40,8 +40,7 @@
 class IRImageMsg : public AditofSensorMsg
 {
 public:
-  IRImageMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding);
+  IRImageMsg(std::string encoding);
   /**
    * @brief Each message corresponds to one frame
    */

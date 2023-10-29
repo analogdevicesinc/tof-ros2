@@ -39,12 +39,7 @@ using namespace aditof;
 
 XYZImageMsg::XYZImageMsg() {}
 
-XYZImageMsg::XYZImageMsg(
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
-{
-  imgEncoding = encoding;
-  FrameDataToMsg(camera, frame);
-}
+XYZImageMsg::XYZImageMsg(std::string encoding) { imgEncoding = encoding; }
 
 void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> & camera, aditof::Frame ** frame)
 {

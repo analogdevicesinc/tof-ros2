@@ -45,8 +45,7 @@
 class XYZImageMsg : public AditofSensorPointCloudMsg
 {
 public:
-  XYZImageMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding);
+  XYZImageMsg(std::string encoding);
   /**
    * @brief Each message corresponds to one frame
    */
