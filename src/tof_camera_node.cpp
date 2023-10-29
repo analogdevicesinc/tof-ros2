@@ -205,6 +205,12 @@ public:
       getNewFrame(camera, frame);
     }
   }
+
+  void stopNode()
+  {
+    publishers.removePublisherWorkers();
+    publishers.deletePublishers(camera);
+  }
 };
 
 int main(int argc, char * argv[])
@@ -248,6 +254,8 @@ int main(int argc, char * argv[])
     tof_node->service_callback();
     rclcpp::spin_some(tof_node);
   }
+
+  tof_node->stopNode();
 
   // Shutdown the node when finished
   rclcpp::shutdown();
