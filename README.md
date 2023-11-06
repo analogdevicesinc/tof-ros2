@@ -91,7 +91,21 @@ Default value: ```False```
 Note: Although multithreading provides a faster publishing rate on certain platforms, on less performant Hosts this might not be beneficial and the single thread implementation can be more relevant.
 
 ## ROS Parameters
+### Camera parameters:
+* ```adsd3500ABinvalidationThreshold``` 
+* ```adsd3500ConfidenceThreshold``` 
+* ```adsd3500JBLFfilterEnableStat``` 
+* ```adsd3500JBLFfilterSize``` 
+* ```adsd3500RadialThresholdMin``` 
+* ```adsd3500RadialThresholdMax``` 
+
 ### Thread parameters:
+* ```ir```
+* ```depth```
+* ```raw```
+* ```conf```
+* ```xyz```
+
 To enable or disable a publisher thread you can use ros2 param set commnad:
 
 ```console
