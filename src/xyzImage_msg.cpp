@@ -73,34 +73,46 @@ void XYZImageMsg::setMetadataMembers(int width, int height)
 
 void XYZImageMsg::setDataMembers(uint16_t * frameData)
 {
-  m_points.clear();
-  m_intensity.values.clear();
-  m_range.values.clear();
-
   int16_t * msgDataPtr = (int16_t *)frameData;
 
-  for (int i = 0; i < message.width * message.height * 3; i += 3) {
-    auto pt = geometry_msgs::msg::Point32();
-    pt.x = static_cast<float>(msgDataPtr[i]);
-    pt.y = static_cast<float>(msgDataPtr[i + 1]);
-    pt.z = static_cast<float>(msgDataPtr[i + 2]);
-    m_points.push_back(pt);
+  //Modifier to describe what the fields are.
+  sensor_msgs::PointCloud2Modifier modifier(message);
 
-    m_intensity.values.push_back(static_cast<float>(pt.z));
-    m_range.values.push_back(static_cast<float>(pt.z));
+  modifier.setPointCloud2Fields(
+    4, "x", 1, sensor_msgs::msg::PointField::FLOAT32, "y", 1, sensor_msgs::msg::PointField::FLOAT32,
+    "z", 1, sensor_msgs::msg::PointField::FLOAT32, "rgb", 1, sensor_msgs::msg::PointField::FLOAT32);
+
+  //Msg header
+  //  message.header = std_msgs::msg::Header();
+  //  message.header.stamp =rclcpp::Clock{RCL_ROS_TIME}.now();
+  //  message.header.frame_id = "aditof_xyz_img";
+
+  //message.height = message.height;
+  //message.width = message.width;
+  //message.is_dense = true;
+
+  //Total number of bytes per point
+  message.point_step = 16;
+  message.row_step = message.point_step * message.width * message.height;
+  message.data.resize(message.row_step);
+
+  //Iterators for PointCloud msg
+  sensor_msgs::PointCloud2Iterator<float> iterX(message, "x");
+  sensor_msgs::PointCloud2Iterator<float> iterY(message, "y");
+  sensor_msgs::PointCloud2Iterator<float> iterZ(message, "z");
+
+  sensor_msgs::PointCloud2Iterator<uint8_t> iter_r(message, "r");
+
+  int i = 0;
+
+  for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ, ++iter_r) {
+    *iterX = static_cast<float>(msgDataPtr[i]);
+    *iterY = static_cast<float>(msgDataPtr[i + 1]);
+    *iterZ = static_cast<float>(msgDataPtr[i + 2]);
+
+    *iter_r = 255;
+    i += 3;
   }
-
-  sensor_msgs::msg::PointCloud cloud;
-
-  cloud.header.stamp.nanosec = rclcpp::Clock{RCL_ROS_TIME}.now().nanoseconds();
-  cloud.header.stamp.sec = rclcpp::Clock{RCL_ROS_TIME}.now().seconds();
-  cloud.header.frame_id = "map";
-
-  cloud.points = m_points;
-  cloud.channels.push_back(m_intensity);
-  cloud.channels.push_back(m_range);
-
-  sensor_msgs::convertPointCloudToPointCloud2(cloud, message);
 }
 
 sensor_msgs::msg::PointCloud2 XYZImageMsg::getMessagePointCloud() { return message; }

@@ -34,13 +34,13 @@
 
 #include <aditof/frame.h>
 #include <aditof_sensor_msg.h>
+#include <sensor_msgs/msg/point_field.h>
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 #include "aditof_utils.h"
 #include "geometry_msgs/msg/point32.hpp"
-#include "sensor_msgs/msg/point_cloud.hpp"
-#include "sensor_msgs/point_cloud_conversion.hpp"
+#include "sensor_msgs/point_cloud2_iterator.hpp"
 
 class XYZImageMsg : public AditofSensorPointCloudMsg
 {
@@ -51,16 +51,6 @@ public:
    * @brief Each message corresponds to one frame
    */
   sensor_msgs::msg::PointCloud2 message;
-
-  /**
-   * @brief Variale to color the points in rviz2
-   */
-  sensor_msgs::msg::ChannelFloat32 m_intensity, m_range;
-
-  /**
-   * @brief Points that will be publish on message
-   */
-  std::vector<geometry_msgs::msg::Point32> m_points;
 
   /**
    * @brief Will be assigned a value from the list of strings in include/sensor_msgs/image_encodings.h
