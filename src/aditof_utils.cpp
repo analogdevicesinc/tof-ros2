@@ -115,14 +115,7 @@ std::shared_ptr<Camera> initCamera(std::string * arguments)
 
   std::shared_ptr<Camera> camera = cameras.front();
 
-  // user can pass any config.json stored anywhere in HW
-  status = camera->setControl("initialization_config", arguments[1]);
-  if (status != Status::OK) {
-    LOG(ERROR) << "Could not set the initialization config file!";
-    return 0;
-  }
-
-  status = camera->initialize();
+  status = camera->initialize(arguments[1]);
   if (status != Status::OK) {
     LOG(ERROR) << "Could not initialize camera!";
     return 0;
