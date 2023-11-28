@@ -45,8 +45,10 @@
 #include "aditof/system.h"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "safedataaccess.h"
 #include "std_msgs/msg/string.hpp"
 
+using namespace std::chrono;
 using namespace std::chrono_literals;
 using namespace aditof;
 
@@ -61,6 +63,10 @@ private:
   aditof::Frame ** frame;
   PublisherFactory publishers;
 
+public:
+  SafeDataAccess<aditof::Frame *> m_safeDataAccess;
+
+private:
   // camera parameters
   int m_adsd3500ABinvalidationThreshold_;
   int m_adsd3500ConfidenceThreshold_;
@@ -180,12 +186,17 @@ public:
     this->camera = camera;
     this->frame = frame;
 
+    // add 12 items in the list needed for circular vector
+    for (int i = 0; i <= 12; i++) {
+      m_safeDataAccess.populateData(new aditof::Frame);
+    }
+
     if (!streamOnFlag) {
       startCamera(camera);
       streamOnFlag = true;
     }
 
-    publishers.createNew(this, camera, frame);
+    publishers.createNew(this, camera, frame, &m_safeDataAccess);
 
     callback_handle_ = this->add_on_set_parameters_callback(
       std::bind(&TofNode::parameterCallback, this, std::placeholders::_1));
@@ -202,7 +213,12 @@ public:
   {
     if (streamOnFlag) {
       globalTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
-      getNewFrame(camera, frame);
+
+      aditof::Frame * tmp1 = m_safeDataAccess.getNextElement();
+
+      m_safeDataAccess.setReadytoStart();
+      getNewFrame(camera, tmp1);
+      m_safeDataAccess.addElement(tmp1);
     }
   }
 

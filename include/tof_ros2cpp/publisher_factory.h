@@ -38,8 +38,10 @@
 #include <depthImage_msg.h>
 #include <irImage_msg.h>
 #include <rawImage_msg.h>
+#include <safedataaccess.h>
 #include <xyzImage_msg.h>
 
+#include <chrono>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
@@ -50,6 +52,8 @@
 
 #include "aditof/camera.h"
 
+using namespace std::chrono;
+
 static bool deletePublisherWorkers = false;
 extern bool streamOnFlag;
 extern rclcpp::Time globalTimeStamp;
@@ -57,24 +61,28 @@ extern rclcpp::Time globalTimeStamp;
 void publisherImgMsgsWorker(
   std::shared_ptr<AditofSensorMsg> imgMsgs,
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr img_publisher,
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+  SafeDataAccess<aditof::Frame *> * safeDataAccess);
 void publisherPointCloudMsgsWorker(
   std::shared_ptr<AditofSensorPointCloudMsg> pointCloudMsgs,
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointCloudPublishers,
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+  SafeDataAccess<aditof::Frame *> * safeDataAccess);
 void publisherSingleThreadWorker(
   std::vector<rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> imgPublisher,
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs,
   std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers,
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs,
-  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+  const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+  SafeDataAccess<aditof::Frame *> * safeDataAccess);
 
 class PublisherFactory
 {
 public:
   PublisherFactory();
   void createNew(
-    rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
+    rclcpp::Node * node, const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+    SafeDataAccess<aditof::Frame *> * safeDataAccess);
   void createSingleThreadPublisherWorker(
     const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
   void createMultiThreadPublisherWorkers(
@@ -91,6 +99,7 @@ private:
   std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers;
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
   std::vector<std::shared_ptr<std::thread>> tofThreads;
+  SafeDataAccess<aditof::Frame *> * m_safeDataAccess;
 };
 
 #endif  // PUBLISHER_FACTORY_H

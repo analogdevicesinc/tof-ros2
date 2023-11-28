@@ -41,10 +41,10 @@ ConfImageMsg::ConfImageMsg(
 }
 
 void ConfImageMsg::FrameDataToMsg(
-  const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)
+  const std::shared_ptr<Camera> & camera, aditof::Frame * frame, rclcpp::Time tStamp)
 {
   FrameDetails fDetails;
-  (*frame)->getDetails(fDetails);
+  frame->getDetails(fDetails);
 
   setMetadataMembers(fDetails.width, fDetails.height, tStamp);
 

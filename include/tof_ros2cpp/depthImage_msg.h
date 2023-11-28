@@ -80,7 +80,7 @@ public:
      * @brief Converts the frame data to a message
      */
   void FrameDataToMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame * frame,
     rclcpp::Time tStamp) override;
 
   /**

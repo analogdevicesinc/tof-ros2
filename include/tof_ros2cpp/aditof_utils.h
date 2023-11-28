@@ -64,8 +64,8 @@ void setCameraRevision(const std::shared_ptr<aditof::Camera> & camera, const std
 void setIrGammaCorrection(const std::shared_ptr<aditof::Camera> & camera, float gamma);
 void applyNoiseReduction(const std::shared_ptr<aditof::Camera> & camera, int threshold);
 void disableNoiseReduction(const std::shared_ptr<aditof::Camera> & camera);
-void getNewFrame(const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame);
-uint16_t * getFrameData(aditof::Frame ** frame, const std::string & dataType);
+void getNewFrame(const std::shared_ptr<aditof::Camera> & camera, aditof::Frame * frame);
+uint16_t * getFrameData(aditof::Frame * frame, const std::string & dataType);
 aditof::IntrinsicParameters getIntrinsics(const std::shared_ptr<aditof::Camera> & camera);
 int getRangeMax(const std::shared_ptr<aditof::Camera> & camera);
 int getRangeMin(const std::shared_ptr<aditof::Camera> & camera);
