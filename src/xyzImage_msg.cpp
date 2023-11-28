@@ -43,13 +43,12 @@ XYZImageMsg::XYZImageMsg(
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame, std::string encoding)
 {
   imgEncoding = encoding;
-  FrameDataToMsg(camera, frame);
 }
 
-void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> & camera, aditof::Frame ** frame)
+void XYZImageMsg::FrameDataToMsg(const std::shared_ptr<Camera> & camera, aditof::Frame * frame)
 {
   FrameDetails fDetails;
-  (*frame)->getDetails(fDetails);
+  frame->getDetails(fDetails);
 
   setMetadataMembers(fDetails.width, fDetails.height);
 

@@ -41,7 +41,7 @@ RAWImageMsg::RAWImageMsg(
 }
 
 void RAWImageMsg::FrameDataToMsg(
-  const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)
+  const std::shared_ptr<Camera> & camera, aditof::Frame * frame, rclcpp::Time tStamp)
 {
   aditof::CameraDetails * details_tmp = new aditof::CameraDetails;
   getCameraDataDetails(camera, *details_tmp);

@@ -47,8 +47,7 @@ public:
   bool publisherEnabled = true;
   virtual ~AditofSensorMsg() = default;
   virtual void FrameDataToMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
-    rclcpp::Time tStamp) = 0;
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame * frame, rclcpp::Time tStamp) = 0;
   virtual sensor_msgs::msg::Image getMessage() = 0;
   virtual void publishMsg(rclcpp::Publisher<sensor_msgs::msg::Image> & pub) = 0;
 };
@@ -59,7 +58,7 @@ public:
   bool publisherEnabled = true;
   virtual ~AditofSensorPointCloudMsg() = default;
   virtual void FrameDataToMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame) = 0;
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame * frame) = 0;
 
   virtual sensor_msgs::msg::PointCloud2 getMessagePointCloud() = 0;
   virtual void publishMsg(rclcpp::Publisher<sensor_msgs::msg::PointCloud2> & pub) = 0;

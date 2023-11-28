@@ -61,7 +61,7 @@ public:
    * @brief Converts the frame data to a message
    */
   void FrameDataToMsg(
-    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame) override;
+    const std::shared_ptr<aditof::Camera> & camera, aditof::Frame * frame) override;
   /**
    * @brief Assigns values to the message fields concerning metadata
    */

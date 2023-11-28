@@ -41,14 +41,14 @@ IRImageMsg::IRImageMsg(
 }
 
 void IRImageMsg::FrameDataToMsg(
-  const std::shared_ptr<Camera> & camera, aditof::Frame ** frame, rclcpp::Time tStamp)
+  const std::shared_ptr<Camera> & camera, aditof::Frame * frame, rclcpp::Time tStamp)
 {
   FrameDetails fDetails;
-  (*frame)->getDetails(fDetails);
+  frame->getDetails(fDetails);
 
   setMetadataMembers(fDetails.width, fDetails.height, tStamp);
 
-  uint16_t * frameData = getFrameData(frame, "ir");
+  uint16_t * frameData = getFrameData(frame, "ab");
 
   if (!frameData) {
     LOG(ERROR) << "getFrameData call failed";
@@ -61,7 +61,7 @@ void IRImageMsg::FrameDataToMsg(
 void IRImageMsg::setMetadataMembers(int width, int height, rclcpp::Time tStamp)
 {
   message.header.stamp = tStamp;
-  message.header.frame_id = "aditof_ir_img";
+  message.header.frame_id = "aditof_ab_img";
 
   message.width = width;
   message.height = height;
