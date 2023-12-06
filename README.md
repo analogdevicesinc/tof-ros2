@@ -65,6 +65,13 @@ ros2 launch tof_ros2cpp EVAL-ADTF3175D.launch.xml
 ```
 
 #### Parameters:
+[ip = "<<b>ip address of camera></b>"]
+* for remote acces specify the cameras ip: ```10.42.0.1``` 
+* for on target use, leave empty: ```""``` 
+
+ Default value: ```""``` (empty string)
+
+
  [config_file = "<<b>config file path></b>"]
 * ```config/config_adsd3500_adsd3100.json``` ("Crosby")
 * ```config/config_adsd3500_adsd3030.json``` ("Adsd3030")
