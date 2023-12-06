@@ -24,7 +24,6 @@ find_package(glog REQUIRED)
 find_package(Protobuf REQUIRED)
 
 set(ADITOF_MIN_VERSION "4.3.0")
-
 if(aditof_VERSION VERSION_LESS ${ADITOF_MIN_VERSION})
     message(FATAL_ERROR "You can not compile with aditof version less than ${ADITOF_MIN_VERSION}" )
 else()
@@ -33,7 +32,11 @@ endif()
 
 find_library(TOFI_COMPUTE
   NAMES tofi_compute
-  PATHS /usr/lib)
+  PATHS /usr/local/lib)
+
+find_library(TOFI_CONFIG
+  NAMES tofi_config
+  PATHS /usr/local/lib)
 
 if(UNIX)
     set(CMAKE_POSITION_INDEPENDENT_CODE "1")
