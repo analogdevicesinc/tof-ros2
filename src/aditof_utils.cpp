@@ -74,7 +74,7 @@ std::string * parseArgs(int argc, char ** argv)
 
   if (ip.empty()) {
     LOG(INFO) << "No ip provided, attempting to connect to the camera "
-                 "through USB";
+                 "on target";
   }
   if (config_path.empty()) {
     LOG(INFO) << "Config file not provided!";
@@ -86,6 +86,8 @@ std::string * parseArgs(int argc, char ** argv)
   std::string * result = new std::string[4];
   if (!ip.empty()) {
     result[0] = std::string("ip:") + ip;
+  } else {
+    result[0] = std::string("");
   }
   result[1] = config_path;
   result[2] = mode;
@@ -102,11 +104,8 @@ std::shared_ptr<Camera> initCamera(std::string * arguments)
   System system;
 
   std::vector<std::shared_ptr<Camera>> cameras;
-  if (arguments[0].empty()) {
-    system.getCameraList(cameras);
-  } else {
-    system.getCameraList(cameras, arguments[0]);
-  }
+
+  system.getCameraList(cameras, arguments[0]);
 
   if (cameras.empty()) {
     LOG(WARNING) << "No cameras found";
