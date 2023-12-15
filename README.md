@@ -11,6 +11,10 @@
 
 - In order to prepare the system to run the ROS wrapper in the general catkin workspace make sure to install correctly the following libraries:
 
+### 1.1 Install ROS2 on NXP
+
+- The installation is described on file doc/ros2_on_nxp.md
+
 ## 2. ToF dependency
 ### Download debian package:
 #### For Crosby:
