@@ -4,6 +4,10 @@ trigger:
 pr: 
 - main
 
+variables:
+- name: BRANCH_NAME
+  value: $(Build.SourceBranchName)
+
 resources:
   containers:
   - container: ubuntu_20_04_ros2_foxy
@@ -34,23 +38,48 @@ steps:
 
   - script: |
       #!/bin/bash
-      rm -rf ToF && git clone https://github.com/analogdevicesinc/ToF && cd ToF && mkdir build && cd build && sudo cmake -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" -DUSE_DEPTH_COMPUTE_STUBS=1 .. && sudo make install .
+      rm -rf ToF 
+      git clone https://github.com/analogdevicesinc/ToF 
+      cd ToF 
+      mkdir build 
+      cd build 
+      sudo cmake -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" .. 
+      sudo make install .
+
     displayName: 'ToF Build'
 
   - script: |
       #!/bin/bash
-      rm -rf ros2_ws && mkdir -p ros2_ws/src && cd ros2_ws/src && git clone https://github.com/analogdevicesinc/tof-ros2 && cd ../ && . /opt/ros/foxy/setup.sh && colcon build
+      rm -rf ros2_ws 
+      mkdir -p ros2_ws/src 
+      cd ros2_ws/src 
+      git clone -b ${{ variables.BRANCH_NAME }} https://github.com/analogdevicesinc/tof-ros2 
+      cd ../ 
+      source /opt/ros/foxy/setup.sh 
+      colcon build
     condition: eq( variables['buildContainer'], 'ubuntu_20_04_ros2_foxy' )
     displayName: 'ros2_foxy'
 
   - script: |
       #!/bin/bash
-      rm -rf ros2_ws && mkdir -p ros2_ws/src && cd ros2_ws/src && git clone https://github.com/analogdevicesinc/tof-ros2 && cd ../ && . /opt/ros/humble/setup.sh && colcon build
+      rm -rf ros2_ws 
+      mkdir -p ros2_ws/src 
+      cd ros2_ws/src 
+      git clone -b ${{ variables.BRANCH_NAME }} https://github.com/analogdevicesinc/tof-ros2 
+      cd ../ 
+      source /opt/ros/humble/setup.sh 
+      colcon build
     condition: eq( variables['buildContainer'], 'ubuntu_22_04_ros2_humble' )
     displayName: 'ros2_humble'
 
   - script: |
       #!/bin/bash
-      rm -rf ros2_ws && mkdir -p ros2_ws/src && cd ros2_ws/src && git clone https://github.com/analogdevicesinc/tof-ros2 && cd ../ && . /opt/ros/rolling/setup.sh && colcon build
+      rm -rf ros2_ws 
+      mkdir -p ros2_ws/src 
+      cd ros2_ws/src 
+      git clone -b ${{ variables.BRANCH_NAME }} https://github.com/analogdevicesinc/tof-ros2 
+      cd ../ 
+      source /opt/ros/rolling/setup.sh 
+      colcon build
     condition: eq( variables['buildContainer'], 'ubuntu_22_04_ros2_rolling' )
     displayName: 'ros2_rolling'
