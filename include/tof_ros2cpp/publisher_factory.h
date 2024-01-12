@@ -45,6 +45,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <std_msgs/msg/int32.hpp>
 #include <string>
 #include <thread>
 #include <typeinfo>
@@ -57,6 +58,8 @@ using namespace std::chrono;
 static bool deletePublisherWorkers = false;
 extern bool streamOnFlag;
 extern rclcpp::Time globalTimeStamp;
+
+extern int pub_factory_adsd3500_status;
 
 void publisherImgMsgsWorker(
   std::shared_ptr<AditofSensorMsg> imgMsgs,
@@ -73,8 +76,12 @@ void publisherSingleThreadWorker(
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs,
   std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers,
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs,
+  std::vector<rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr> cameraStatus_publisher,
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
   SafeDataAccess<aditof::Frame *> * safeDataAccess);
+
+void publisherCameraStatusMsgsWorker(
+  std::vector<rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr> cameraStatus_publisher);
 
 class PublisherFactory
 {
@@ -98,6 +105,7 @@ private:
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs;
   std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers;
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs;
+  std::vector<rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr> cameraStatusPublisher;
   std::vector<std::shared_ptr<std::thread>> tofThreads;
   SafeDataAccess<aditof::Frame *> * m_safeDataAccess;
 };
