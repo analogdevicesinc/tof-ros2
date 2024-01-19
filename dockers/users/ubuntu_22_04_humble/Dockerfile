@@ -1,5 +1,4 @@
-FROM ubuntu:20.04
- 
+FROM ubuntu:22.04
 LABEL maintainer="Robert Budai, <robert.budai@analog.com>"
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -35,13 +34,13 @@ RUN \
   && cmake -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=/opt/protobuf ../cmake \
   && cmake --build . --target install
 
-# #Install ToF SDK
-# RUN \
-#   git clone https://github.com/analogdevicesinc/ToF \
-#   && cd ToF \
-#   && mkdir build && cd build \
-#   && cmake -DUSE_DEPTH_COMPUTE_OPENSOURCE=1 -DWITH_NETWORK=1 -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" .. \
-#   && cmake --build . --target install 
+#Install ToF SDK
+RUN \
+  git clone https://github.com/analogdevicesinc/ToF \
+  && cd ToF \
+  && mkdir build && cd build \
+  && cmake -DWITH_NETWORK=1 -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" .. \
+  && cmake --build . --target install 
 
 #Install ROS2
 RUN \
@@ -61,8 +60,16 @@ RUN \
   && apt-get update \
   && apt-get upgrade -y
 RUN \
-  apt-get install -y ros-galactic-desktop python3-argcomplete \
+  apt-get install -y ros-humble-desktop python3-argcomplete \
   && apt-get install -y python3-colcon-common-extensions
 
+# Install Tof ROS2
 RUN \
-  mkdir ros2_ws && cd ros2_ws && mkdir src
+  mkdir ros2_ws && cd ros2_ws && mkdir src \
+  && cd src \
+  && git clone https://github.com/analogdevicesinc/tof-ros2
+
+RUN \
+ . /opt/ros/humble/setup.sh \
+ && cd ros2_ws \
+ && colcon build
