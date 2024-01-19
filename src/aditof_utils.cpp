@@ -31,12 +31,15 @@
  */
 #include "aditof_utils.h"
 
+#include <aditof/depth_sensor_interface.h>
 #include <aditof/system.h>
 #include <string.h>
 #include <unistd.h>
 
 #include <rclcpp/rclcpp.hpp>
 #include <regex>
+
+#include "publisher_factory.h"
 
 std::mutex mtx_dynamic_rec;
 using namespace aditof;
@@ -113,6 +116,19 @@ std::shared_ptr<Camera> initCamera(std::string * arguments)
   }
 
   std::shared_ptr<Camera> camera = cameras.front();
+
+  // Registering a callback to be executed when ADSD3500 issues an interrupt
+  std::shared_ptr<DepthSensorInterface> sensor = camera->getSensor();
+  aditof::SensorInterruptCallback callback = [](Adsd3500Status status) {
+    LOG(INFO) << "Adsd3500Status changed: " << status;
+    pub_factory_adsd3500_status = static_cast<int>(status);
+  };
+  Status registerCbStatus = sensor->adsd3500_register_interrupt_callback(callback);
+  if (registerCbStatus != Status::OK) {
+    LOG(WARNING) << "Could not register callback " << registerCbStatus;
+  } else {
+    LOG(INFO) << "Success register callback";
+  }
 
   status = camera->initialize(arguments[1]);
   if (status != Status::OK) {

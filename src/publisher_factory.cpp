@@ -34,6 +34,7 @@
 
 bool streamOnFlag;
 rclcpp::Time globalTimeStamp;
+int pub_factory_adsd3500_status = -1;
 
 PublisherFactory::PublisherFactory(){};
 
@@ -75,6 +76,9 @@ void PublisherFactory::createNew(
       LOG(INFO) << "Added conf data publisher";
     }
   }
+
+  cameraStatusPublisher.emplace_back(
+    node->create_publisher<std_msgs::msg::Int32>("tof_camera_status", 10));
 }
 
 void PublisherFactory::setThreadMode(std::string topicIndex, bool mode)
@@ -108,6 +112,7 @@ void PublisherFactory::createMultiThreadPublisherWorkers(
       publisherPointCloudMsgsWorker, pointCloudMsgs.at(i), pointCloudPublishers.at(i), camera,
       frame, m_safeDataAccess));
   }
+  tofThreads.emplace_back(new std::thread(publisherCameraStatusMsgsWorker, cameraStatusPublisher));
 }
 
 void PublisherFactory::createSingleThreadPublisherWorker(
@@ -116,7 +121,7 @@ void PublisherFactory::createSingleThreadPublisherWorker(
   deletePublisherWorkers = false;
   tofThreads.emplace_back(new std::thread(
     publisherSingleThreadWorker, imgPublishers, imgMsgs, pointCloudPublishers, pointCloudMsgs,
-    camera, frame, m_safeDataAccess));
+    cameraStatusPublisher, camera, frame, m_safeDataAccess));
 }
 
 void PublisherFactory::removePublisherWorkers()
@@ -137,6 +142,22 @@ void PublisherFactory::setDepthFormat(const int val)
   for (unsigned int i = 0; i < imgMsgs.size(); ++i) {
     if (std::dynamic_pointer_cast<DepthImageMsg>(imgMsgs[i])) {
       std::dynamic_pointer_cast<DepthImageMsg>(imgMsgs[i]).get()->setDepthDataFormat(val);
+    }
+  }
+}
+
+void publisherCameraStatusMsgsWorker(
+  std::vector<rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr> cameraStatus_publisher)
+{
+  rclcpp::Rate loop_rate(1.0 / 10);
+
+  while (!deletePublisherWorkers) {
+    if (rclcpp::ok()) {
+      std_msgs::msg::Int32 msgi;
+      msgi.data = pub_factory_adsd3500_status;
+
+      if (cameraStatus_publisher.size()) cameraStatus_publisher.at(0)->publish(msgi);
+      loop_rate.sleep();
     }
   }
 }
@@ -206,10 +227,12 @@ void publisherSingleThreadWorker(
   std::vector<std::shared_ptr<AditofSensorMsg>> imgMsgs,
   std::vector<rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr> pointCloudPublishers,
   std::vector<std::shared_ptr<AditofSensorPointCloudMsg>> pointCloudMsgs,
+  std::vector<rclcpp::Publisher<std_msgs::msg::Int32>::SharedPtr> cameraStatus_publisher,
   const std::shared_ptr<aditof::Camera> & camera, aditof::Frame ** frame,
   SafeDataAccess<aditof::Frame *> * safeDataAccess)
 {
   rclcpp::Time localTimeStamp = rclcpp::Clock{RCL_ROS_TIME}.now();
+  rclcpp::Rate loop_rate(1.0 / 10);
 
   while (!deletePublisherWorkers) {
     if (streamOnFlag) {
@@ -233,6 +256,14 @@ void publisherSingleThreadWorker(
             pointCloudMsgs.at(i)->publishMsg(*pointCloudPublishers.at(i));
           }
         }
+      }
+    }
+    std_msgs::msg::Int32 msg;
+    msg.data = pub_factory_adsd3500_status;
+    if (cameraStatus_publisher.size()) {
+      cameraStatus_publisher.at(0)->publish(msg);
+      if (!streamOnFlag) {
+        loop_rate.sleep();
       }
     }
   }
