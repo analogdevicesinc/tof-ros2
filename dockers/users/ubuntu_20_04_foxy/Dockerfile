@@ -1,5 +1,4 @@
 FROM ubuntu:20.04
- 
 LABEL maintainer="Robert Budai, <robert.budai@analog.com>"
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -11,7 +10,7 @@ RUN \
   && apt-get install -y build-essential \
   && apt-get install apt-utils
 
-#Install Glog
+# Install Glog
 RUN \
   git clone -b v0.6.0 --depth 1 https://github.com/google/glog \
   && cd glog \
@@ -19,7 +18,7 @@ RUN \
   && cmake -DWITH_GFLAGS=off -DCMAKE_INSTALL_PREFIX=/opt/glog .. \
   && cmake --build . --target install
 
-#Install Libwebsoocket
+# Install Libwebsoocket
 RUN \
   git clone --branch v3.1-stable --depth 1 https://github.com/warmcat/libwebsockets \
   && cd libwebsockets \
@@ -27,7 +26,7 @@ RUN \
   && cmake -DLWS_WITH_SSL=OFF -DLWS_STATIC_PIC=ON -DCMAKE_INSTALL_PREFIX=/opt/websockets .. \
   && cmake --build . --target install
 
-#Install Protobuf
+# Install Protobuf
 RUN \
   git clone --branch v3.9.0 --depth 1 https://github.com/protocolbuffers/protobuf \
   && cd protobuf \
@@ -35,15 +34,15 @@ RUN \
   && cmake -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=/opt/protobuf ../cmake \
   && cmake --build . --target install
 
-# #Install ToF SDK
-# RUN \
-#   git clone https://github.com/analogdevicesinc/ToF \
-#   && cd ToF \
-#   && mkdir build && cd build \
-#   && cmake -DUSE_DEPTH_COMPUTE_OPENSOURCE=1 -DWITH_NETWORK=1 -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" .. \
-#   && cmake --build . --target install 
+# Install ToF SDK
+RUN \
+  git clone https://github.com/analogdevicesinc/ToF \
+  && cd ToF \
+  && mkdir build && cd build \
+  && cmake -DWITH_NETWORK=1 -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" .. \
+  && cmake --build . --target install 
 
-#Install ROS2
+# Install ROS2
 RUN \
   locale \
   && apt-get update && apt-get install locales \
@@ -64,5 +63,13 @@ RUN \
   apt-get install -y ros-foxy-desktop python3-argcomplete \
   && apt-get install -y python3-colcon-common-extensions
 
+# Install Tof ROS2
 RUN \
-  mkdir ros2_ws && cd ros2_ws && mkdir src
+  mkdir ros2_ws && cd ros2_ws && mkdir src \
+  && cd src \
+  && git clone https://github.com/analogdevicesinc/tof-ros2
+
+RUN \
+ cd ros2_ws \
+ && source /opt/ros/galactic/setup.bash \
+ && colcon build
