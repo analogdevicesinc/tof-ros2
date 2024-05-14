@@ -2,7 +2,7 @@
 
 # Base Image Updates
 sudo apt-get update -y
-sudo apt-get install -y git cmake build-essential apt-utils libssl-dev wget
+sudo apt-get install -y git gcc-9 g++-9 cmake build-essential apt-utils libssl-dev wget
 
 # Install cmake v3.20
 wget https://github.com/Kitware/CMake/releases/download/v3.20.0/cmake-3.20.0.tar.gz
@@ -24,7 +24,7 @@ sudo apt-get install libssl-dev
 git clone --branch v3.1-stable --depth 1 https://github.com/warmcat/libwebsockets
 cd libwebsockets
 mkdir build_3_1 && cd build_3_1
-sudo cmake -DLWS_WITH_SSL=OFF -DLWS_STATIC_PIC=ON -DCMAKE_INSTALL_PREFIX=/opt/websockets ..
+sudo cmake -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DLWS_WITH_SSL=OFF -DLWS_STATIC_PIC=ON -DCMAKE_INSTALL_PREFIX=/opt/websockets ..
 sudo cmake --build . --target install
 
 # Install Protobuf

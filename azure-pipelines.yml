@@ -43,7 +43,7 @@ steps:
       cd ToF 
       mkdir build 
       cd build 
-      sudo cmake -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" .. 
+      sudo cmake -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DWITH_EXAMPLES=off -DCMAKE_PREFIX_PATH="/opt/glog;/opt/protobuf;/opt/websockets" ..
       sudo make install .
 
     displayName: 'ToF Build'
@@ -80,6 +80,6 @@ steps:
       git clone -b ${{ variables.BRANCH_NAME }} https://github.com/analogdevicesinc/tof-ros2 
       cd ../ 
       source /opt/ros/rolling/setup.sh 
-      colcon build
+      colcon build --cmake-args -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9
     condition: eq( variables['buildContainer'], 'ubuntu_22_04_ros2_rolling' )
     displayName: 'ros2_rolling'
