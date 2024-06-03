@@ -139,15 +139,15 @@ std::shared_ptr<Camera> initCamera(std::string * arguments)
   return camera;
 }
 
-void getAvailableFrameTypes(
-  const std::shared_ptr<aditof::Camera> & camera, std::vector<std::string> & availableFrameTypes)
+void getAvailableModes(
+  const std::shared_ptr<aditof::Camera> & camera, std::vector<uint8_t> & availableModes)
 {
-  //get available frae types of camera
+  //get available modes of camera
   aditof::Status status = aditof::Status::OK;
 
-  status = camera->getAvailableFrameTypes(availableFrameTypes);
+  status = camera->getAvailableModes(availableModes);
   if (status != Status::OK) {
-    LOG(ERROR) << "Couldn't get available frame types";
+    LOG(ERROR) << "Couldn't get available modes";
     return;
   }
 }
@@ -192,36 +192,11 @@ void stopCamera(const std::shared_ptr<aditof::Camera> & camera)
   return;
 }
 
-void setFrameType(const std::shared_ptr<aditof::Camera> & camera, const std::string & type)
+void getAvailableMode(
+  const std::shared_ptr<aditof::Camera> & camera, std::vector<uint8_t> & availableModes)
 {
-  std::vector<std::string> frameTypes;
-  camera->getAvailableFrameTypes(frameTypes);
-  if (frameTypes.empty()) {
-    LOG(ERROR) << "No frame type available!";
-    return;
-  }
-
-  std::vector<std::string>::iterator it = std::find(frameTypes.begin(), frameTypes.end(), type);
-  if (it == frameTypes.end()) {
-    LOG(ERROR) << "Requested frame type is not available";
-    return;
-  }
-
-  Status status = Status::OK;
-  status = camera->setFrameType(type);
-  if (status != Status::OK) {
-    LOG(ERROR) << "Could not set camera frame type!";
-    return;
-  } else {
-    LOG(INFO) << "Frame type set: " << type;
-  }
-}
-
-void getAvailableFrameType(
-  const std::shared_ptr<aditof::Camera> & camera, std::vector<std::string> & availableFrameTypes)
-{
-  camera->getAvailableFrameTypes(availableFrameTypes);
-  if (availableFrameTypes.empty()) {
+  camera->getAvailableModes(availableModes);
+  if (availableModes.empty()) {
     LOG(ERROR) << "No frame type available!";
     return;
   }
@@ -237,16 +212,16 @@ void getCameraDataDetails(
   }
 }
 
-void setMode(const std::shared_ptr<aditof::Camera> & camera, const std::string & mode)
+void setCameraMode(const std::shared_ptr<aditof::Camera> & camera, const uint8_t & mode)
 {
-  std::vector<std::string> modes;
+  std::vector<uint8_t> modes;
   camera->getAvailableModes(modes);
   if (modes.empty()) {
     LOG(ERROR) << "No camera modes available!";
     return;
   }
 
-  std::vector<std::string>::iterator it = std::find(modes.begin(), modes.end(), mode);
+  std::vector<uint8_t>::iterator it = std::find(modes.begin(), modes.end(), mode);
   if (it == modes.end()) {
     LOG(ERROR) << "Requested mode is not available";
     return;

@@ -237,26 +237,26 @@ int main(int argc, char * argv[])
   std::string * arguments = parseArgs(argc, argv);
   // find camera (local/usb/network), set config file and initialize the camera
   std::shared_ptr<Camera> camera = initCamera(arguments);
-  // versioning print
-  versioningAuxiliaryFunction(camera);
 
   if (!camera) {
     LOG(WARNING) << "No cameras found";
     return 0;
   }
+  // versioning print
+  versioningAuxiliaryFunction(camera);
 
-  // getting available frame types, backward compatibility
-  std::vector<std::string> availableFrameTypes;
-  getAvailableFrameTypes(camera, availableFrameTypes);
+  // getting available modes
+  std::vector<uint8_t> availableModes;
+  getAvailableModes(camera, availableModes);
 
   // Setting camera parameters
   int currentMode = atoi(arguments[2].c_str());
-  int availableFrameTypeSize = availableFrameTypes.size();
+  int availableModesSize = availableModes.size();
 
-  if (0 <= currentMode && currentMode < availableFrameTypeSize) {
-    setFrameType(camera, availableFrameTypes.at(currentMode));
+  if (0 <= currentMode && currentMode < availableModesSize) {
+    setCameraMode(camera, currentMode);
   } else {
-    LOG(ERROR) << "Incompatible or unavalable mode type chosen";
+    LOG(ERROR) << "Incompatible or unavalable mode type chosen" << currentMode;
     return 0;
   }
 

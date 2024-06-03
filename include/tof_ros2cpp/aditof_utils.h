@@ -53,13 +53,12 @@ std::string * parseArgs(int argc, char ** argv);
 std::shared_ptr<aditof::Camera> initCamera(std::string * arguments);
 void startCamera(const std::shared_ptr<aditof::Camera> & camera);
 void stopCamera(const std::shared_ptr<aditof::Camera> & camera);
-void setFrameType(const std::shared_ptr<aditof::Camera> & camera, const std::string & type);
+void setCameraMode(const std::shared_ptr<aditof::Camera> & camera, const uint8_t & mode);
 void getAvailableFrameType(
   const std::shared_ptr<aditof::Camera> & camera, std::vector<std::string> & availableFrameTypes);
 void getCameraDataDetails(
   const std::shared_ptr<aditof::Camera> & camera, aditof::CameraDetails & details);
 void enableCameraDepthCompute(const std::shared_ptr<aditof::Camera> & camera, const bool value);
-void setMode(const std::shared_ptr<aditof::Camera> & camera, const std::string & mode);
 void setCameraRevision(const std::shared_ptr<aditof::Camera> & camera, const std::string rev);
 void setIrGammaCorrection(const std::shared_ptr<aditof::Camera> & camera, float gamma);
 void applyNoiseReduction(const std::shared_ptr<aditof::Camera> & camera, int threshold);
@@ -95,7 +94,7 @@ void control_adsd3500SetRadialThresholdMax(
 void control_adsd3500GetRadialThresholdMax(
   const std::shared_ptr<aditof::Camera> & camera, int & threshold);
 void versioningAuxiliaryFunction(const std::shared_ptr<aditof::Camera> & camera);
-void getAvailableFrameTypes(
-  const std::shared_ptr<aditof::Camera> & camera, std::vector<std::string> & availableFrameTypes);
+void getAvailableModes(
+  const std::shared_ptr<aditof::Camera> & camera, std::vector<uint8_t> & availableModes);
 
 #endif  // ADITOF_UTILS_H
