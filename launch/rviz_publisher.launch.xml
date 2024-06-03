@@ -1,5 +1,5 @@
 <launch>
-	<let name='ip' value='10.42.0.1'/>
+	<let name='ip' value='10.43.0.1'/>
 	<let name='config_file' value='config/config_adsd3500_adsd3100.json'/>
 	<let name='mode' value='2'/>
 	<node 
